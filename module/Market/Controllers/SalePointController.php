@@ -23,6 +23,7 @@ class SalePointController extends Controller
             ['title' => 'Sale Points', 'url' => null]
         ];
 
+        $data['sale_points'] = SalePoint::all();
         $query = SalePoint::query();
         $data['territories'] = Territory::all();
 

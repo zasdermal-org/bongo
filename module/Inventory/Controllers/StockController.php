@@ -82,9 +82,9 @@ class StockController extends Controller
     {
         $categoryName = $request->query('category_name');
 
-        if ($categoryName == 'pesticide') {
+        if ($categoryName == 'seed') {
             $products = Product::whereHas('category', function ($query) {
-                $query->where('slug', 'pesticide');
+                $query->where('slug', 'seed');
             })->get();
 
             // Extract SKUs from the products
@@ -94,9 +94,9 @@ class StockController extends Controller
             $stocks = Stock::whereIn('sku', $productSkus)->get();
         }
 
-        if ($categoryName == 'fertilizer_seed') {
+        if ($categoryName == 'agrochemicals') {
             $products = Product::whereHas('category', function ($query) {
-                $query->whereIn('slug', ['fertilizer', 'seed']);
+                $query->whereIn('slug', ['pesticide', 'fertilizer']);
             })->get();
 
             // Extract SKUs from the products

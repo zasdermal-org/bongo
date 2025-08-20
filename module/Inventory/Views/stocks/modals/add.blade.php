@@ -32,8 +32,8 @@
                         <label class="form-label required">Select Category</label>
                         <select onchange="categoryName()" id="category_name" name="category_name" class="form-select form-select-solid" data-control="select2" data-placeholder="Select product category">
                             <option></option>
-                            <option value="pesticide">Pesticide</option>
-                            <option value="fertilizer_seed">Fertilizer + Seed</option>
+                            <option value="seed">Seed</option>
+                            <option value="agrochemicals">Agrochemicals</option>
                         </select>
                     </div>
 

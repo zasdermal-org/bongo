@@ -21,7 +21,7 @@
                             <div class="w-110 mw-120px me-2">
                                 <select name="code_number" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Sales Point">
                                     <option></option>
-                                    @foreach ($salePoints as $salePoint)
+                                    @foreach ($sale_points as $salePoint)
                                         <option value="{{ $salePoint->code_number }}" {{ request('code_number') == $salePoint->code_number ? 'selected' : '' }}>
                                             {{ $salePoint->name }} — ({{ $salePoint->code_number }}) — ({{ $salePoint->address }})
                                         </option>

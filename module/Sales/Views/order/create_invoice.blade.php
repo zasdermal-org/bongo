@@ -63,8 +63,8 @@
                                     <!--begin::Select Product-->
                                     <select onchange="categoryName()" id="category_name" data-control="select2" data-placeholder="Select product category" class="form-select form-select-solid">
                                         <option></option>
-                                        <option value="pesticide">Pesticide</option>
-                                        <option value="fertilizer_seed">Fertilizer + Seed</option>
+                                        <option value="seed">Seed</option>
+                                        <option value="agrochemicals">Agrochemicals</option>
                                     </select>
                                     <!--end::Select Product-->
                                 </div>

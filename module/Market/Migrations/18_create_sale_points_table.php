@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('contact_name')->nullable();
             $table->string('contact_number')->nullable();
-            $table->enum('customer_type', ['Trnder Govt', 'Tender Pvt', 'Deller'])->default('Deller');
+            $table->enum('customer_type', ['Tender Govt', 'Tender Pvt', 'Deller'])->default('Deller');
             $table->enum('payment_type', ['Cash', 'Credit'])->default('Cash');
             $table->integer('discount')->nullable();
             $table->enum('is_active', ['Active', 'Inactive'])->default('Inactive');

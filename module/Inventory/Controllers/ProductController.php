@@ -84,15 +84,15 @@ class ProductController extends Controller
     {
         $categoryName = $request->query('category_name');
 
-        if ($categoryName == 'pesticide') {
+        if ($categoryName == 'agrochemicals') {
             $products = Product::whereHas('category', function ($query) {
-                $query->where('slug', 'pesticide');
+                $query->whereIn('slug', ['pesticide', 'fertilizer']);
             })->get();
         }
 
-        if ($categoryName == 'fertilizer_seed') {
+        if ($categoryName == 'seed') {
             $products = Product::whereHas('category', function ($query) {
-                $query->whereIn('slug', ['fertilizer', 'seed']);
+                $query->where('slug', 'seed');
             })->get();
         }
 
