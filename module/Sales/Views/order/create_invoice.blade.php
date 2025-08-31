@@ -146,12 +146,35 @@
                                     <!--begin::Wrapper-->
                                     <div class="d-flex flex-column align-items-start flex-xxl-row">
                                         <!--begin::Input group-->
-                                        <div class="me-5">
+                                        <div class="me-2">
                                             <!--begin::Label-->
                                             <label class="form-label fw-bolder fs-6 text-gray-700">Previous Date</label>
                                             <!--end::Label-->
 
                                             <input class="form-control form-control-solid" type="date" id="date" value="{{ Carbon\Carbon::now()->toDateString() }}" />
+                                        </div>
+                                        <!--end::Input group-->
+
+                                        <!--begin::Input group-->
+                                        <div class="me-2">
+                                            <!--begin::Label-->
+                                            <label class="form-label fw-bolder fs-6 text-gray-700">Payment Type</label>
+                                            <!--end::Label-->
+
+                                            <select id="payment_type" data-control="select2" data-placeholder="Select Payment Type" class="form-select form-select-solid">
+                                                <option value="Credit">Credit</option>
+                                                <option value="Cash">Cash</option>
+                                            </select>
+                                        </div>
+                                        <!--end::Input group-->
+
+                                        <!--begin::Input group-->
+                                        <div class="me-2">
+                                            <!--begin::Label-->
+                                            <label class="form-label fw-bolder fs-6 text-gray-700">Discount %</label>
+                                            <!--end::Label-->
+
+                                            <input class="form-control form-control-solid no-spinner" type="number" id="discount"  />
                                         </div>
                                         <!--end::Input group-->
                                     </div>
@@ -402,6 +425,8 @@
 
             var selectedSalePoint = $('#sale_point_id').val();
             var date = $('#date').val(); // temporary
+            var payment_type = $('#payment_type').val();
+            var discount = $('#discount').val();
 
             var orders = JSON.parse(localStorage.getItem('orders')) || [];
 
@@ -413,6 +438,8 @@
                 territory_id: territory_id,
                 total_amount: invoice_total_amount,
                 date: date, // temporary
+                payment_type: payment_type,
+                discount: discount,
                 orders: [],
             };
             
@@ -430,6 +457,9 @@
 
                 order_invoice.orders.push(order_data);
             }
+
+            // console.log(order_invoice);
+            
             
             $.ajax({
                 url: "{{ route('order.store_invoice') }}",

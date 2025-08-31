@@ -1,0 +1,19 @@
+SELECT
+    id,
+    sku,
+    product_name,
+    SUM(quantity)
+FROM
+    `orders`
+GROUP BY
+    sku;
+
+
+SELECT
+    oi.*
+FROM
+    order_invoices oi
+JOIN sale_points sp ON
+    sp.id = oi.sale_point_id
+WHERE
+    sp.code_number = 'WGP273';

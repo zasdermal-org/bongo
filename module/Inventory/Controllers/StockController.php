@@ -11,6 +11,9 @@ use Module\Inventory\Models\Product;
 
 use Illuminate\Support\Facades\Log;
 use Module\Report\Models\Transection;
+use Illuminate\Support\Facades\DB;
+
+use Carbon\Carbon;
 
 class StockController extends Controller
 {
@@ -21,8 +24,31 @@ class StockController extends Controller
             ['title' => 'Stocks', 'url' => null],
         ];
 
-        $data['products'] = Product::all();
-        $data['stocks'] = Stock::orderBy('id', 'desc')->paginate(30);
+        $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+            ? Carbon::parse($request->fromDate)->startOfDay()
+            : Carbon::today()->startOfDay();
+
+        $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+            ? Carbon::parse($request->toDate)->endOfDay()
+            : Carbon::today()->endOfDay();
+
+        $data['stocks'] = Transection::select(
+            'sku',
+            'product_name',
+            DB::raw('MIN(pre_stock) as opening_stock'),
+            DB::raw('MAX(curr_stock) as closing_stock'),
+            DB::raw("SUM(CASE WHEN status = 'Stock In' THEN tran_quant ELSE 0 END) as total_in"),
+            DB::raw("SUM(CASE WHEN status = 'Stock Out' THEN tran_quant ELSE 0 END) as total_out"),
+            DB::raw("SUM(CASE WHEN status = 'Return' THEN tran_quant ELSE 0 END) as total_return")
+        )
+        ->whereBetween('created_at', [$fromDate, $toDate])
+        ->when($request->filled('sku'), function ($query) use ($request) {
+            $query->where('sku', $request->sku);
+        })
+        ->groupBy('sku', 'product_name')
+        ->paginate(30);
+
+        // $data['stocks'] = Stock::orderBy('id', 'desc')->paginate(30);
 
         return view('Inventory::stocks.list', $data);
     }

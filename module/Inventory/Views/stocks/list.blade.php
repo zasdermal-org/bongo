@@ -19,9 +19,17 @@
                         <form class="d-flex align-items-center position-relative my-1" action="{{ route('stocks') }}" method="GET">
                             <!--begin::Search-->
                             <div class="w-110 mw-120px me-2">
-                                <input name="code_number" value="{{ request('code_number') }}" type="text" class="form-control form-control-solid" placeholder="Search by SKU" />
+                                <input name="sku" value="{{ request('sku') }}" type="text" class="form-control form-control-solid" placeholder="Search by SKU" />
                             </div>
                             <!--end::Search-->
+
+                            <div class="w-110 mw-120px me-2">
+                                <input name="fromDate" type="date" value="{{ request('fromDate') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />
+                            </div>
+
+                            <div class="w-110 mw-120px me-2">
+                                <input name="toDate" type="date" value="{{ request('toDate') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />
+                            </div>
 
                             <button type="submit" class="btn btn-light-primary">Search</button>
                         </form>
@@ -62,8 +70,11 @@
                                 <th class="min-w-10px">S.N</th>
                                 <th class="min-w-80px">Stock Kipping Unit (SKU)</th>
                                 <th class="min-w-80px">Product Name</th>
-                                <th class="min-w-80px">Unit Price</th>
-                                <th class="min-w-80px text-end">Quantity</th>
+                                <th class="min-w-80px">Opening Stock</th>
+                                <th class="min-w-80px">Total In</th>
+                                <th class="min-w-80px">Total Out</th>
+                                <th class="min-w-80px">Total Return</th>
+                                <th class="min-w-80px text-end">Closing Stock</th>
                             </tr>
                             <!--end::Table row-->
                         </thead>
@@ -84,12 +95,27 @@
                                     <!--end::Product=-->
 
                                     <!--begin::MRP=-->
-                                    <td>{{ $stock->unit_price }} Tk</td>
+                                    {{-- <td>{{ $stock->unit_price }} Tk</td> --}}
                                     <!--end::MRP=-->
 
                                     <!--begin::Stock Quantity=-->
-                                    <td class="text-end">{{ $stock->quantity }} pcs</td>
+                                    {{-- <td class="text-end">{{ $stock->quantity }} pcs</td> --}}
                                     <!--end::Stock Quantity=-->
+
+                                    <!-- Opening Stock -->
+                                    <td>{{ $stock->opening_stock }} pcs</td>
+
+                                    <!-- Total In -->
+                                    <td>{{ $stock->total_in }} pcs</td>
+
+                                    <!-- Total Out -->
+                                    <td>{{ $stock->total_out }} pcs</td>
+
+                                    <!-- Total Return -->
+                                    <td>{{ $stock->total_return }} pcs</td>
+
+                                    <!-- Closing Stock -->
+                                    <td class="text-end">{{ $stock->closing_stock }} pcs</td>
                                 </tr>
                             @endforeach
                         </tbody>

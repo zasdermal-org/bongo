@@ -342,727 +342,884 @@ class ProductsTableSeeder extends Seeder
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Kaveri-88 10gm',
-                'sku' => 'SBG9084'
+                'sku' => 'SBG9084',
+                'unit_price' => 195
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Captain 10gm',
-                'sku' => 'SBG8385'
+                'sku' => 'SBG8385',
+                'unit_price' => 190
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Utshob 10gm',
-                'sku' => 'SBG9389'
+                'sku' => 'SBG9389',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Utshob 20gm',
-                'sku' => 'SBG1391'
+                'sku' => 'SBG1391',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Jhumka Super 10gm',
-                'sku' => 'SBG8961'
+                'sku' => 'SBG8961',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Maharaza Plus 10gm',
-                'sku' => 'SBG2391'
+                'sku' => 'SBG2391',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Samira Plus 10gm',
-                'sku' => 'SBG1012'
+                'sku' => 'SBG1012',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Hasi 10gm',
-                'sku' => 'SBG6971'
+                'sku' => 'SBG6971',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Hasi 20gm',
-                'sku' => 'SBG4104'
+                'sku' => 'SBG4104',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Shokh 10gm',
-                'sku' => 'SBG7865'
+                'sku' => 'SBG7865',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Shokh 20gm',
-                'sku' => 'SBG3270'
+                'sku' => 'SBG3270',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Kajol Super 10gm',
-                'sku' => 'SBG5326'
+                'sku' => 'SBG5326',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Jui 10gm',
-                'sku' => 'SBG6246'
+                'sku' => 'SBG6246',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Jui 20gm',
-                'sku' => 'SBG9292'
+                'sku' => 'SBG9292',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Bongo Queen 5gm',
-                'sku' => 'SBG1001'
+                'sku' => 'SBG1001',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Bongo Queen 10gm',
-                'sku' => 'SBG1517'
+                'sku' => 'SBG1517',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Chamok 10gm',
-                'sku' => 'SBG8883'
+                'sku' => 'SBG8883',
+                'unit_price' => 185
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Khushi 10gm',
-                'sku' => 'SBG7050'
+                'sku' => 'SBG7050',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Khushi 20gm',
-                'sku' => 'SBG7006'
+                'sku' => 'SBG7006',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Bongo King 5gm',
-                'sku' => 'SBG7758'
+                'sku' => 'SBG7758',
+                'unit_price' => 95
             ],
             [
                 'category_id' => $bitterGourd->category_id,
                 'sub_category_id' => $bitterGourd->id,
                 'title' => 'Bongo King 10gm',
-                'sku' => 'SBG2479'
+                'sku' => 'SBG2479',
+                'unit_price' => 178
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Punam 50gm',
-                'sku' => 'SO9926'
+                'sku' => 'SO9926',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Priya 10gm',
-                'sku' => 'SO4832'
+                'sku' => 'SO4832',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Priya 25gm',
-                'sku' => 'SO6850'
+                'sku' => 'SO6850',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Priya 50gm',
-                'sku' => 'SO9956'
+                'sku' => 'SO9956',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Priya 100gm',
-                'sku' => 'SO7087'
+                'sku' => 'SO7087',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Laboni 50gm',
-                'sku' => 'SO4678'
+                'sku' => 'SO4678',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Laboni 100gm',
-                'sku' => 'SO4326'
+                'sku' => 'SO4326',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Boishakhi 50gm',
-                'sku' => 'SO3694'
+                'sku' => 'SO3694',
+                'unit_price' => 250
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Boishakhi 100gm',
-                'sku' => 'SO6388'
+                'sku' => 'SO6388',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $okra->category_id,
                 'sub_category_id' => $okra->id,
                 'title' => 'Bharat 100gm',
-                'sku' => 'SO1506'
+                'sku' => 'SO1506',
+                'unit_price' => 92
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Ovi 10gm',
-                'sku' => 'SBG4969'
+                'sku' => 'SBG4969',
+                'unit_price' => 70
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Rosia 5gm',
-                'sku' => 'SBG2790'
+                'sku' => 'SBG2790',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Rosia 10gm',
-                'sku' => 'SBG2066'
+                'sku' => 'SBG2066',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Mayuri 5gm',
-                'sku' => 'SBG3217'
+                'sku' => 'SBG3217',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Mayuri 10gm',
-                'sku' => 'SBG4865'
+                'sku' => 'SBG4865',
+                'unit_price' => 70
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Bongo Super 5gm',
-                'sku' => 'SBG3260'
+                'sku' => 'SBG3260',
+                'unit_price' => 38
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Bongo Super 10gm',
-                'sku' => 'SBG6048'
+                'sku' => 'SBG6048',
+                'unit_price' => 70
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Bongo Gold 5gm',
-                'sku' => 'SBG3045'
+                'sku' => 'SBG3045',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Bongo Gold 10gm',
-                'sku' => 'SBG3932'
+                'sku' => 'SBG3932',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Deizi 5gm',
-                'sku' => 'SBG6869'
+                'sku' => 'SBG6869',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Deizi 10gm',
-                'sku' => 'SBG6554'
+                'sku' => 'SBG6554',
+                'unit_price' => 70
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Super Green 5gm',
-                'sku' => 'SBG3725'
+                'sku' => 'SBG3725',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $bottleGourd->category_id,
                 'sub_category_id' => $bottleGourd->id,
                 'title' => 'Super Green 10gm',
-                'sku' => 'SBG8545'
+                'sku' => 'SBG8545',
+                'unit_price' => 70
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'KHC-179 10gm',
-                'sku' => 'SC8084'
+                'sku' => 'SC8084',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'BS-1701 DG 5gm',
-                'sku' => 'SC2171'
+                'sku' => 'SC2171',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'BS-1701 DG 10gm',
-                'sku' => 'SC5353'
+                'sku' => 'SC5353',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'KHC-177 10gm',
-                'sku' => 'SC3683'
+                'sku' => 'SC3683',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'Lalgolapi 5gm',
-                'sku' => 'SC7464'
+                'sku' => 'SC7464',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'Lalgolapi 10gm',
-                'sku' => 'SC6792'
+                'sku' => 'SC6792',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'Boby 10gm',
-                'sku' => 'SC6714'
+                'sku' => 'SC6714',
+                'unit_price' => 460
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'Fire Green 5gm',
-                'sku' => 'SC5181'
+                'sku' => 'SC5181',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $chili->category_id,
                 'sub_category_id' => $chili->id,
                 'title' => 'Fire Green 10gm',
-                'sku' => 'SC1099'
+                'sku' => 'SC1099',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Sweet Star 5gm',
-                'sku' => 'SP1919'
+                'sku' => 'SP1919',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Sweet Star 10gm',
-                'sku' => 'SP2668'
+                'sku' => 'SP2668',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Chitra Sweet-2 5gm',
-                'sku' => 'SP5889'
+                'sku' => 'SP5889',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Chitra Sweet-2 10gm',
-                'sku' => 'SP9425'
+                'sku' => 'SP9425',
+                'unit_price' => 165
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Royel Bangle 5gm',
-                'sku' => 'SP7650'
+                'sku' => 'SP7650',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Royel Bangle 10gm',
-                'sku' => 'SP7250'
+                'sku' => 'SP7250',
+                'unit_price' => 170
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Sweet Plus 5gm',
-                'sku' => 'SP1796'
+                'sku' => 'SP1796',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Sweet Plus 10gm',
-                'sku' => 'SP6477'
+                'sku' => 'SP6477',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Bongo Sweet 5gm',
-                'sku' => 'SP4152'
+                'sku' => 'SP4152',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $pumpkin->category_id,
                 'sub_category_id' => $pumpkin->id,
                 'title' => 'Bongo Sweet 10gm',
-                'sku' => 'SP5719'
+                'sku' => 'SP5719',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Deluxe-777 1gm',
-                'sku' => 'SC7597'
+                'sku' => 'SC7597',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Deluxe-777 5gm',
-                'sku' => 'SC5895'
+                'sku' => 'SC5895',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Deluxe-777 10gm',
-                'sku' => 'SC3431'
+                'sku' => 'SC3431',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Super King 10gm',
-                'sku' => 'SC4798'
+                'sku' => 'SC4798',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Juboraj 10gm',
-                'sku' => 'SC2228'
+                'sku' => 'SC2228',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Sabuj Shathi 5gm',
-                'sku' => 'SC1758'
+                'sku' => 'SC1758',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Sabuj Shathi 10gm',
-                'sku' => 'SC9742'
+                'sku' => 'SC9742',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
-                'title' => 'Champion-1122 5gm',
-                'sku' => 'SC2753'
+                'title' => 'Champion 5gm',
+                'sku' => 'SC2753',
+                'unit_price' => 145
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
-                'title' => 'Champion-1122 10gm',
-                'sku' => 'SC1688'
+                'title' => 'Champion 10gm',
+                'sku' => 'SC1688',
+                'unit_price' => 280
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'BS-1122 5gm',
-                'sku' => 'SC1458'
+                'sku' => 'SC1458',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'BS-1122 10gm',
-                'sku' => 'SC6710'
+                'sku' => 'SC6710',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Rajmoti 5gm',
-                'sku' => 'SC6630'
+                'sku' => 'SC6630',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Rajmoti 10gm',
-                'sku' => 'SC2654'
+                'sku' => 'SC2654',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Kiyara 10gm',
-                'sku' => 'SC2100'
+                'sku' => 'SC2100',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Bongo Green 5gm',
-                'sku' => 'SC4669'
+                'sku' => 'SC4669',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Bongo Green 10gm',
-                'sku' => 'SC1031'
+                'sku' => 'SC1031',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Excellent 5gm',
-                'sku' => 'SC8793'
+                'sku' => 'SC8793',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Excellent 10gm',
-                'sku' => 'SC4526'
+                'sku' => 'SC4526',
+                'unit_price' => 325
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Anonna 5gm',
-                'sku' => 'SC5243'
+                'sku' => 'SC5243',
+                'unit_price' => 175
             ],
             [
                 'category_id' => $cucumber->category_id,
                 'sub_category_id' => $cucumber->id,
                 'title' => 'Anonna 10gm',
-                'sku' => 'SC5448'
+                'sku' => 'SC5448',
+                'unit_price' => 330
             ],
             [
                 'category_id' => $snackGourd->category_id,
                 'sub_category_id' => $snackGourd->id,
                 'title' => 'Bongo Rekha 5gm',
-                'sku' => 'SSG2274'
+                'sku' => 'SSG2274',
+                'unit_price' => 90
             ],
             [
                 'category_id' => $snackGourd->category_id,
                 'sub_category_id' => $snackGourd->id,
                 'title' => 'Bongo Rekha 10gm',
-                'sku' => 'SSG4257'
+                'sku' => 'SSG4257',
+                'unit_price' => 160
             ],
             [
                 'category_id' => $snackGourd->category_id,
                 'sub_category_id' => $snackGourd->id,
                 'title' => 'Varosha 5gm',
-                'sku' => 'SSG7686'
+                'sku' => 'SSG7686',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $snackGourd->category_id,
                 'sub_category_id' => $snackGourd->id,
                 'title' => 'Varosha 10gm',
-                'sku' => 'SSG2070'
+                'sku' => 'SSG2070',
+                'unit_price' => 160
             ],
             [
                 'category_id' => $snackGourd->category_id,
                 'sub_category_id' => $snackGourd->id,
                 'title' => 'Bipasha 5gm',
-                'sku' => 'SSG9986'
+                'sku' => 'SSG9986',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $snackGourd->category_id,
                 'sub_category_id' => $snackGourd->id,
                 'title' => 'Bipasha 10gm',
-                'sku' => 'SSG9883'
+                'sku' => 'SSG9883',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $ridgeGourd->category_id,
                 'sub_category_id' => $ridgeGourd->id,
                 'title' => 'Super Shot 5gm',
-                'sku' => 'SRG9572'
+                'sku' => 'SRG9572',
+                'unit_price' => 50
             ],
             [
                 'category_id' => $ridgeGourd->category_id,
                 'sub_category_id' => $ridgeGourd->id,
                 'title' => 'Super Shot 10gm',
-                'sku' => 'SRG7801'
+                'sku' => 'SRG7801',
+                'unit_price' => 90
             ],
             [
                 'category_id' => $ridgeGourd->category_id,
                 'sub_category_id' => $ridgeGourd->id,
                 'title' => 'Green Shot 10gm',
-                'sku' => 'SRG3091'
+                'sku' => 'SRG3091',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $ridgeGourd->category_id,
                 'sub_category_id' => $ridgeGourd->id,
                 'title' => 'Sangram 5gm',
-                'sku' => 'SRG2101'
+                'sku' => 'SRG2101',
+                'unit_price' => 50
             ],
             [
                 'category_id' => $ridgeGourd->category_id,
                 'sub_category_id' => $ridgeGourd->id,
                 'title' => 'Sangram 10gm',
-                'sku' => 'SRG6260'
+                'sku' => 'SRG6260',
+                'unit_price' => 90
             ],
             [
                 'category_id' => $ridgeGourd->category_id,
                 'sub_category_id' => $ridgeGourd->id,
                 'title' => 'Green Star 5gm',
-                'sku' => 'SRG9050'
+                'sku' => 'SRG9050',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $ridgeGourd->category_id,
                 'sub_category_id' => $ridgeGourd->id,
                 'title' => 'Green Star 10gm',
-                'sku' => 'SRG1603'
+                'sku' => 'SRG1603',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $spongeGourd->category_id,
                 'sub_category_id' => $spongeGourd->id,
                 'title' => 'Mukti 5gm',
-                'sku' => 'SSG6771'
+                'sku' => 'SSG6771',
+                'unit_price' => 40
             ],
             [
                 'category_id' => $spongeGourd->category_id,
                 'sub_category_id' => $spongeGourd->id,
                 'title' => 'Mukti 10gm',
-                'sku' => 'SSG9110'
+                'sku' => 'SSG9110',
+                'unit_price' => 75
             ],
             [
                 'category_id' => $spongeGourd->category_id,
                 'sub_category_id' => $spongeGourd->id,
                 'title' => 'Mitaly 5gm',
-                'sku' => 'SSG9973'
+                'sku' => 'SSG9973',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $spongeGourd->category_id,
                 'sub_category_id' => $spongeGourd->id,
                 'title' => 'Mitaly 10gm',
-                'sku' => 'SSG1405'
+                'sku' => 'SSG1405',
+                'unit_price' => 78
             ],
             [
                 'category_id' => $spongeGourd->category_id,
                 'sub_category_id' => $spongeGourd->id,
                 'title' => 'Aliya 10gm',
-                'sku' => 'SSG4958'
+                'sku' => 'SSG4958',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Ullash 20gm',
-                'sku' => 'SW4428'
+                'sku' => 'SW4428',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Ullash 50gm',
-                'sku' => 'SW5747'
+                'sku' => 'SW5747',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Ullash 100gm',
-                'sku' => 'SW4606'
+                'sku' => 'SW4606',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Top Dragon 100gm',
-                'sku' => 'SW8179'
+                'sku' => 'SW8179',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Five Star Dragon 50gm',
-                'sku' => 'SW9344'
+                'sku' => 'SW9344',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Five Star Dragon 100gm',
-                'sku' => 'SW5587'
+                'sku' => 'SW5587',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Mithai 50gm',
-                'sku' => 'SW5041'
+                'sku' => 'SW5041',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Mithai 100gm',
-                'sku' => 'SW5660'
+                'sku' => 'SW5660',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Shahi 50gm',
-                'sku' => 'SW8711'
+                'sku' => 'SW8711',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $watermealon->category_id,
                 'sub_category_id' => $watermealon->id,
                 'title' => 'Shahi 100gm',
-                'sku' => 'SW4016'
+                'sku' => 'SW4016',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $brinjal->category_id,
                 'sub_category_id' => $brinjal->id,
                 'title' => 'KEP-1509 10gm',
-                'sku' => 'SB6094'
+                'sku' => 'SB6094',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $brinjal->category_id,
                 'sub_category_id' => $brinjal->id,
                 'title' => 'Bagun King 5gm',
-                'sku' => 'SB7563'
+                'sku' => 'SB7563',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $brinjal->category_id,
                 'sub_category_id' => $brinjal->id,
                 'title' => 'Bagun King 10gm',
-                'sku' => 'SB5828'
+                'sku' => 'SB5828',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $brinjal->category_id,
                 'sub_category_id' => $brinjal->id,
                 'title' => 'Aporupa 5gm',
-                'sku' => 'SB9511'
+                'sku' => 'SB9511',
+                'unit_price' => 95
             ],
             [
                 'category_id' => $brinjal->category_id,
                 'sub_category_id' => $brinjal->id,
                 'title' => 'Aporupa 10gm',
-                'sku' => 'SB8020'
+                'sku' => 'SB8020',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $radish->category_id,
                 'sub_category_id' => $radish->id,
                 'title' => 'BS-305 100gm',
-                'sku' => 'SR3952'
+                'sku' => 'SR3952',
+                'unit_price' => 0
             ],
             [
                 'category_id' => $knolkhol->category_id,
                 'sub_category_id' => $knolkhol->id,
                 'title' => 'Happy 10gm',
-                'sku' => 'SK4853'
+                'sku' => 'SK4853',
+                'unit_price' => 180
             ],
             [
                 'category_id' => $tometo->category_id,
                 'sub_category_id' => $tometo->id,
                 'title' => 'Anjali 5gm',
-                'sku' => 'ST6843'
+                'sku' => 'ST6843',
+                'unit_price' => 375
             ],
             [
                 'category_id' => $tometo->category_id,
                 'sub_category_id' => $tometo->id,
                 'title' => 'KTM-1405 5gm',
-                'sku' => 'ST1931'
+                'sku' => 'ST1931',
+                'unit_price' => 375
             ],
             [
                 'category_id' => $cauliflower->category_id,
                 'sub_category_id' => $cauliflower->id,
                 'title' => 'White Express 10gm',
-                'sku' => 'SC3588'
+                'sku' => 'SC3588',
+                'unit_price' => 0
+            ],
+
+            [
+                'category_id' => $bitterGourd->category_id,
+                'sub_category_id' => $bitterGourd->id,
+                'title' => 'Captain (Shokh) 20gm',
+                'sku' => 'SBG3588',
+                'unit_price' => 370
+            ],
+            [
+                'category_id' => $bitterGourd->category_id,
+                'sub_category_id' => $bitterGourd->id,
+                'title' => 'Captain (Bongo Queen) 10gm',
+                'sku' => 'SBG3589',
+                'unit_price' => 175
+            ],
+            [
+                'category_id' => $bitterGourd->category_id,
+                'sub_category_id' => $bitterGourd->id,
+                'title' => 'Captain (Bongo Queen) 20gm',
+                'sku' => 'SBG3590',
+                'unit_price' => 340
+            ],
+            [
+                'category_id' => $bitterGourd->category_id,
+                'sub_category_id' => $bitterGourd->id,
+                'title' => 'Captain (Maharaza Plus) 10gm',
+                'sku' => 'SBG3591',
+                'unit_price' => 195
+            ],
+            [
+                'category_id' => $snackGourd->category_id,
+                'sub_category_id' => $snackGourd->id,
+                'title' => 'Varosha 20gm',
+                'sku' => 'SSG2071',
+                'unit_price' => 320
             ],
         ];
 
@@ -1088,7 +1245,7 @@ class ProductsTableSeeder extends Seeder
                 'title' => $product['title'],
                 'slug' => Str::slug($product['title']),
                 'sku' => $product['sku'],
-                'unit_price' => $product['unit_price'] ?? 0,
+                'unit_price' => $product['unit_price'],
                 'is_active' => 'Active'
             ]);
         }

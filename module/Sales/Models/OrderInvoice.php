@@ -22,6 +22,8 @@ class OrderInvoice extends Model
         'territory_id',
         'invoice_number',
         'total_amount',
+        'discount',
+        'payment_type',
         'status',
         'return_amount',
         'return_note',

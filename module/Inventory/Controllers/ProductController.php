@@ -10,6 +10,7 @@ use Module\Inventory\Models\Category;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Module\Inventory\Models\Stock;
 
 class ProductController extends Controller
 {
@@ -43,7 +44,8 @@ class ProductController extends Controller
             'title' => $data['title'],
             'slug' => Str::slug($data['title']),
             'sku' => $data['sku'],
-            'unit_price' => $data['unit_price']
+            'unit_price' => $data['unit_price'],
+            'is_active' => 'Active',
         ]);
 
         return response()->json([
@@ -65,6 +67,8 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
+        $sku = $product->sku;
+        $stock = Stock::where('sku', $sku)->first();
 
         $data = $request->validate([
             'unit_price' => 'required|numeric'
@@ -73,6 +77,12 @@ class ProductController extends Controller
         $product->update([
             'unit_price' => $data['unit_price']
         ]);
+
+        if ($stock) {
+            $stock->update([
+                'unit_price' => $data['unit_price']
+            ]);
+        }
 
         return response()->json([
             'success' => true,

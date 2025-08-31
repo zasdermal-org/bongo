@@ -25,10 +25,11 @@ class TerritoriesTableSeeder extends Seeder
         $dhaka = Area::where('slug', 'dhaka')->first();
         $jamalpur = Area::where('slug', 'jamalpur')->first();
         $cumilla = Area::where('slug', 'cumilla')->first();
-        $jessore = Area::where('slug', 'jessore')->first();
+        $khulna = Area::where('slug', 'khulna')->first();
         $naogaon = Area::where('slug', 'naogaon')->first();
         $faridpur = Area::where('slug', 'faridpur')->first();
         $coxsbazar = Area::where('slug', 'coxs-bazar')->first();
+        $gopalgonj = Area::where('slug', 'gopalgonj')->first();
 
         $territories = [
             [
@@ -84,11 +85,11 @@ class TerritoriesTableSeeder extends Seeder
                 'name' => 'Ghoraghat'
             ],
             [
-                'area_id' => $jessore->id,
+                'area_id' => $khulna->id,
                 'name' => 'Monirampur'
             ],
             [
-                'area_id' => $jessore->id,
+                'area_id' => $khulna->id,
                 'name' => 'Khulna'
             ],
             [
@@ -126,6 +127,43 @@ class TerritoriesTableSeeder extends Seeder
             [
                 'area_id' => $rajshahi->id,
                 'name' => 'Pabna'
+            ],
+
+            [
+                'area_id' => $naogaon->id,
+                'name' => 'Niamatpur'
+            ],
+            [
+                'area_id' => $gopalgonj->id,
+                'name' => 'Gopalgonj'
+            ],
+            [
+                'area_id' => $khulna->id,
+                'name' => 'Jessore'
+            ],
+            [
+                'area_id' => $dinajpur->id,
+                'name' => 'Dinajpur'
+            ],
+            [
+                'area_id' => $coxsbazar->id,
+                'name' => "Cox's Bazar"
+            ],
+            [
+                'area_id' => $chuadanga->id,
+                'name' => 'Kushtia'
+            ],
+            [
+                'area_id' => $khulna->id,
+                'name' => 'Chuknagar'
+            ],
+            [
+                'area_id' => $khulna->id,
+                'name' => 'Kaligoanj'
+            ],
+            [
+                'area_id' => $cumilla->id,
+                'name' => 'Cumilla'
             ],
         ];
 

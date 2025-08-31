@@ -18,6 +18,7 @@ class Order extends Model
         'sku',
         'quantity',
         'unit_price',
+        'discount',
         'return_qty',
         'total_amount',
 

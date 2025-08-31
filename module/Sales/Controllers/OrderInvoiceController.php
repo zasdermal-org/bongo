@@ -98,6 +98,8 @@ class OrderInvoiceController extends Controller
             'territory_id' => 'required|exists:territories,id',
             'total_amount' => 'required|numeric',
             'date' => 'nullable',
+            'payment_type' => 'nullable',
+            'discount' => 'nullable|numeric',
             'orders' => 'required|array',
             'orders.*.stock_id' => 'required|exists:stocks,id',
             'orders.*.product_name' => 'required',
@@ -119,6 +121,8 @@ class OrderInvoiceController extends Controller
             'territory_id' => $data['territory_id'],
             'invoice_number' => $this->generate_unique_invoice_number(),
             'total_amount' => $data['total_amount'],
+            'payment_type' => $data['payment_type'],
+            'discount' => $data['discount'] ?? null,
             'created_at' => $data['date'], // temporary
             'updated_at' => $data['date'], // temporary
         ]);
@@ -131,6 +135,7 @@ class OrderInvoiceController extends Controller
                 'sku' => $order['sku'],
                 'quantity' => $order['quantity'],
                 'unit_price' => $order['unit_price'],
+                'discount' => $data['discount'] ?? null,
                 'total_amount' => $order['order_total_amount'],
                 'created_at' => $data['date'], // temporary
                 'updated_at' => $data['date'], // temporary

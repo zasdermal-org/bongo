@@ -63,7 +63,7 @@ class AreasTableSeeder extends Seeder
             ],
             [
                 'region_id' => $south->id,
-                'name' => 'Jessore'
+                'name' => 'Khulna'
             ],
             [
                 'region_id' => $north->id,
@@ -76,6 +76,10 @@ class AreasTableSeeder extends Seeder
             [
                 'region_id' => $east->id,
                 'name' => "Cox's Bazar"
+            ],
+            [
+                'region_id' => $west->id,
+                'name' => 'Gopalgonj'
             ],
         ];
 

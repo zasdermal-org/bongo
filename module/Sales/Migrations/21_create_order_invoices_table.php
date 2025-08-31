@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('territory_id')->constrained('territories')->cascadeOnDelete();
             $table->string('invoice_number')->unique();
             $table->decimal('total_amount', 10, 2);
+            $table->integer('discount')->nullable(); // discount
+            $table->enum('payment_type', ['Cash', 'Credit'])->default('Credit');
             $table->enum('status', ['Requested', 'Accepted', 'Assigned', 'Delivered', 'Partial Return', 'Return', 'Cancel'])->default('Requested');
             $table->decimal('return_amount', 10, 2)->nullable();
             $table->text('return_note')->nullable();

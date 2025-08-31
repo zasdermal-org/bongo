@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('sku');
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);
+            $table->integer('discount')->nullable(); // discount
             $table->integer('return_qty')->nullable();
             $table->decimal('total_amount', 10, 2);
             $table->timestamps();

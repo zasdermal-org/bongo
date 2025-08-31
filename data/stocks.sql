@@ -1,41 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Aug 20, 2025 at 10:22 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `dev_bongo_db`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `stocks`
---
-
-CREATE TABLE `stocks` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `product_name` varchar(255) NOT NULL,
-  `sku` varchar(255) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `unit_price` decimal(10,2) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 --
 -- Dumping data for table `stocks`
 --
@@ -71,30 +33,12 @@ INSERT INTO `stocks` (`id`, `product_name`, `sku`, `quantity`, `unit_price`, `cr
 (28, 'Bongo Zinc (Chelated) 17gm', 'FBZ1099', 10000, 17.00, '2025-08-20 07:04:15', '2025-08-20 07:04:15'),
 (29, 'Bongo Solubor (Solubor Boron) 500gm', 'FSB4692', 10000, 210.00, '2025-08-20 07:36:56', '2025-08-20 07:36:56'),
 (30, 'Bongo Boric (Boric Acid) 500gm', 'FBA1649', 10000, 110.00, '2025-08-20 07:36:57', '2025-08-20 07:36:57'),
-(31, 'Sakura Gold (PGR) 100ml', 'FSG1035', 10000, 60.00, '2025-08-20 07:50:39', '2025-08-20 07:50:39');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `stocks`
---
-ALTER TABLE `stocks`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `stocks_sku_unique` (`sku`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `stocks`
---
-ALTER TABLE `stocks`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+(31, 'Sakura Gold (PGR) 100ml', 'FSG1035', 10000, 60.00, '2025-08-20 07:50:39', '2025-08-20 07:50:39'),
+(32, 'Bongo Solubor (Solubor Boron) 100gm', 'FSB8858', 10000, 45.00, '2025-08-21 06:01:28', '2025-08-21 06:01:28'),
+(33, 'Bongo Zypsum 10kg', 'FZ2453', 10000, 280.00, '2025-08-21 06:01:28', '2025-08-21 06:01:28'),
+(34, 'Bongo Zinc (Mono) 1kg', 'FBZ1229', 10000, 220.00, '2025-08-24 11:50:36', '2025-08-24 11:50:36'),
+(35, 'Sakura Gold (PGR) 250ml', 'FSG8409', 10000, 140.00, '2025-08-24 11:55:11', '2025-08-24 11:55:11'),
+(36, 'Sakura Gold (PGR) 500ml', 'FSG3344', 10000, 250.00, '2025-08-24 11:55:11', '2025-08-24 11:55:11'),
+(37, 'Bongo Root Grow (NAA) 1kg', 'FRG3917', 10000, 70.00, '2025-08-24 11:55:11', '2025-08-24 11:55:11'),
+(38, 'Bongo Zypsum 5kg', 'FZ7527', 10000, 155.00, '2025-08-25 05:45:07', '2025-08-25 05:45:07'),
+(39, 'Sakura Gold (PGR) 1000ml', 'FSG7209', 10000, 450.00, '2025-08-26 06:34:14', '2025-08-26 06:34:14');
