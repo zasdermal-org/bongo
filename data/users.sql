@@ -60,4 +60,5 @@ INSERT INTO `users` (`id`, `role_id`, `username`, `name`, `password`, `is_active
 (55, 3, 'birol_vacant', 'Birol Vacant', '$2y$12$sLIOM/4UcOMKmQWPHWBQ8uTqnbFHUT9jLmqe.bXNXbZcVcikiWvjO', 'Active', '2025-08-28 09:35:21', '2025-08-28 09:35:21'),
 (56, 3, 'manikgonj_vacant', 'Manikgonj Vacant', '$2y$12$5k5XpHiUT7MM7VToXmNPyuzAXSKvkCLlMnlzRKb.EyOk2m40SXNOC', 'Active', '2025-08-28 10:03:32', '2025-08-28 10:03:32'),
 (57, 3, 'cumilla_vacant', 'Cumilla Vacant', '$2y$12$e5Q3kMuhphX7PpKm408qF.Az.AZTEq5JBvyWrQTePhCTpZiZgsz6u', 'Active', '2025-08-28 10:15:23', '2025-08-28 10:15:23'),
-(58, 3, 'kaligoanj_vacant', 'Kaligoanj Vacant', '$2y$12$DSpkNWA7ZPjfETcZEXWLk.e1ZcjXD5hHhAA8jzdU41eSy6Fpi7zq2', 'Active', '2025-08-28 11:47:38', '2025-08-28 11:47:38');
+(58, 3, 'kaligoanj_vacant', 'Kaligoanj Vacant', '$2y$12$DSpkNWA7ZPjfETcZEXWLk.e1ZcjXD5hHhAA8jzdU41eSy6Fpi7zq2', 'Active', '2025-08-28 11:47:38', '2025-08-28 11:47:38'),
+(59, 3, 'jamalpur_vacant', 'Jamalpur Vacant', '$2y$12$BoWvWduSHgpwR1owKEv9LOrg/GIZZXuHZ3Ny6M7tWzFt7czKkN1GG', 'Active', '2025-09-01 06:16:21', '2025-09-01 06:29:53');

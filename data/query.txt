@@ -1,12 +1,18 @@
 SELECT
     id,
+    stock_id,
     sku,
     product_name,
-    SUM(quantity)
+    SUM(quantity) AS total_quantity
 FROM
-    `orders`
+    orders
+WHERE
+    created_at BETWEEN '2025-07-01' AND '2025-08-31'
 GROUP BY
-    sku;
+    sku,
+    product_name
+ORDER BY
+    `orders`.`stock_id` ASC
 
 
 SELECT

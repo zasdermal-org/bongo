@@ -30,6 +30,7 @@ class TerritoriesTableSeeder extends Seeder
         $faridpur = Area::where('slug', 'faridpur')->first();
         $coxsbazar = Area::where('slug', 'coxs-bazar')->first();
         $gopalgonj = Area::where('slug', 'gopalgonj')->first();
+        $corporate = Area::where('slug', 'corporate')->first();
 
         $territories = [
             [
@@ -164,6 +165,10 @@ class TerritoriesTableSeeder extends Seeder
             [
                 'area_id' => $cumilla->id,
                 'name' => 'Cumilla'
+            ],
+            [
+                'area_id' => $corporate->id,
+                'name' => 'Corporate'
             ],
         ];
 

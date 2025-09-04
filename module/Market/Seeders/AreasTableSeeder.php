@@ -81,6 +81,10 @@ class AreasTableSeeder extends Seeder
                 'region_id' => $west->id,
                 'name' => 'Gopalgonj'
             ],
+            [
+                'region_id' => $west->id,
+                'name' => 'Corporate'
+            ],
         ];
 
         foreach ($areas as $area) {
