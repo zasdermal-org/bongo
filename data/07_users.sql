@@ -9,9 +9,9 @@ INSERT INTO `users` (`id`, `role_id`, `username`, `name`, `password`, `is_active
 (4, 3, 'BA-203', 'Amit Chandra Das', '$2y$12$i8mx2b4TXd0ijKUevEraI.e6PGAgrzPkkJ00cuSQusH1KaBmBrwFC', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
 (5, 3, 'BA-207', 'Shovon Das', '$2y$12$20.gcVS2vZma7NGhe7HbyuLMX3oxWQwV8uy8rzy8gAMQwXqPbL/4K', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
 (6, 3, 'BA-205', 'Anup Datta Shuvo', '$2y$12$gPihBQ4lXvwUqMMPxWzqTeId/mbv0IOzcmZl0fnPfWFogsg86uFo.', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
-(7, 3, 'BA-235', 'Tanjib Rahman', '$2y$12$vw4HKvwKDGRqWXHgjDqBE.ZT0p2GCGwArCtXgITA/XECzlB4hM286', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
-(8, 3, 'BA-250', 'Ovizit Kumar', '$2y$12$nrqClmG1AnyPos3qoHm1J.jOYz4tlhk8r7H3l2AaSaxwfz9L2GobK', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
-(9, 3, 'BA-206', 'Sujon Sharma', '$2y$12$nMZP6DxL0E9HMCv48c5SwegX9mPmLbS26EPisJYMO04zrZ.VxzriG', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
+(7, 1, 'BA-235', 'Tanjib Rahman', '$2y$12$vw4HKvwKDGRqWXHgjDqBE.ZT0p2GCGwArCtXgITA/XECzlB4hM286', 'Active', '2025-08-06 18:08:43', '2025-09-04 10:00:00'),
+(8, 1, 'BA-250', 'Ovizit Kumar', '$2y$12$nrqClmG1AnyPos3qoHm1J.jOYz4tlhk8r7H3l2AaSaxwfz9L2GobK', 'Active', '2025-08-06 18:08:43', '2025-09-04 09:59:53'),
+(9, 1, 'BA-206', 'Sujon Sharma', '$2y$12$nMZP6DxL0E9HMCv48c5SwegX9mPmLbS26EPisJYMO04zrZ.VxzriG', 'Active', '2025-08-06 18:08:43', '2025-09-04 09:59:42'),
 (10, 3, 'BA-215', 'Md. Akibul Islam', '$2y$12$/H6TZ7OogzUMZ3NTRJ6mnevYPezgfd0u1YU.XB.c6.CdZpEhIygCC', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
 (11, 3, 'BA-210', 'Rudra Dev', '$2y$12$Lc8UxJM5J/sQPMvNiQmFhOKcYaGoPnjBvBUAA5wqN0p6Fz2CaNRZe', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
 (12, 3, 'BA-212', 'Md. Kobir Hossain', '$2y$12$Xqkohm9WcsaYbNIwHlNMwuKwPPsCPsJcd2Rkkk0gJJofmZp/02vW2', 'Active', '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
@@ -61,4 +61,5 @@ INSERT INTO `users` (`id`, `role_id`, `username`, `name`, `password`, `is_active
 (56, 3, 'manikgonj_vacant', 'Manikgonj Vacant', '$2y$12$5k5XpHiUT7MM7VToXmNPyuzAXSKvkCLlMnlzRKb.EyOk2m40SXNOC', 'Active', '2025-08-28 10:03:32', '2025-08-28 10:03:32'),
 (57, 3, 'cumilla_vacant', 'Cumilla Vacant', '$2y$12$e5Q3kMuhphX7PpKm408qF.Az.AZTEq5JBvyWrQTePhCTpZiZgsz6u', 'Active', '2025-08-28 10:15:23', '2025-08-28 10:15:23'),
 (58, 3, 'kaligoanj_vacant', 'Kaligoanj Vacant', '$2y$12$DSpkNWA7ZPjfETcZEXWLk.e1ZcjXD5hHhAA8jzdU41eSy6Fpi7zq2', 'Active', '2025-08-28 11:47:38', '2025-08-28 11:47:38'),
-(59, 3, 'jamalpur_vacant', 'Jamalpur Vacant', '$2y$12$BoWvWduSHgpwR1owKEv9LOrg/GIZZXuHZ3Ny6M7tWzFt7czKkN1GG', 'Active', '2025-09-01 06:16:21', '2025-09-01 06:29:53');
+(59, 3, 'jamalpur_vacant', 'Jamalpur Vacant', '$2y$12$BoWvWduSHgpwR1owKEv9LOrg/GIZZXuHZ3Ny6M7tWzFt7czKkN1GG', 'Active', '2025-09-01 06:16:21', '2025-09-01 06:29:53'),
+(60, 3, 'corporate_vacant', 'Corporate Vacant', '$2y$12$MOfQlHluIJ7tlD6R412l1O2yccQrW9gakK25vdGZUx8CenHyL.wz.', 'Active', '2025-09-04 07:51:06', '2025-09-04 07:51:35');

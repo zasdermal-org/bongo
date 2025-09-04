@@ -93,4 +93,13 @@ INSERT INTO `transections` (`id`, `user_id`, `stock_id`, `order_invoice_id`, `pr
 (88, 1, 88, NULL, 'Bongo Sweet 5gm', 'SP4152', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-03 11:28:41', '2025-09-03 11:28:41'),
 (89, 1, 89, NULL, 'Excellent 5gm', 'SC8793', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-03 11:31:29', '2025-09-03 11:31:29'),
 (90, 1, 90, NULL, 'Super Green 5gm', 'SBG3725', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-03 11:39:17', '2025-09-03 11:39:17'),
-(91, 1, 91, NULL, 'Sweet Star 10gm', 'SP2668', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-03 11:41:57', '2025-09-03 11:41:57');
+(91, 1, 91, NULL, 'Sweet Star 10gm', 'SP2668', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-03 11:41:57', '2025-09-03 11:41:57'),
+(92, 1, 92, NULL, 'Gima Kolmi-Op 5gm', 'SK7598', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(93, 1, 93, NULL, 'Dhonni-Op 2gm', 'SC1091', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(94, 1, 94, NULL, 'Roktim-Op 5gm', 'SRA1022', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(95, 1, 95, NULL, 'Trisha-Op 5gm', 'SRG2026', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(96, 1, 96, NULL, 'Chandni-Op 5gm', 'SSG8975', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(97, 1, 97, NULL, 'Bari Lau-Op 5gm', 'SBG1236', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(98, 1, 98, NULL, 'Baromashi-Op 10gm', 'SSG4589', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(99, 1, 99, NULL, 'Shingnath-Op 2gm', 'SB7896', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51'),
+(100, 1, 100, NULL, 'Kegornatoki-Op 5gm', 'SYLB12365', 0, 10000, 10000, NULL, 'Warehouse Stock In', 'Stock In', '2025-09-04 08:48:51', '2025-09-04 08:48:51');

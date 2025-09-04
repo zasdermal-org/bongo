@@ -3,7 +3,7 @@
 --
 
 INSERT INTO `employees` (`id`, `user_id`, `designation_id`, `zone_id`, `division_id`, `region_id`, `area_id`, `territory_id`, `contact`, `address`, `joining_date`, `created_at`, `updated_at`) VALUES
-(1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
+(1, 1, 15, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-06 18:08:43', '2025-09-04 10:04:15'),
 (2, 2, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
 (3, 3, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
 (4, 4, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-06 18:08:43', '2025-08-06 18:08:43'),
@@ -61,4 +61,5 @@ INSERT INTO `employees` (`id`, `user_id`, `designation_id`, `zone_id`, `division
 (56, 56, 11, NULL, NULL, NULL, NULL, 18, NULL, NULL, NULL, '2025-08-28 10:03:32', '2025-08-28 10:03:32'),
 (57, 57, 11, NULL, NULL, NULL, NULL, 33, NULL, NULL, NULL, '2025-08-28 10:15:23', '2025-08-28 10:15:23'),
 (58, 58, 11, NULL, NULL, NULL, NULL, 32, NULL, NULL, NULL, '2025-08-28 11:47:39', '2025-08-28 11:47:39'),
-(59, 59, 11, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, '2025-09-01 06:16:21', '2025-09-01 06:16:21');
+(59, 59, 11, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, '2025-09-01 06:16:21', '2025-09-01 06:16:21'),
+(60, 60, 11, NULL, NULL, NULL, NULL, 34, NULL, NULL, NULL, '2025-09-04 07:51:06', '2025-09-04 07:51:29');
