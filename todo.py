@@ -4,4 +4,6 @@
 # TODO: users list two success are confilicts / Done
 # TODO: if designation is changed then it will impect with other location menus in the user update list
 
-# TODO: will start work from .....
+# Sep 6, 2025
+# TODO: when multiple stocks 0 then it will show the modal with all the sku for insuficant stocks
+# TODO: single invoice a accept button er kaj korte hobe

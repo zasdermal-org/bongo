@@ -177,6 +177,14 @@ class OrderInvoiceController extends Controller
 
             $orderInvoice = OrderInvoice::findOrFail($id);
             $userId = auth()->user()->id;
+            // $paymentType = $orderInvoice->payment_type;
+            
+            // if ($paymentType === 'Cash') {
+            //     $totalAmount = $orderInvoice->total_amount;
+            //     $discount = $orderInvoice->discount;
+            //     $discountAmount = ($totalAmount * $discount) / 100;
+            //     $totalAfterDiscount = $totalAmount - $discountAmount;
+            // }
 
             foreach ($orderInvoice->orders as $order) {
                 $stock = $order->stock;
@@ -212,16 +220,17 @@ class OrderInvoiceController extends Controller
                 ]);
             }
 
-            Collection::create([
-                'order_invoice_id' => $orderInvoice->id,
-                'collection_amount' => $orderInvoice->total_amount,
-                'due' => $orderInvoice->total_amount
-            ]);
+            // Collection::create([
+            //     'order_invoice_id' => $orderInvoice->id,
+            //     'collection_amount' => $orderInvoice->total_amount,
+            //     'due' => $orderInvoice->total_amount
+            // ]);
 
             $orderInvoice->update([
                 'updated_by_user_id' => $userId,
                 'status' => 'Accepted',
-                'invoice_date' => Carbon::now(),
+                // 'invoice_date' => Carbon::now(),
+                'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
             ]);
 
             DB::commit();

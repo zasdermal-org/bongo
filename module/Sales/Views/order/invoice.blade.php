@@ -237,11 +237,11 @@
                                 <!-- end::Action-->
 
                                 <!-- begin::Actions-->
-                                @if ($orderInvoice->status !== 'Accepted')
+                                {{-- @if ($orderInvoice->status !== 'Accepted')
                                     <div class="my-1 me-5">
                                         <button type="button" class="btn btn-primary my-1">Accept</button>
                                     </div>
-                                @endif
+                                @endif --}}
                                 <!-- end::Actions-->
                             </div>
                             <!-- end::Footer-->
