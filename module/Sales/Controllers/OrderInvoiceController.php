@@ -354,7 +354,7 @@ class OrderInvoiceController extends Controller
         $query->whereNotIn('status', ['Requested', 'Cancel']);
 
         $total_query = $query->get();
-        $data['orderInvoices'] = $query->orderBy('id', 'desc')->paginate(20);
+        $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
 
         $data['invoice'] = $total_query->count();
         $data['order_value'] = $total_query->sum('total_amount');
