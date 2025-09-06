@@ -35,7 +35,13 @@ class StockController extends Controller
         $data['stocks'] = Transection::select(
             'sku',
             'product_name',
-            DB::raw('MIN(pre_stock) as opening_stock'),
+            DB::raw("(SELECT t2.curr_stock 
+                  FROM transections t2 
+                  WHERE t2.sku = transections.sku 
+                  AND t2.created_at < '{$fromDate}'
+                  ORDER BY t2.created_at DESC, t2.id DESC
+                  LIMIT 1) as opening_stock"),
+            // DB::raw('MIN(pre_stock) as opening_stock'),
             // DB::raw('MAX(curr_stock) as closing_stock'),
             DB::raw("SUM(CASE WHEN status = 'Stock In' THEN tran_quant ELSE 0 END) as total_in"),
             DB::raw("SUM(CASE WHEN status = 'Stock Out' THEN tran_quant ELSE 0 END) as total_out"),
