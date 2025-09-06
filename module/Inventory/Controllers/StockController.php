@@ -36,10 +36,16 @@ class StockController extends Controller
             'sku',
             'product_name',
             DB::raw('MIN(pre_stock) as opening_stock'),
-            DB::raw('MAX(curr_stock) as closing_stock'),
+            // DB::raw('MAX(curr_stock) as closing_stock'),
             DB::raw("SUM(CASE WHEN status = 'Stock In' THEN tran_quant ELSE 0 END) as total_in"),
             DB::raw("SUM(CASE WHEN status = 'Stock Out' THEN tran_quant ELSE 0 END) as total_out"),
-            DB::raw("SUM(CASE WHEN status = 'Return' THEN tran_quant ELSE 0 END) as total_return")
+            DB::raw("SUM(CASE WHEN status = 'Return' THEN tran_quant ELSE 0 END) as total_return"),
+            DB::raw("(SELECT t2.curr_stock 
+                  FROM transections t2 
+                  WHERE t2.sku = transections.sku 
+                  AND t2.created_at BETWEEN '{$fromDate}' AND '{$toDate}' 
+                  ORDER BY t2.created_at DESC, t2.id DESC 
+                  LIMIT 1) as closing_stock")
         )
         ->whereBetween('created_at', [$fromDate, $toDate])
         ->when($request->filled('sku'), function ($query) use ($request) {
