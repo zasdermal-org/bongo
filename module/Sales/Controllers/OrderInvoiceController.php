@@ -346,9 +346,9 @@ class OrderInvoiceController extends Controller
         // }
 
         if ($fromDate && $toDate) {
-                $query->whereBetween('updated_at', [$fromDate, $toDate]);
+                $query->whereBetween('invoice_date', [$fromDate, $toDate]);
         } else {
-            $query->whereDate('updated_at', $today);
+            $query->whereDate('invoice_date', $today);
         }
 
         $query->whereNotIn('status', ['Requested', 'Cancel']);

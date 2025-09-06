@@ -220,7 +220,7 @@
                                         <td>
                                             {{-- {{ $order_invoice->updated_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A') }} --}}
 
-                                            {{ $orderInvoice->updated_at->setTimezone('Asia/Dhaka')->format('d M, Y') }}
+                                            {{ $orderInvoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y') }}
                                             {{-- <br> --}}
                                             {{-- {{ $order_invoice->updated_at->setTimezone('Asia/Dhaka')->format('h:i A') }} --}}
                                         </td>
