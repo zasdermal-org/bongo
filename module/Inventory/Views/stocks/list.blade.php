@@ -97,10 +97,20 @@
 
                                     <!-- Closing Stock -->
                                     <td class="text-end">
-                                        @if ($stock->transaction->curr_stock === 0)
+                                        {{-- @if ($stock->transaction->curr_stock === 0)
                                             <div class="badge badge-light-danger">{{ $stock->transaction->curr_stock }} pcs</div>
                                         @else
                                             <div class="badge badge-light-info">{{ $stock->transaction->curr_stock }} pcs</div>
+                                        @endif --}}
+
+                                        @php
+                                            $currStock = $stock->transaction?->curr_stock ?? 0;
+                                        @endphp
+
+                                        @if ($currStock === 0)
+                                            <div class="badge badge-light-danger">{{ $currStock }} pcs</div>
+                                        @else
+                                            <div class="badge badge-light-info">{{ $currStock }} pcs</div>
                                         @endif
                                     </td>
                                 </tr>
