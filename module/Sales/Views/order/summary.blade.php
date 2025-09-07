@@ -72,7 +72,7 @@
                                         </td>
 
                                         <td class="text-end">
-                                            <div class="badge badge-light-info">{{ $order->total_quantity - $order->available_stock }} </div>
+                                            <div class="badge badge-light-info">{{ $order->available_stock - $order->total_quantity }} </div>
                                         </td>
                                     </tr>
                                 @endforeach
