@@ -8,9 +8,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? 'Set Title' }} - A&A Skintec</title>
+        <title>{{ $title ?? 'Set Title' }} - Bongo Agritech</title>
 		
-        <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+        <link rel="shortcut icon" href="assets/media/logos/bongo.png" />
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500,600,700" />
 		<!--end::Fonts-->
