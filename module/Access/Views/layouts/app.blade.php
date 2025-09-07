@@ -10,7 +10,7 @@
 
         <title>{{ $title ?? 'Set Title' }} - Bongo Agritech</title>
 		
-        <link rel="shortcut icon" href="assets/media/logos/bongo.png" />
+        <link rel="shortcut icon" href="assets/media/logos/logo.jpeg" />
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500,600,700" />
 		<!--end::Fonts-->
