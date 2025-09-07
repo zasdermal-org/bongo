@@ -206,16 +206,13 @@
 
                             <!-- begin::Footer-->
                             <!-- begin::Grand Total in Words -->
-                            <div class="mt-2">
-                                {{-- <span class="fs-6">
-                                    <i>In Words: {{ $grand_total_in_words }}</i> --}}
+                            {{-- <div class="mt-2">
                                     <h6 class="text-black-400">In Words: {{ $grand_total_in_words }}</h6>
-                                {{-- </span> --}}
-                            </div>
+                            </div> --}}
                             <!-- end::Grand Total in Words -->
 
                             <!-- begin::Signatures-->
-                            @if ($orderInvoice->status !== 'Requested')
+                            {{-- @if ($orderInvoice->status !== 'Requested')
                                 <div class="d-flex justify-content-between mt-20 pt-5">
                                     <div class="text-center">
                                         <div class="border-top border-dark w-150px mx-auto"></div>
@@ -226,7 +223,7 @@
                                         <span class="fw-bold">Authorized Signature</span>
                                     </div>
                                 </div>
-                            @endif
+                            @endif --}}
                             <!-- end::Signatures-->
 
                             <div class="d-flex flex-stack flex-wrap mt-lg-20 pt-13">
@@ -237,11 +234,11 @@
                                 <!-- end::Action-->
 
                                 <!-- begin::Actions-->
-                                {{-- @if ($orderInvoice->status !== 'Accepted')
+                                @if ($orderInvoice->status !== 'Accepted')
                                     <div class="my-1 me-5">
-                                        <button type="button" class="btn btn-primary my-1">Accept</button>
+                                        <button onclick="update_invoice('{{ route('order.update_invoice', $orderInvoice->id) }}')" type="button" class="btn btn-primary my-1">Create Invoice</button>
                                     </div>
-                                @endif --}}
+                                @endif
                                 <!-- end::Actions-->
                             </div>
                             <!-- end::Footer-->
@@ -271,7 +268,24 @@
                     </div>
                 </div>
 
-                <!-- Error Modal -->
+                <div class="modal fade" id="inv_accept_confirmation" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Invoice Create Confirmation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to Accept this order invoice?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success inv_accepted">Create</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal fade" id="stockErrorModal" tabindex="-1" aria-labelledby="stockErrorModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -390,6 +404,47 @@
                         console.error('Unexpected error:', xhr);
                     }
                 }
+            });
+        }
+
+        var returnUrl = "{!! request('returnUrl', route('order.invoices')) !!}";
+        
+        function update_invoice(action) {
+            $('#inv_accept_confirmation').modal('show');
+
+            $('.inv_accepted').on('click', function () {
+                $.ajax({
+                    url: action,
+                    type: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $('#inv_accept_confirmation').modal('hide');
+
+                        toastr.success('Invoice created successfully');
+
+                        setTimeout(function () {
+                            location.href = returnUrl;
+                        }, 1000);
+                    },
+                    error: function(xhr) {
+                        $('#inv_accept_confirmation').modal('hide');
+
+                        // console.error('Failed to create order invoice', xhr);
+
+                        // Check for validation or custom error
+                        if (xhr.status === 400 || xhr.status === 404) {
+                            const errorMessage = xhr.responseJSON?.error || 'An unknown error occurred';
+
+                            // Set and show the stock error modal
+                            $('#stockErrorMessage').text(errorMessage);
+                            $('#stockErrorModal').modal('show');
+                        } else {
+                            console.error('Unexpected error:', xhr);
+                        }
+                    }
+                });
             });
         }
     </script>
