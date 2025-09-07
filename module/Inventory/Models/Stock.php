@@ -4,6 +4,7 @@ namespace Module\Inventory\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Module\Report\Models\Transection;
 
 class Stock extends Model
 {
@@ -15,4 +16,9 @@ class Stock extends Model
         'quantity',
         'unit_price'
     ];
+
+    public function transaction()
+    {
+        return $this->hasOne(Transection::class, 'stock_id')->latest('created_at');
+    }
 }

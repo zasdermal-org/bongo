@@ -24,37 +24,48 @@ class StockController extends Controller
             ['title' => 'Stocks', 'url' => null],
         ];
 
-        $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
-            ? Carbon::parse($request->fromDate)->startOfDay()
-            : Carbon::today()->startOfDay();
+        $date = $request->input('date');
 
-        $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
-            ? Carbon::parse($request->toDate)->endOfDay()
-            : Carbon::today()->endOfDay();
+        // $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+        //     ? Carbon::parse($request->fromDate)->startOfDay()
+        //     : Carbon::today()->startOfDay();
 
-        $data['stocks'] = Transection::select(
-            'sku',
-            'product_name',
-            DB::raw('MIN(pre_stock) as opening_stock'),
-            // DB::raw('MAX(curr_stock) as closing_stock'),
-            DB::raw("SUM(CASE WHEN status = 'Stock In' THEN tran_quant ELSE 0 END) as total_in"),
-            DB::raw("SUM(CASE WHEN status = 'Stock Out' THEN tran_quant ELSE 0 END) as total_out"),
-            DB::raw("SUM(CASE WHEN status = 'Return' THEN tran_quant ELSE 0 END) as total_return"),
-            DB::raw("(SELECT t2.curr_stock 
-                  FROM transections t2 
-                  WHERE t2.sku = transections.sku 
-                  AND t2.created_at BETWEEN '{$fromDate}' AND '{$toDate}' 
-                  ORDER BY t2.created_at DESC, t2.id DESC 
-                  LIMIT 1) as closing_stock")
-        )
-        ->whereBetween('created_at', [$fromDate, $toDate])
-        ->when($request->filled('sku'), function ($query) use ($request) {
-            $query->where('sku', $request->sku);
-        })
-        ->groupBy('sku', 'product_name')
-        ->paginate(30);
+        // $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+        //     ? Carbon::parse($request->toDate)->endOfDay()
+        //     : Carbon::today()->endOfDay();
+
+        // $data['stocks'] = Transection::select(
+        //     'sku',
+        //     'product_name',
+        //     DB::raw('MIN(pre_stock) as opening_stock'),
+        //     // DB::raw('MAX(curr_stock) as closing_stock'),
+        //     DB::raw("SUM(CASE WHEN status = 'Stock In' THEN tran_quant ELSE 0 END) as total_in"),
+        //     DB::raw("SUM(CASE WHEN status = 'Stock Out' THEN tran_quant ELSE 0 END) as total_out"),
+        //     DB::raw("SUM(CASE WHEN status = 'Return' THEN tran_quant ELSE 0 END) as total_return"),
+        //     DB::raw("(SELECT t2.curr_stock 
+        //           FROM transections t2 
+        //           WHERE t2.sku = transections.sku 
+        //           AND t2.created_at BETWEEN '{$fromDate}' AND '{$toDate}' 
+        //           ORDER BY t2.created_at DESC, t2.id DESC 
+        //           LIMIT 1) as closing_stock")
+        // )
+        // ->whereBetween('created_at', [$fromDate, $toDate])
+        // ->when($request->filled('sku'), function ($query) use ($request) {
+        //     $query->where('sku', $request->sku);
+        // })
+        // ->groupBy('sku', 'product_name')
+        // ->paginate(30);
 
         // $data['stocks'] = Stock::orderBy('id', 'desc')->paginate(30);
+
+        $data['stocks'] = Stock::with(['transaction' => function ($query) use ($date) {
+            if ($date) {
+                $query->whereDate('created_at', '<=', $date)
+                    ->orderBy('created_at', 'desc');
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
+        }])->get();
 
         return view('Inventory::stocks.list', $data);
     }
