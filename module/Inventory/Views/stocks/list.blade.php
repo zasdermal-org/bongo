@@ -74,7 +74,7 @@
                             <tr class="text-start text-black-400 fw-bolder fs-7 text-uppercase gs-0">
                                 <th class="min-w-10px">S.N</th>
                                 <th class="min-w-80px">Stock Kipping Unit (SKU)</th>
-                                <th class="min-w-80px">Product Name</th>
+                                <th class="min-w-200px">Product Name</th>
                                 <th class="min-w-80px text-end">Current Stock</th>
                             </tr>
                             <!--end::Table row-->
@@ -96,7 +96,13 @@
                                     <!--end::Product=-->
 
                                     <!-- Closing Stock -->
-                                    <td class="text-end">{{ $stock->transaction->curr_stock }} pcs</td>
+                                    <td class="text-end">
+                                        @if ($stock->transaction->curr_stock === 0)
+                                            <div class="badge badge-light-danger">{{ $stock->transaction->curr_stock }} pcs</div>
+                                        @else
+                                            <div class="badge badge-light-info">{{ $stock->transaction->curr_stock }} pcs</div>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
