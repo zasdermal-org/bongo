@@ -45,7 +45,7 @@
                                     <th class="min-w-120px">Product Name</th>
                                     <th class="min-w-60px">Required Quantity</th>
                                     <th class="min-w-60px text-center">Available Quantity</th>
-                                    <th class="min-w-60px text-end">Required Stock</th>
+                                    <th class="min-w-60px text-end">Remaining Quantity</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
