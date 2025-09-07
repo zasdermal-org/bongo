@@ -325,16 +325,30 @@ class OrderInvoiceController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : Carbon::today()->endOfDay();
 
-        $data['orders'] = DB::table('orders')
+        $orders = DB::table('orders')
             ->select(
+                DB::raw('MIN(stock_id) as stock_id'), // pick one stock_id per SKU
                 'sku',
                 'product_name',
                 DB::raw('SUM(quantity) as total_quantity')
             )
             ->whereBetween('created_at', [$fromDate, $toDate])
             ->groupBy('sku', 'product_name')
-            ->orderBy('sku', 'asc')
+            ->orderBy('stock_id', 'asc')
             ->get();
+
+        $skuList = $orders->pluck('sku');
+        $stocks = DB::table('stocks')
+            ->whereIn('sku', $skuList)
+            ->pluck('quantity', 'sku'); // [sku => quantity]
+
+        // Step 3: attach stock to orders
+        $orders->transform(function ($item) use ($stocks) {
+            $item->available_stock = $stocks[$item->sku] ?? 0;
+            return $item;
+        });
+
+        $data['orders'] = $orders;
 
         return view('Sales::order.summary', $data);
     }

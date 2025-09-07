@@ -42,8 +42,10 @@
                                 <tr class="text-start text-black-400 fw-bolder fs-7 text-uppercase gs-0">
                                     <th class="min-w-10px">S.N</th>
                                     <th class="min-w-80px">SKU</th>
-                                    <th class="min-w-80px">Product Name</th>
-                                    <th class="min-w-80px text-end">Total Quantity</th>
+                                    <th class="min-w-120px">Product Name</th>
+                                    <th class="min-w-60px">Required Quantity</th>
+                                    <th class="min-w-60px text-center">Available Quantity</th>
+                                    <th class="min-w-60px text-end">Required Stock</th>
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -61,8 +63,16 @@
 
                                         <td>{{ $order->product_name }}</td>
 
-                                        <td class="text-end">
+                                        <td>
                                             <div class="badge badge-light-info">{{ $order->total_quantity }}</div>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <div class="badge badge-light-info">{{ $order->available_stock }}</div>
+                                        </td>
+
+                                        <td class="text-end">
+                                            <div class="badge badge-light-info">{{ $order->total_quantity - $order->available_stock }} </div>
                                         </td>
                                     </tr>
                                 @endforeach
