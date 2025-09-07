@@ -124,8 +124,9 @@
                                         <td>
                                             {{-- {{ $order_invoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A') }} --}}
 
-                                            {{ $orderInvoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y') }}<br>
-                                            {{ $orderInvoice->created_at->setTimezone('Asia/Dhaka')->format('h:i A') }}
+                                            {{ $orderInvoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y') }}
+                                            {{-- <br>
+                                            {{ $orderInvoice->created_at->setTimezone('Asia/Dhaka')->format('h:i A') }} --}}
                                         </td>
                                         <!--end::Order Date=-->
 
