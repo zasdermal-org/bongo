@@ -107,11 +107,15 @@
                                             $currStock = $stock->transaction?->curr_stock ?? 0;
                                         @endphp
 
-                                        @if ($currStock === 0)
+                                        {{-- @if ($currStock === 0)
                                             <div class="badge badge-light-danger">{{ $currStock }} pcs</div>
                                         @else
                                             <div class="badge badge-light-info">{{ $currStock }} pcs</div>
-                                        @endif
+                                        @endif --}}
+
+                                        <div class="badge {{ $currStock == 0 ? 'badge-light-danger' : 'badge-light-info' }}">
+                                            {{ $currStock }} pcs
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
