@@ -15,6 +15,7 @@ Route::prefix('/order')->name('order.')->group(function () {
     Route::get('/cancel-invoice/{id}', [OrderInvoiceController::class, 'cancel'])->name('cancel_invoice');
     Route::post('/update-order/{id}', [OrderInvoiceController::class, 'update_order'])->name('update_order');
 
+    Route::get('/order-summary', [OrderInvoiceController::class, 'order_summary'])->name('order_summary');
     Route::get('/accepted-invoices', [OrderInvoiceController::class, 'accepted_invoices'])->name('accepted_invoices');
 });
 

@@ -488,11 +488,13 @@
                 @php
                     $salesPermissions = [
                         ['order', 'invoices'],
-                        ['order', 'store-out'],
+                        ['order', 'symmary'],
+                        ['order', 'store-out']
                     ];
 
                     $orderPermissions = [
                         ['order', 'invoices'],
+                        ['order', 'symmary'],
                         ['order', 'store-out']
                     ];
 
@@ -537,6 +539,17 @@
                                             <span class="bullet bullet-dot"></span>
                                         </span>
                                         <span class="menu-title">Invoices</span>
+                                    </a>
+                                </div>
+                            @endif
+
+                            @if(auth()->user()->hasPermission('order', 'summary', 'read'))
+                                <div class="menu-item">
+                                    <a class="menu-link @if(Route::is('order.order_summary')) active @endif" href="{{ route('order.order_summary') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Summary</span>
                                     </a>
                                 </div>
                             @endif

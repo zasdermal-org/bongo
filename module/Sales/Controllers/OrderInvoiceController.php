@@ -308,6 +308,37 @@ class OrderInvoiceController extends Controller
         }
     }
 
+    public function order_summary(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Order', 'url' => null],
+            ['title' => 'Summary', 'url' => null]
+        ];
+
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : Carbon::today()->startOfDay();;
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : Carbon::today()->endOfDay();
+
+        $data['orders'] = DB::table('orders')
+            ->select(
+                'sku',
+                'product_name',
+                DB::raw('SUM(quantity) as total_quantity')
+            )
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->groupBy('sku', 'product_name')
+            ->orderBy('sku', 'asc')
+            ->get();
+
+        return view('Sales::order.summary', $data);
+    }
+
     public function accepted_invoices(Request $request)
     {
         $data['breadcrumbs'] = [
