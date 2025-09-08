@@ -9,8 +9,10 @@ Route::prefix('/order')->name('order.')->group(function () {
     Route::get('/invoices', [OrderInvoiceController::class, 'invoices'])->name('invoices');
     Route::get('/create-invoice', [OrderInvoiceController::class, 'create'])->name('create_invoice');
     Route::post('/store-invoice', [OrderInvoiceController::class, 'store'])->name('store_invoice');
-    Route::get('/invoice/{id}', [OrderInvoiceController::class, 'invoice'])->name('invoice');
+    Route::get('/edit-invoice/{id}', [OrderInvoiceController::class, 'edit'])->name('edit');
     Route::put('/update-invoice/{id}', [OrderInvoiceController::class, 'update'])->name('update_invoice');
+
+    Route::get('/invoice/{id}', [OrderInvoiceController::class, 'invoice'])->name('invoice');
     
     Route::get('/cancel-invoice/{id}', [OrderInvoiceController::class, 'cancel'])->name('cancel_invoice');
     Route::post('/update-order/{id}', [OrderInvoiceController::class, 'update_order'])->name('update_order');

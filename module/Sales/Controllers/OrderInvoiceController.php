@@ -150,24 +150,29 @@ class OrderInvoiceController extends Controller
         ], 200);
     }
 
-    public function invoice(Request $request, $id)
+    public function edit(Request $request, $id)
     {
         $data['breadcrumbs'] = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
             ['title' => 'Order', 'url' => null],
-            ['title' => 'Invoice', 'url' => null]
+            ['title' => 'Edit Invoice', 'url' => null]
         ];
 
         $orderInvoice = OrderInvoice::findOrFail($id);
         $data['orderInvoice'] = $orderInvoice;
 
-        // Convert Grand Total to Words using NumberFormatter
-        $formatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
-        $grandTotalInWords = ucwords($formatter->format($orderInvoice->total_amount)) . ' Taka Only';
+        $paymentType = $orderInvoice->payment_type;
+        $data['totalAfterDiscount'] = 0;
+        $data['discountAmount'] = 0;
+            
+        if ($paymentType === 'Cash') {
+            $totalAmount = $orderInvoice->total_amount;
+            $discount = $orderInvoice->discount;
+            $data['discountAmount'] = ($totalAmount * $discount) / 100;
+            $data['totalAfterDiscount'] = $totalAmount - $data['discountAmount'];
+        }
 
-        $data['grand_total_in_words'] = $grandTotalInWords;
-
-        return view('Sales::order.invoice', $data);
+        return view('Sales::order.update_invoice', $data);
     }
 
     public function update(Request $request, $id)
@@ -244,6 +249,37 @@ class OrderInvoiceController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function invoice(Request $request, $id)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Order', 'url' => null],
+            ['title' => 'Invoice', 'url' => null]
+        ];
+
+        $orderInvoice = OrderInvoice::findOrFail($id);
+        $data['orderInvoice'] = $orderInvoice;
+
+        $paymentType = $orderInvoice->payment_type;
+        $data['totalAfterDiscount'] = 0;
+        $data['discountAmount'] = 0;
+            
+        if ($paymentType === 'Cash') {
+            $totalAmount = $orderInvoice->total_amount;
+            $discount = $orderInvoice->discount;
+            $data['discountAmount'] = ($totalAmount * $discount) / 100;
+            $data['totalAfterDiscount'] = $totalAmount - $data['discountAmount'];
+        }
+
+        // Convert Grand Total to Words using NumberFormatter
+        $formatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
+        $grandTotalInWords = ucwords($formatter->format($orderInvoice->total_amount)) . ' Taka Only';
+
+        $data['grand_total_in_words'] = $grandTotalInWords;
+
+        return view('Sales::order.invoice', $data);
     }
 
     public function cancel($id)

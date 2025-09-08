@@ -6,9 +6,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta property="og:locale" content="en_US" />
 
-		<title>Sign In - Bongo</title>
+		<title>Sign In - Bongo Agritech</title>
 		
-        <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+        <link rel="shortcut icon" href="assets/media/logos/logo.jpeg" />
 
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
@@ -33,7 +33,7 @@
 					<!--begin::Logo-->
 					<a href="{{ route('login_form') }}" class="mb-12" style="font-size:30px;">
 						{{-- <img alt="Logo" src="assets/media/logos/logo-1.svg" class="h-40px" /> --}}
-						Bongo
+						Bongo Agritech
 					</a>
 					<!--end::Logo-->
 					<!--begin::Wrapper-->
@@ -44,7 +44,7 @@
 							<!--begin::Heading-->
 							<div class="text-center mb-10">
 								<!--begin::Title-->
-								<h1 class="text-dark mb-3">Sign In to Bongo</h1>
+								<h1 class="text-dark mb-3">Sign In</h1>
 								<!--end::Title-->
 							</div>
 							<!--begin::Heading-->
