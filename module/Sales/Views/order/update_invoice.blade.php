@@ -151,7 +151,7 @@
 
                                                                 <!--begin::Total-->
                                                                 <td class="text-end">
-                                                                    Tk {{ $order->total_amount }}
+                                                                    Tk {{ number_format($order->total_amount, 2) }}
                                                                 </td>
                                                                 <!--end::Total-->
                                                             </tr>
@@ -161,7 +161,7 @@
                                                         <!--begin::Subtotal-->
                                                         <tr>
                                                             <td colspan="5" class="text-end">Subtotal</td>
-                                                            <td class="text-end">Tk {{ $orderInvoice->total_amount }}</td>
+                                                            <td class="text-end">Tk {{ number_format($orderInvoice->total_amount, 2) }}</td>
                                                         </tr>
                                                         <!--end::Subtotal-->
 
