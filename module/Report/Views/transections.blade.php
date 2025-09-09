@@ -120,7 +120,7 @@
                                         <!--end::S.N=-->
 
                                         <!--begin::Product=-->
-                                        <td>{{ $transection->product_name }}</td>
+                                        <td>{{ $transection->stock->product->title }}</td>
                                         <!--end::Product=-->
 
                                         <!--begin::SKU=-->

@@ -120,7 +120,7 @@
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
                                                                         <a class="symbol symbol-50px">
-                                                                            <div class="fw-bolder">{{ $order->product_name }}</div>
+                                                                            <div class="fw-bolder">{{ $order->stock->product->title }}</div>
                                                                         </a>
                                                                     </div>
                                                                 </td>

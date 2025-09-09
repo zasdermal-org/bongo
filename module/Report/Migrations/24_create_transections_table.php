@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('stock_id')->nullable()->constrained('stocks')->nullOnDelete();
             $table->foreignId('order_invoice_id')->nullable()->constrained('order_invoices')->nullOnDelete();
-            $table->string('product_name');
+            // $table->string('product_name');
             $table->string('sku');
             $table->integer('pre_stock');
             $table->integer('tran_quant');

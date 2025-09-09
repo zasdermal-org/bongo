@@ -3,7 +3,7 @@
 --
 
 INSERT INTO `products` (`id`, `category_id`, `sub_category_id`, `pack_size_id`, `title`, `slug`, `sku`, `unit_price`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, NULL, 'Bongo Boric (Boric Acid) 500gm', 'bongo-boric-boric-acid-500gm', 'FBA1649', 150.00, 'Active', '2025-08-28 10:59:01', '2025-09-03 08:14:47'),
+(1, 1, 1, NULL, 'Bongo Boric (Boric Acid) 500gm', 'bongo-boric-boric-acid-500gm', 'FBA1649', 115.00, 'Active', '2025-08-28 10:59:01', '2025-09-07 05:06:51'),
 (2, 1, 2, NULL, 'Bongo Humic Gold Plus 500gm', 'bongo-humic-gold-plus-500gm', 'FHGP8614', 75.00, 'Active', '2025-08-28 10:59:01', '2025-08-28 10:59:01'),
 (3, 1, 3, NULL, 'Bongo Mag (Crystal) 1kg', 'bongo-mag-crystal-1kg', 'FBM3774', 47.00, 'Active', '2025-08-28 10:59:01', '2025-08-30 09:46:11'),
 (4, 1, 3, NULL, 'Bongo Mag (Dust) 1kg', 'bongo-mag-dust-1kg', 'FBM1978', 35.00, 'Active', '2025-08-28 10:59:02', '2025-08-28 10:59:02'),
@@ -182,4 +182,7 @@ INSERT INTO `products` (`id`, `category_id`, `sub_category_id`, `pack_size_id`, 
 (177, 3, 20, NULL, 'Bari Lau-Op 5gm', 'bari-lau-op-5gm', 'SBG1236', 15.00, 'Active', '2025-09-04 08:35:15', '2025-09-04 08:35:15'),
 (178, 3, 35, NULL, 'Baromashi-Op 10gm', 'baromashi-op-10gm', 'SSG4589', 25.00, 'Active', '2025-09-04 08:43:28', '2025-09-04 08:43:28'),
 (179, 3, 28, NULL, 'Shingnath-Op 2gm', 'shingnath-op-2gm', 'SB7896', 17.00, 'Active', '2025-09-04 08:44:35', '2025-09-04 08:44:35'),
-(180, 3, 36, NULL, 'Kegornatoki-Op 5gm', 'kegornatoki-op-5gm', 'SYLB12365', 10.00, 'Active', '2025-09-04 08:46:28', '2025-09-04 08:46:28');
+(180, 3, 36, NULL, 'Kegornatoki-Op 5gm', 'kegornatoki-op-5gm', 'SYLB12365', 10.00, 'Active', '2025-09-04 08:46:28', '2025-09-04 08:46:28'),
+(181, 2, 37, NULL, 'Bongo Sena 50 ml', 'bongo-sena-50-ml', 'PBS3712', 290.00, 'Active', '2025-09-07 06:06:59', '2025-09-07 06:06:59'),
+(182, 2, 37, NULL, 'Bongo Sena 100 ml', 'bongo-sena-100-ml', 'PBS3713', 570.00, 'Active', '2025-09-07 06:08:10', '2025-09-07 06:08:10'),
+(183, 2, 37, NULL, 'Bongo Sena 400 ml', 'bongo-sena-400-ml', 'PBS3714', 2200.00, 'Active', '2025-09-07 06:08:58', '2025-09-07 06:08:58');

@@ -102,7 +102,7 @@ class OrderInvoiceController extends Controller
             'discount' => 'nullable|numeric',
             'orders' => 'required|array',
             'orders.*.stock_id' => 'required|exists:stocks,id',
-            'orders.*.product_name' => 'required',
+            // 'orders.*.product_name' => 'required',
             'orders.*.sku' => 'required',
             'orders.*.quantity' => 'required|numeric|min:1',
             'orders.*.unit_price' => 'required|numeric',
@@ -131,7 +131,7 @@ class OrderInvoiceController extends Controller
             $order = Order::create([
                 'stock_id' => $order['stock_id'],
                 'order_number' => $this->generate_unique_order_number(),
-                'product_name' => $order['product_name'],
+                // 'product_name' => $order['product_name'],
                 'sku' => $order['sku'],
                 'quantity' => $order['quantity'],
                 'unit_price' => $order['unit_price'],
@@ -215,7 +215,7 @@ class OrderInvoiceController extends Controller
                     'user_id' => $userId,
                     'stock_id' => $stock->id,
                     'order_invoice_id' => $orderInvoice->id,
-                    'product_name' => $order->product_name,
+                    // 'product_name' => $order->product_name,
                     'sku' => $order->sku,
                     'pre_stock' => $previous_quantity,
                     'tran_quant' => $order->quantity,
@@ -361,15 +361,29 @@ class OrderInvoiceController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : Carbon::today()->endOfDay();
 
+        // $orders = DB::table('orders')
+        //     ->select(
+        //         DB::raw('MIN(stock_id) as stock_id'), // pick one stock_id per SKU
+        //         'sku',
+        //         'product_name',
+        //         DB::raw('SUM(quantity) as total_quantity')
+        //     )
+        //     ->whereBetween('created_at', [$fromDate, $toDate])
+        //     ->groupBy('sku', 'product_name')
+        //     ->orderBy('stock_id', 'asc')
+        //     ->get();
+
         $orders = DB::table('orders')
             ->select(
-                DB::raw('MIN(stock_id) as stock_id'), // pick one stock_id per SKU
-                'sku',
-                'product_name',
-                DB::raw('SUM(quantity) as total_quantity')
+                DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
+                'orders.sku',
+                DB::raw('SUM(orders.quantity) as total_quantity'),
+                'products.title as product_name'
             )
-            ->whereBetween('created_at', [$fromDate, $toDate])
-            ->groupBy('sku', 'product_name')
+            ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
+            ->join('products', 'stocks.product_id', '=', 'products.id')
+            ->whereBetween('orders.created_at', [$fromDate, $toDate])
+            ->groupBy('orders.sku', 'products.title')
             ->orderBy('stock_id', 'asc')
             ->get();
 

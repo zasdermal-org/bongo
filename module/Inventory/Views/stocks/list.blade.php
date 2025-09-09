@@ -92,7 +92,7 @@
                                     <!--end::SKU=-->
 
                                     <!--begin::Product=-->
-                                    <td>{{ $stock->product_name }}</td>
+                                    <td>{{ $stock->product->title }}</td>
                                     <!--end::Product=-->
 
                                     <!-- Closing Stock -->

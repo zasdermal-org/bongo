@@ -95,7 +95,7 @@ class StockController extends Controller
                 
             } else {
                 $stock = Stock::create([
-                    'product_name' => $product->title,
+                    'product_id' => $product->id,
                     'sku' => $product->sku,
                     'quantity' => $data['quantity'][$index],
                     'unit_price' => $product->unit_price
@@ -105,7 +105,7 @@ class StockController extends Controller
             Transection::create([
                 'user_id' => $userId,
                 'stock_id' => $existingStock ? $existingStock->id : $stock->id,
-                'product_name' => $product->title,
+                // 'product_name' => $product->title,
                 'sku' => $product->sku,
                 'pre_stock' => $preStockQuantity,
                 'tran_quant' => $data['quantity'][$index],
@@ -134,7 +134,7 @@ class StockController extends Controller
             $productSkus = $products->pluck('sku');
 
             // Fetch all stocks that match those SKUs
-            $stocks = Stock::whereIn('sku', $productSkus)->get();
+            $stocks = Stock::with('product')->whereIn('sku', $productSkus)->get();
         }
 
         if ($categoryName == 'agrochemicals') {
@@ -146,7 +146,7 @@ class StockController extends Controller
             $productSkus = $products->pluck('sku');
 
             // Fetch all stocks that match those SKUs
-            $stocks = Stock::whereIn('sku', $productSkus)->get();
+            $stocks = Stock::with('product')->whereIn('sku', $productSkus)->get();
         }
 
         return response()->json([

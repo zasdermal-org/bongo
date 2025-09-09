@@ -308,10 +308,10 @@
                     $.each(data.stocks, function (key, stock) {
                         $('#stock_id').append(
                             '<option value="' + stock.id + '"'
-                                + 'data-product_name="' + stock.product_name + '"'
+                                + 'data-product_name="' + stock.product.title + '"'
                                 + 'data-unit_price="' + stock.unit_price + '"'
                                 + 'data-sku="' + stock.sku + '">'
-                                + stock.product_name 
+                                + stock.product.title
                                 + '</option>'
                         );
                     });
@@ -448,7 +448,7 @@
                 
                 var order_data = {
                     stock_id: order.stock_id,
-                    product_name: order.product_name,
+                    // product_name: order.product_name,
                     sku: order.sku,
                     quantity: order.quantity,
                     unit_price: order.unit_price,

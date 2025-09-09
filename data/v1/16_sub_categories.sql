@@ -38,4 +38,5 @@ INSERT INTO `sub_categories` (`id`, `category_id`, `name`, `slug`, `is_active`, 
 (33, 3, 'Kangkong', 'kangkong', 'Active', '2025-09-04 14:03:36', '2025-09-04 14:03:36'),
 (34, 3, 'Red Amaranth', 'red-amaranth', 'Active', '2025-09-04 14:29:19', '2025-09-04 14:29:19'),
 (35, 3, 'Sweet Gourd', 'sweet-gourd', 'Active', '2025-09-04 14:41:46', '2025-09-04 14:41:46'),
-(36, 3, 'Yard Long Bean', 'yard-long-bean', 'Active', '2025-09-04 14:44:58', '2025-09-04 14:44:58');
+(36, 3, 'Yard Long Bean', 'yard-long-bean', 'Active', '2025-09-04 14:44:58', '2025-09-04 14:44:58'),
+(37, 2, 'Bongo Sena', 'bongo-sena', 'Active', '2025-09-07 12:02:18', '2025-09-07 12:02:18');

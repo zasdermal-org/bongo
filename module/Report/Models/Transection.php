@@ -5,6 +5,7 @@ namespace Module\Report\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use Module\Inventory\Models\Stock;
 use Module\Sales\Models\OrderInvoice;
 
 class Transection extends Model
@@ -15,7 +16,7 @@ class Transection extends Model
         'user_id',
         'stock_id',
         'order_invoice_id',
-        'product_name',
+        // 'product_name',
         'sku',
         'pre_stock',
         'tran_quant',
@@ -24,6 +25,11 @@ class Transection extends Model
         'tran_type',
         'status'
     ];
+
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class);
+    }
 
     public function orderInvoice()
     {

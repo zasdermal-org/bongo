@@ -11,11 +11,16 @@ class Stock extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_name',
+        'product_id',
         'sku',
         'quantity',
         'unit_price'
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 
     public function transaction()
     {

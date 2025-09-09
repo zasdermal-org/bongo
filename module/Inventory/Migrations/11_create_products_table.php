@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('sku')->unique();
             $table->decimal('unit_price', 10, 2);
+            $table->integer('pcs_per_carton')->nullable();
             $table->enum('is_active', ['Active', 'Inactive'])->default('Inactive');
             $table->timestamps();
         });

@@ -579,7 +579,7 @@ class CollectionController extends Controller
 
             Transection::create([
                 'depot_id' => $order->depot_stock_product->depot_id,
-                'product_name' => $order->product_name,
+                // 'product_name' => $order->product_name,
                 'sku' => $order->sku,
                 'invoice_number' => $collection->order_invoice->invoice_number,
                 'order_number' => $order->order_number,
@@ -820,7 +820,7 @@ class CollectionController extends Controller
 
                     Transection::create([
                         'depot_id' => $order->depot_stock_product->depot_id,
-                        'product_name' => $order->product_name,
+                        // 'product_name' => $order->product_name,
                         'sku' => $order->sku,
                         'invoice_number' => $collection->order_invoice->invoice_number,
                         'order_number' => $order->order_number,

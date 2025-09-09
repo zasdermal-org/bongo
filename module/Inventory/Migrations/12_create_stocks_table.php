@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name');
+            $table->foreignId('product_id')->unique()->constrained('products')->onDelete('RESTRICT');
+            // $table->string('product_name');
             $table->string('sku')->unique();
             $table->integer('quantity');
             $table->decimal('unit_price', 10, 2);
