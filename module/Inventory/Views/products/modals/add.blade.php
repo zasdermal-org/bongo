@@ -69,7 +69,7 @@
                             <!--end::Label-->
                             
                             <!--begin::Input-->
-                            <input type="text" name="title" class="form-control mb-2" placeholder="Product name" value="" />
+                            <input type="text" name="title" class="form-control mb-2" placeholder="Product name" />
                             <!--end::Input-->
                         </div>
                         <!--end::Input group-->
@@ -81,7 +81,7 @@
                             <!--end::Label-->
                             
                             <!--begin::Input-->
-                            <input type="number" name="unit_price" class="no-spinner form-control mb-2" placeholder="Product price" value="" />
+                            <input type="number" name="unit_price" class="no-spinner form-control mb-2" placeholder="Product price" />
                             <!--end::Input-->
                         </div>
                         <!--end::Input group-->
@@ -93,7 +93,19 @@
                             <!--end::Label-->
 
                             <!--begin::Input-->
-                            <input type="text" name="sku" class="form-control mb-2" placeholder="SKU Number" value="" />
+                            <input type="text" name="sku" class="form-control mb-2" placeholder="SKU Number" />
+                            <!--end::Input-->
+                        </div>
+                        <!--end::Input group-->
+
+                        <!--begin::Input group-->
+                        <div class="fv-row mb-7">
+                            <!--begin::Label-->
+                            <label class="form-label">PCS Per Carton</label>
+                            <!--end::Label-->
+
+                            <!--begin::Input-->
+                            <input type="number" name="pcs_per_carton" class="no-spinner form-control mb-2" placeholder="Type pcs per carton" />
                             <!--end::Input-->
                         </div>
                         <!--end::Input group-->

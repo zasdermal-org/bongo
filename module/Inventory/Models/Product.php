@@ -16,6 +16,7 @@ class Product extends Model
         'slug',
         'sku',
         'unit_price',
+        'pcs_per_carton',
         'is_active'
     ];
 

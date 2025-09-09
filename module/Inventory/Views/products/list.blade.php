@@ -64,6 +64,7 @@
                                     <th class="min-w-100px">Product</th>
                                     <th class="min-w-80px">SKU</th>
                                     <th class="min-w-80px">Unit Price</th>
+                                    <th class="min-w-80px">PCS Per Carton</th>
                                     <th class="min-w-80px">Sub Category</th>
                                     <th class="min-w-80px">Category</th>
                                     <th class="text-end min-w-100px">Actions</th>
@@ -99,6 +100,10 @@
 
                                         <!--begin::Unit Price=-->
                                         <td class="pe-0">{{ $product->unit_price }} Tk</td>
+                                        <!--end::Unit Price=-->
+
+                                        <!--begin::Unit Price=-->
+                                        <td class="pe-0">{{ $product->pcs_per_carton }}</td>
                                         <!--end::Unit Price=-->
 
                                         <!--begin::Sub Category=-->
@@ -137,10 +142,11 @@
                                                     <a href="javascript:void(0);" onclick="product({{ $product->id }})" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_update_product">Edit</a>
                                                 </div>
                                                 <!--end::Menu item-->
+
                                                 <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
+                                                {{-- <div class="menu-item px-3">
                                                     <a href="#" class="menu-link px-3" data-kt-ecommerce-product-filter="delete_row">Delete</a>
-                                                </div>
+                                                </div> --}}
                                                 <!--end::Menu item-->
                                             </div>
                                             <!--end::Menu-->
@@ -192,8 +198,9 @@
                     let updateUrl = url.replace(':id', id);
                     form.attr('action', updateUrl);
 
-                    form.find('input[name="title"]').val(data.title);
-                    form.find('input[name="unit_price"]').val(data.unit_price);
+                    form.find('input[name="title"]').val(data.product.title);
+                    form.find('input[name="unit_price"]').val(data.product.unit_price);
+                    form.find('input[name="pcs_per_carton"]').val(data.product.pcs_per_carton);
                 },
                 error: function (error) {
                     console.error('Error fetching role data:', error);

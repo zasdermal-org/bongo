@@ -35,7 +35,8 @@ class ProductController extends Controller
             'sub_category_id' => 'required|exists:sub_categories,id',
             'title' => 'required|string',
             'sku' => 'required|string|unique:products,sku',
-            'unit_price' => 'required|numeric'
+            'unit_price' => 'required|numeric',
+            'pcs_per_carton' => 'nullable|numeric'
         ]);
 
         Product::create([
@@ -45,6 +46,7 @@ class ProductController extends Controller
             'slug' => Str::slug($data['title']),
             'sku' => $data['sku'],
             'unit_price' => $data['unit_price'],
+            'pcs_per_carton' => $data['pcs_per_carton'] ?? null,
             'is_active' => 'Active',
         ]);
 
@@ -59,8 +61,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         return response()->json([
-            'title' => $product->title,
-            'unit_price' => $product->unit_price
+            'product' => $product
         ]);
     }
 
@@ -71,11 +72,15 @@ class ProductController extends Controller
         $stock = Stock::where('sku', $sku)->first();
 
         $data = $request->validate([
-            'unit_price' => 'required|numeric'
+            'title' => 'required|string',
+            'unit_price' => 'required|numeric',
+            'pcs_per_carton' => 'nullable|numeric'
         ]);
         
         $product->update([
-            'unit_price' => $data['unit_price']
+            'title' => $data['title'],
+            'unit_price' => $data['unit_price'],
+            'pcs_per_carton' => $data['pcs_per_carton'] ?? null,
         ]);
 
         if ($stock) {

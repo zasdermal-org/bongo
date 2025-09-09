@@ -34,7 +34,7 @@
                         <label class="fs-6 fw-bold form-label mb-2 required">Product Name</label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <input class="form-control form-control-solid" placeholder="Type product name" name="title" readonly/>
+                        <input type="text" class="form-control form-control-solid" placeholder="Type product name" name="title"/>
                         <!--end::Input-->
                     </div>
                     <!--end::Input group-->
@@ -45,7 +45,18 @@
                         <label class="fs-6 fw-bold form-label mb-2 required">Unit Price</label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <input class="form-control form-control-solid" placeholder="Type unit price" name="unit_price" />
+                        <input type="number" class="form-control form-control-solid no-spinner" placeholder="Type unit price" name="unit_price" />
+                        <!--end::Input-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
+                        <label class="fs-6 fw-bold form-label mb-2">PCS Per Carton</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="number" class="form-control form-control-solid no-spinner" placeholder="Type pcs per carton" name="pcs_per_carton" />
                         <!--end::Input-->
                     </div>
                     <!--end::Input group-->

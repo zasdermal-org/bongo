@@ -105,6 +105,7 @@
                                                             <th class="min-w-100px pb-2">Products</th>
                                                             {{-- <th class="min-w-70px pb-2">SKU</th> --}}
                                                             <th class="min-w-80px text-end pb-2">QTY</th>
+                                                            <th class="min-w-80px text-end pb-2 show-in-chalan">Carton</th>
                                                             <th class="min-w-80px text-end pb-2 hide-in-chalan">Unit Price</th>
                                                             <th class="min-w-100px text-end pb-2 hide-in-chalan">Total</th>
                                                         </tr>
@@ -133,6 +134,16 @@
                                                                 <!--begin::Quantity-->
                                                                 <td class="text-end">{{ $order->quantity }}</td>
                                                                 <!--end::Quantity-->
+
+                                                                <!--begin::PCS Per carton-->
+                                                                <td class="text-end show-in-chalan">
+                                                                    @if ($order->stock->product->pcs_per_carton)
+                                                                        {{ $order->quantity / $order->stock->product->pcs_per_carton }}
+                                                                    @else
+                                                                        0
+                                                                    @endif
+                                                                </td>
+                                                                <!--end::PCS Per Carton-->
 
                                                                 <!--begin::Price-->
                                                                 <td class="text-end hide-in-chalan">{{ $order->unit_price }}</td>
