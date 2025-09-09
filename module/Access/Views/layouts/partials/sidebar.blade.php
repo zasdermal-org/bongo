@@ -3,8 +3,7 @@
     <div class="aside-logo flex-column-auto" id="kt_aside_logo">
         <!--begin::Logo-->
         <a href="{{ route('dashboard') }}" style="font-size:20px;">
-            {{-- <img alt="Logo" src="assets/media/logos/logo-1-dark.svg" class="h-25px logo" /> --}}
-            Bongo
+            <img alt="Logo" src="assets/media/logos/logo.jpeg" class="h-50px logo" />
         </a>
         <!--end::Logo-->
 
