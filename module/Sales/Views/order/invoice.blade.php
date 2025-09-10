@@ -36,7 +36,7 @@
                                         <div class="d-flex flex-column flex-sm-row gap-7 gap-md-10 fw-bolder">
                                             <div class="flex-root d-flex flex-column">
                                                 <span class="text-muted">Invoice Number</span>
-                                                <span class="fs-5">{{ $orderInvoice->invoice_number }} - ({{ $orderInvoice->id }})</span>
+                                                <span class="fs-5">{{ $orderInvoice->invoice_number }} / {{ $orderInvoice->id }}</span>
                                             </div>
 
                                             <div class="flex-root d-flex flex-column">
