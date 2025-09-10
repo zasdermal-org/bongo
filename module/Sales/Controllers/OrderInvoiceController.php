@@ -434,6 +434,12 @@ class OrderInvoiceController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : null;
 
+        $authUser = auth()->user();
+        if ($authUser->role->slug === 'depot') {
+            $depot_id = auth()->user()->employee->depot_id;
+            $query->where('depot_id', $depot_id);
+        }
+
         if ($request->filled('invoice_number')) {
             $invoice_number = $request->invoice_number;
             $query->where('invoice_number', $invoice_number);
