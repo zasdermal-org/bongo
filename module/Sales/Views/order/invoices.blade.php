@@ -84,6 +84,9 @@
                                     {{-- <th class="min-w-120px">Invoice No</th> --}}
                                     <th class="min-w-80px">Order By</th>
                                     <th class="min-w-80px">Sale Point Name</th>
+                                    @if (auth()->user()->role->slug === 'admin')
+                                        <th class="min-w-50px">Type</th>
+                                    @endif
                                     <th class="min-w-50px">Territory</th>
                                     <th class="min-w-80px">Order Date</th>
                                     <th class="min-w-60px">Order Value</th>
@@ -115,6 +118,10 @@
                                         <!--begin::Sales Point Name=-->
                                         <td>{{ $orderInvoice->salePoint->name }} ({{ $orderInvoice->salePoint->code_number }})</td>
                                         <!--end::Sales Point Name=-->
+
+                                        @if (auth()->user()->role->slug === 'admin')
+                                            <td>{{ $orderInvoice->type }}</td>
+                                        @endif
 
                                         <!--begin::Territory=-->
                                         <td>{{ $orderInvoice->territory->name }}</td>

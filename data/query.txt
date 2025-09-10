@@ -1,3 +1,4 @@
+// order total quantity calculation
 SELECT
     id,
     stock_id,
@@ -15,6 +16,7 @@ ORDER BY
     `orders`.`stock_id` ASC
 
 
+// see sale point from orderInvoice table
 SELECT
     oi.*
 FROM
@@ -23,3 +25,27 @@ JOIN sale_points sp ON
     sp.id = oi.sale_point_id
 WHERE
     sp.code_number = 'WGP273';
+
+// update orderInvoice table for type
+UPDATE
+    order_invoices oi
+JOIN order_order_invoice ooi ON
+    oi.id = ooi.order_invoice_id
+JOIN orders o ON
+    ooi.order_id = o.id
+JOIN stocks s ON
+    o.stock_id = s.id
+JOIN products p ON
+    s.product_id = p.id
+JOIN categories c ON
+    p.category_id = c.id
+SET
+    oi.type = CASE WHEN c.slug = 'seed' THEN 'seed' ELSE 'agrochemicals'
+END;
+
+// update orderInvoice table for depot_id
+UPDATE
+    order_invoices
+SET
+    depot_id = CASE WHEN TYPE = 'seed' THEN 1 WHEN TYPE = 'agrochemicals' THEN 2
+END;

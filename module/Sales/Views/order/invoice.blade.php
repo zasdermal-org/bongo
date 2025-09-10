@@ -57,7 +57,7 @@
                                             <div class="flex-root d-flex flex-column">
                                                 <span class="text-muted">Depot</span>
                                                 <span class="fs-5">
-                                                    {{-- {{ $order_invoice->depot->name }} --}}
+                                                    {{ $orderInvoice->depot->name }}
                                                 </span>
                                             </div>
                                         </div>

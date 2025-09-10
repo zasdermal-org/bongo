@@ -45,6 +45,12 @@ class OrderInvoiceController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : null;
 
+        $authUser = auth()->user();
+        if ($authUser->role->slug === 'depot') {
+            $depot_id = auth()->user()->employee->depot_id;
+            $query->where('depot_id', $depot_id);
+        }
+
         if ($request->filled('username')) {
             $user_id = User::where('username', $request->username)->value('id');
             $query->where('user_id', $user_id);
@@ -97,7 +103,7 @@ class OrderInvoiceController extends Controller
             'user_id' => 'required|exists:users,id',
             'sale_point_id' => 'required|exists:sale_points,id',
             'territory_id' => 'required|exists:territories,id',
-            'depot_id' => 'nullable|exists:depots,id',
+            'depot_id' => 'required|exists:depots,id',
             'total_amount' => 'required|numeric',
             'date' => 'nullable',
             'payment_type' => 'nullable',

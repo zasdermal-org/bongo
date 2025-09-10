@@ -5,6 +5,7 @@ namespace Module\Sales\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use Module\Access\Models\Depot;
 use Module\Access\Models\User;
 
 use Module\Market\Models\SalePoint;
@@ -57,6 +58,11 @@ class OrderInvoice extends Model
     public function territory()
     {
         return $this->belongsTo(Territory::class);
+    }
+
+    public function depot()
+    {
+        return $this->belongsTo(Depot::class);
     }
 
     // public function collections()

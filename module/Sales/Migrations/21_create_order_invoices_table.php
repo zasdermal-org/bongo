@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('updated_by_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('sale_point_id')->constrained('sale_points')->cascadeOnDelete();
             $table->foreignId('territory_id')->constrained('territories')->cascadeOnDelete();
-            $table->foreignId('depot_id')->nullable()->constrained('depots')->nullOnDelete();
-            // $table->foreignId('depot_id')->constrained('depots')->cascadeOnDelete(); letter it will be final
+            // $table->foreignId('depot_id')->nullable()->constrained('depots')->nullOnDelete();
+            $table->foreignId('depot_id')->constrained('depots')->cascadeOnDelete();
             $table->string('invoice_number')->unique();
             $table->decimal('total_amount', 10, 2);
             $table->integer('discount')->nullable(); // discount
