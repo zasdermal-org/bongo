@@ -81,22 +81,6 @@
                                         <!--option will be populated from ajax request-->
                                     </select>
                                     <!--end::Select Product-->
-
-                                    <!--begin::Select Product-->
-                                    {{-- <select id="stock_id" data-control="select2" data-placeholder="Select product" class="form-select form-select-solid">
-                                        <option></option>
-                                        @foreach ($stocks as $stock)
-                                            <option 
-                                                value="{{ $stock->id }}"
-                                                data-product_name="{{ $stock->product_name }}"
-                                                data-sku="{{ $stock->sku }}"
-                                                data-mrp="{{ $stock->mrp }}"
-                                                >
-                                                {{ $stock->product_name }}
-                                            </option>
-                                        @endforeach
-                                    </select> --}}
-                                    <!--end::Select Product-->
                                 </div>
                                 <!--end::Input group-->
 
@@ -176,6 +160,25 @@
 
                                             <input class="form-control form-control-solid no-spinner" type="number" id="discount"  />
                                         </div>
+                                        <!--end::Input group-->
+
+                                        <!--begin::Input group-->
+                                        @if (auth()->user()->role->slug === 'admin')
+                                            <div class="me-2">
+                                                <!--begin::Label-->
+                                                <label class="form-label fw-bolder fs-6 text-gray-700">Depot</label>
+                                                <!--end::Label-->
+
+                                                <select id="depot_id" data-control="select2" data-placeholder="Select Depot" class="form-select form-select-solid">
+                                                    <option></option>
+                                                    @foreach ($depots as $depot)
+                                                        <option value="{{ $depot->id }}">{{ $depot->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @elseif (auth()->user()->role->slug === 'depot')
+                                            <input type="hidden" id="depot_id" value="{{ auth()->user()->employee->depot_id }}">
+                                        @endif
                                         <!--end::Input group-->
                                     </div>
                                     <!--end::Wrapper-->
@@ -427,6 +430,8 @@
             var date = $('#date').val(); // temporary
             var payment_type = $('#payment_type').val();
             var discount = $('#discount').val();
+            var selectedCategoryName = $('#category_name').val();
+            var selectedDepot = $('#depot_id').val();
 
             var orders = JSON.parse(localStorage.getItem('orders')) || [];
 
@@ -436,10 +441,12 @@
                 user_id: user_id,
                 sale_point_id: selectedSalePoint,
                 territory_id: territory_id,
+                depot_id: selectedDepot,
                 total_amount: invoice_total_amount,
                 date: date, // temporary
                 payment_type: payment_type,
                 discount: discount,
+                type: selectedCategoryName,
                 orders: [],
             };
             

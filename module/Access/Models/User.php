@@ -59,7 +59,11 @@ class User extends Authenticatable
 
     public function hasPermission($menuSlug, $subMenuSlug, $action)
     {
-        if ($this->role->slug === 'admin') {
+        // if ($this->role->slug === 'admin') {
+        //     return true;
+        // }
+
+        if (in_array($this->role->slug, ['admin', 'depot'])) {
             return true;
         }
 

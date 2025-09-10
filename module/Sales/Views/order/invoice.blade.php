@@ -20,7 +20,7 @@
                                 <!-- begin::Header-->
                                 <div class="d-flex justify-content-center mb-19">
                                     <h4 class="fw-boldest text-gray-800 fs-2qx text-center show-in-invoice">INVOICE</h4>
-                                    <h4 class="fw-boldest text-gray-800 fs-2qx text-center show-in-chalan">CHALAN</h4>
+                                    <h4 class="fw-boldest text-gray-800 fs-2qx text-center show-in-chalan">CHALLAN</h4>
                                 </div>
                                 <!--end::Header-->
 
@@ -36,7 +36,7 @@
                                         <div class="d-flex flex-column flex-sm-row gap-7 gap-md-10 fw-bolder">
                                             <div class="flex-root d-flex flex-column">
                                                 <span class="text-muted">Invoice Number</span>
-                                                <span class="fs-5">{{ $orderInvoice->invoice_number }}</span>
+                                                <span class="fs-5">{{ $orderInvoice->invoice_number }} - ({{ $orderInvoice->id }})</span>
                                             </div>
 
                                             <div class="flex-root d-flex flex-column">
@@ -105,7 +105,7 @@
                                                             <th class="min-w-100px pb-2">Products</th>
                                                             {{-- <th class="min-w-70px pb-2">SKU</th> --}}
                                                             <th class="min-w-80px text-end pb-2">QTY</th>
-                                                            <th class="min-w-80px text-end pb-2 show-in-chalan">Carton</th>
+                                                            <th class="min-w-80px text-end pb-2 show-in-chalan">CTN</th>
                                                             <th class="min-w-80px text-end pb-2 hide-in-chalan">Unit Price</th>
                                                             <th class="min-w-100px text-end pb-2 hide-in-chalan">Total</th>
                                                         </tr>

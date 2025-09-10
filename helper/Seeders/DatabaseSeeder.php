@@ -4,6 +4,7 @@ namespace Helper\Seeders;
 
 use Illuminate\Database\Seeder;
 
+use Module\Access\Seeders\DepotsTableSeeder;
 use Module\Access\Seeders\RolesTableSeeder;
 use Module\Access\Seeders\UsersTableSeeder;
 use Module\Access\Seeders\MenusTableSeeder;
@@ -37,6 +38,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesTableSeeder::class);
         $this->call(AssignPermissionRole::class);
         // $this->call(UsersTableSeeder::class);
+        $this->call(DepotsTableSeeder::class);
         $this->call(ZonesTableSeeder::class);
         $this->call(DivisionsTableSeeder::class);
         $this->call(RegionsTableSeeder::class);

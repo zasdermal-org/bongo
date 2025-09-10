@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+use Module\Access\Models\Depot;
 use Module\Access\Models\User;
 use Module\Inventory\Models\Stock;
 
@@ -85,7 +86,7 @@ class OrderInvoiceController extends Controller
             $query->where('slug', 'marketing-officer');
         })
         ->get();
-        // $data['stocks'] = Stock::all();
+        $data['depots'] = Depot::all();
 
         return view('Sales::order.create_invoice', $data);
     }
@@ -96,10 +97,12 @@ class OrderInvoiceController extends Controller
             'user_id' => 'required|exists:users,id',
             'sale_point_id' => 'required|exists:sale_points,id',
             'territory_id' => 'required|exists:territories,id',
+            'depot_id' => 'nullable|exists:depots,id',
             'total_amount' => 'required|numeric',
             'date' => 'nullable',
             'payment_type' => 'nullable',
             'discount' => 'nullable|numeric',
+            'type' => 'nullable',
             'orders' => 'required|array',
             'orders.*.stock_id' => 'required|exists:stocks,id',
             // 'orders.*.product_name' => 'required',
@@ -119,10 +122,12 @@ class OrderInvoiceController extends Controller
             'submitted_by_user_id' => $auth_user->id,
             'sale_point_id' => $data['sale_point_id'],
             'territory_id' => $data['territory_id'],
+            'depot_id' => $data['depot_id'],
             'invoice_number' => $this->generate_unique_invoice_number(),
             'total_amount' => $data['total_amount'],
             'payment_type' => $data['payment_type'],
             'discount' => $data['discount'] ?? null,
+            'type' => $data['type'] ?? null,
             'created_at' => $data['date'], // temporary
             'updated_at' => $data['date'], // temporary
         ]);

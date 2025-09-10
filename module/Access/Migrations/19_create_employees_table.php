@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('region_id')->nullable()->unique()->constrained('regions')->nullOnDelete();
             $table->foreignId('area_id')->nullable()->unique()->constrained('areas')->nullOnDelete();
             $table->foreignId('territory_id')->nullable()->unique()->constrained('territories')->nullOnDelete();
+            $table->foreignId('depot_id')->nullable()->constrained('depots')->nullOnDelete();
             $table->string('contact')->nullable();
             $table->text('address')->nullable();
             $table->date('joining_date')->nullable();
