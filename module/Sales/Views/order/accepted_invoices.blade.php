@@ -18,34 +18,34 @@
                         <div class="card-title">
                             <form class="d-flex align-items-center position-relative my-1" action="{{ route('order.accepted_invoices') }}" method="GET">
                                 <!--begin::Search-->
-                                <div class="w-110 mw-120px me-2">
+                                {{-- <div class="w-110 mw-120px me-2">
                                     <input name="invoice_number" value="{{ request('invoice_number') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Invoice Number" />
-                                </div>
+                                </div> --}}
                                 <!--end::Search-->
 
                                 <!--begin::Search-->
-                                <div class="w-110 mw-120px me-2">
+                                {{-- <div class="w-110 mw-120px me-2">
                                     <input name="username" value="{{ request('username') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Employee ID" />
-                                </div>
+                                </div> --}}
                                 <!--end::Search-->
 
                                 <!--begin::Search-->
-                                <div class="w-110 mw-120px me-2">
+                                {{-- <div class="w-110 mw-120px me-2">
                                     <input name="code_number" value="{{ request('code_number') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Sale Point Number" />
-                                </div>
+                                </div> --}}
                                 <!--end::Search-->
 
                                 <!--begin::Depot-->
-                                <div class="w-110 mw-120px me-2">
+                                {{-- <div class="w-110 mw-120px me-2">
                                     <!--begin::Select2-->
                                     <select id="depot_id" name="depot_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Depot" data-kt-ecommerce-product-filter="status">
                                         <option></option>
-                                        {{-- @foreach ($depots as $depot)
+                                        @foreach ($depots as $depot)
                                             <option value="{{ $depot->id }}" {{ request('depot_id') == $depot->id ? 'selected' : '' }}>{{ $depot->name }}</option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                     <!--end::Select2-->
-                                </div>
+                                </div> --}}
                                 <!--end::Depot-->
 
                                 <div class="w-110 mw-120px me-2">
@@ -62,7 +62,7 @@
                         <!--begin::Card title-->
                         
                         <!--begin::Card toolbar-->
-                        <div class="card-toolbar">
+                        {{-- <div class="card-toolbar">
                             <!--begin::Toolbar-->
                             <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base"></div>
                             <!--end::Toolbar-->
@@ -77,13 +77,13 @@
 
                                     <select data-order_invoice_id="" class="form-select form-select-solid status_select" data-control="select2">
                                         <option>Select a Delivery Man</option>
-                                        {{-- @foreach($delivery_men as $delivery_man)
+                                        @foreach($delivery_men as $delivery_man)
                                             <option value="{{ $delivery_man->id }}">
                                                 @if ($delivery_man->employee)
                                                     {{ $delivery_man->employee->name }} - {{ $delivery_man->depot->name }}
                                                 @endif
                                             </option>
-                                        @endforeach --}}
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -107,21 +107,7 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_upload">
-                                <!--begin::Svg Icon | path: icons/duotune/files/fil018.svg-->
-                                <span class="svg-icon svg-icon-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path opacity="0.3" d="M10 4H21C21.6 4 22 4.4 22 5V7H10V4Z" fill="currentColor" />
-                                        <path d="M10.4 3.60001L12 6H21C21.6 6 22 6.4 22 7V19C22 19.6 21.6 20 21 20H3C2.4 20 2 19.6 2 19V4C2 3.4 2.4 3 3 3H9.20001C9.70001 3 10.2 3.20001 10.4 3.60001ZM16 11.6L12.7 8.29999C12.3 7.89999 11.7 7.89999 11.3 8.29999L8 11.6H11V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H16Z" fill="currentColor" />
-                                        <path opacity="0.3" d="M11 11.6V17C11 17.6 11.4 18 12 18C12.6 18 13 17.6 13 17V11.6H11Z" fill="currentColor" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon-->
-
-                                Bulk Upload
-                            </button> --}}
-                        </div>
+                        </div> --}}
                         <!--end::Card toolbar-->
                     </div>
                     <!--end::Card header-->
@@ -140,16 +126,16 @@
                             </thead>
                         </table>
 
-                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_users">
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_category_table">
                             <!--begin::Table head-->
                             <thead>
                                 <!--begin::Table row-->
                                 <tr class="text-start text-black-400 fw-bolder fs-7 text-uppercase gs-0">
-                                    <th class="w-10px pe-2">
+                                    {{-- <th class="w-10px pe-2">
                                         <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
                                             <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_table_users .form-check-input" value="1" />
                                         </div>
-                                    </th>
+                                    </th> --}}
                                     <th class="min-w-10px">S.N</th>
                                     <th class="min-w-80px">Invoice No</th>
                                     <th class="min-w-80px">Order By</th>
@@ -173,11 +159,11 @@
                                 @foreach ($orderInvoices as $key => $orderInvoice)
                                     <tr class="hover-row">
                                         <!--begin::Checkbox-->
-                                        <td>
+                                        {{-- <td>
                                             <div class="form-check form-check-sm form-check-custom form-check-solid">
                                                 <input class="form-check-input row-checkbox" type="checkbox" value="1" data-order_invoice_id="{{ $orderInvoice->id }}" />
                                             </div>
-                                        </td>
+                                        </td> --}}
                                         <!--end::Checkbox-->
 
                                         <!--begin::S.N=-->

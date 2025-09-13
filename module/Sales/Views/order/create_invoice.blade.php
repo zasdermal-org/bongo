@@ -172,7 +172,7 @@
                                                 <select id="depot_id" data-control="select2" data-placeholder="Select Depot" class="form-select form-select-solid">
                                                     <option></option>
                                                     @foreach ($depots as $depot)
-                                                        <option value="{{ $depot->id }}">{{ $depot->name }}</option>
+                                                        <option value="{{ $depot->id }}">{{ $depot->name }} ({{ $depot->employee->user->name }})</option>
                                                     @endforeach
                                                 </select>
                                             </div>

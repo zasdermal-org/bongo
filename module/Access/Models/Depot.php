@@ -10,4 +10,9 @@ class Depot extends Model
         'name',
         'is_active'
     ];
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
 }

@@ -415,7 +415,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                             </span>
-                            <span class="menu-title">Order</span>
+                            <span class="menu-title">Orders & Invoices</span>
                             <span class="menu-arrow"></span>
                         </span>
 
@@ -426,7 +426,7 @@
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Invoices</span>
+                                        <span class="menu-title">Orders</span>
                                     </a>
                                 </div>
                             @endif
@@ -437,7 +437,7 @@
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Accepted Invoices</span>
+                                        <span class="menu-title">Invoices</span>
                                     </a>
                                 </div>
                             @endif

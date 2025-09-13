@@ -18,15 +18,15 @@
                         <div class="card-title">
                             <form class="d-flex align-items-center position-relative my-1" action="{{ route('order.invoices') }}" method="GET">
                                 <!--begin::Search-->
-                                <div class="w-110 mw-120px me-2">
+                                {{-- <div class="w-110 mw-120px me-2">
                                     <input name="username" value="{{ request('username') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Employee ID" />
-                                </div>
+                                </div> --}}
                                 <!--end::Search-->
 
                                 <!--begin::Search-->
-                                <div class="w-110 mw-120px me-2">
+                                {{-- <div class="w-110 mw-120px me-2">
                                     <input name="code_number" value="{{ request('code_number') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Sale Point Number" />
-                                </div>
+                                </div> --}}
                                 <!--end::Search-->
 
                                 <div class="w-110 mw-120px me-2">
