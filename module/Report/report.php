@@ -7,6 +7,7 @@ use Module\Report\Controllers\TransectionController;
 
 Route::prefix('/report')->name('report.')->group(function () {
     Route::get('/order-summary', [ReportController::class, 'order_summary'])->name('order_summary');
+    Route::get('/invoice-summary', [ReportController::class, 'invoice_summary'])->name('invoice_summary');
     Route::get('/sales', [ReportController::class, 'sales'])->name('sales');
     // Route::get('/brand-wise-sales', [SalesReportController::class, 'brand_wise_sales'])->name('brand_wise_sales');
 

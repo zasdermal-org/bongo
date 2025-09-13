@@ -537,6 +537,17 @@
                                 </div>
                             @endif
 
+                            {{-- @if(auth()->user()->hasPermission('report', 'order-summary', 'read')) --}}
+                                <div class="menu-item">
+                                    <a class="menu-link @if(Route::is('report.invoice_summary')) active @endif" href="{{ route('report.invoice_summary') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Invoice Summary</span>
+                                    </a>
+                                </div>
+                            {{-- @endif --}}
+
                             @if(auth()->user()->hasPermission('report', 'sales', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('report.sales')) active @endif" href="{{ route('report.sales') }}">

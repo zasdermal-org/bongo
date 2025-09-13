@@ -31,8 +31,8 @@ class ReportController extends Controller
     {
         $data['breadcrumbs'] = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Order', 'url' => null],
-            ['title' => 'Summary', 'url' => null]
+            ['title' => 'Report', 'url' => null],
+            ['title' => 'Order Summary', 'url' => null]
         ];
 
         // Parse date filters
@@ -84,6 +84,56 @@ class ReportController extends Controller
         $data['orders'] = $orders;
 
         return view('Report::order_summary', $data);
+    }
+
+    public function invoice_summary(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Report', 'url' => null],
+            ['title' => 'Invoice Summary', 'url' => null]
+        ];
+
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : Carbon::today()->startOfDay();;
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : Carbon::today()->endOfDay();
+
+        $orders = DB::table('orders')
+            ->select(
+                DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
+                'orders.sku',
+                DB::raw('SUM(orders.quantity) as total_quantity'),
+                'products.title as product_name'
+            )
+            ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
+            ->join('products', 'stocks.product_id', '=', 'products.id')
+            ->join('order_order_invoice', 'orders.id', '=', 'order_order_invoice.order_id')
+            ->join('order_invoices', 'order_order_invoice.order_invoice_id', '=', 'order_invoices.id')
+            ->where('order_invoices.status', 'Accepted')
+            ->whereBetween('orders.created_at', [$fromDate, $toDate])
+            ->groupBy('orders.sku', 'products.title')
+            ->orderBy('stock_id', 'asc')
+            ->get();
+
+        $skuList = $orders->pluck('sku');
+        $stocks = DB::table('stocks')
+            ->whereIn('sku', $skuList)
+            ->pluck('quantity', 'sku');
+
+        // Step 3: attach stock to orders
+        $orders->transform(function ($item) use ($stocks) {
+            $item->available_stock = $stocks[$item->sku] ?? 0;
+            return $item;
+        });
+
+        $data['orders'] = $orders;
+
+        return view('Report::invoice_summary', $data);
     }
 
     public function sales(Request $request)
