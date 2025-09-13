@@ -29,8 +29,8 @@ class OrderInvoiceController extends Controller
     {
         $data['breadcrumbs'] = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Order', 'url' => null],
-            ['title' => 'Invoices', 'url' => null]
+            ['title' => 'Orders & Invoices', 'url' => null],
+            ['title' => 'Orders', 'url' => null]
         ];
 
         $today = Carbon::today();
@@ -359,8 +359,8 @@ class OrderInvoiceController extends Controller
     {
         $data['breadcrumbs'] = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Order', 'url' => null],
-            ['title' => 'Accepted Invoices', 'url' => null]
+            ['title' => 'Orders & Invoices', 'url' => null],
+            ['title' => 'Invoices', 'url' => null]
         ];
 
         $today = Carbon::today();
