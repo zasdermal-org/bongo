@@ -16,7 +16,7 @@
                     <div class="card-header mt-5">
                         <!--begin::Card title-->
                         <div class="card-title">
-                            <form class="d-flex align-items-center position-relative my-1" action="{{ route('order.order_summary') }}" method="GET">
+                            <form class="d-flex align-items-center position-relative my-1" action="{{ route('report.order_summary') }}" method="GET">
                                 <div class="w-110 mw-120px me-2">
                                     <input name="from_date" type="date" value="{{ request('from_date') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />
                                 </div>

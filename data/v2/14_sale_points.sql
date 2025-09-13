@@ -369,4 +369,7 @@ INSERT INTO `sale_points` (`id`, `territory_id`, `name`, `code_number`, `address
 (363, 24, 'M/S Musa Enterpeise', 'NRH364', 'Jattrapur Atghoria,Pabna', 'Md.Jahangir Alom', '01723814395', 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10'),
 (364, 20, 'M/S Rustom Enterprise', 'SFP366', 'Hat Krishnopur Bazar,Sadorpur,Foridpur', 'Md.Rustom Mia', '01713502635', 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10'),
 (365, 34, 'Crystal Crop Care Ltd.', 'CCCC01', 'Betgari,Shajahanpur,Bogura.', 'Kbd.Khondokar Moqbul Hossain', '01714068370', 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10'),
-(366, 34, 'Concern World Wide', 'CCWW02', 'Rathnapalong, Ukhiya, Coxs Bazar', NULL, NULL, 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10');
+(366, 34, 'Concern World Wide', 'CCWW02', 'Rathnapalong, Ukhiya, Coxs Bazar', NULL, NULL, 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10'),
+(367, 29, 'M/S Harun Store', 'ECB370\n', 'Shamlapur Bazar,Teknaf,Cox\'s Bazar', 'Md.harunar Rashied', '01862477598', 'Deller', 'Active', '2025-09-10 11:42:06', '2025-09-10 11:42:06'),
+(368, 29, 'M/S Allaher Dan Beej Bhander', 'ECB369', 'Teknaf Bazar,Cox\'s Bazar', 'Md.ashik Elahie', '01852006062', 'Deller', 'Active', '2025-09-10 11:43:36', '2025-09-10 11:43:36'),
+(369, 34, 'World Vision Bangladesh', 'CWVB03', 'Shanta Western Tower (Level 14), 186 Bir Uttam Mir Shawkat Sarak (Gulshan-Tejgaon Link Road', '', NULL, 'Deller', 'Active', '2025-09-10 11:59:35', '2025-09-10 11:59:35');

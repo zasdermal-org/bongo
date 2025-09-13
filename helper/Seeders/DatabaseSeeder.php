@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SubMenusTableSeeder::class);
         $this->call(PermissionsTableSeeder::class);
         $this->call(RolesTableSeeder::class);
-        $this->call(AssignPermissionRole::class);
+        // $this->call(AssignPermissionRole::class);
         // $this->call(UsersTableSeeder::class);
         $this->call(DepotsTableSeeder::class);
         $this->call(ZonesTableSeeder::class);

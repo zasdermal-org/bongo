@@ -15,8 +15,13 @@ class MenusTableSeeder extends Seeder
     {
         $menus = [
             'User Management',
+            'Catalog',
+            'Stock',
             'Location',
-            'Sale Point'
+            'Sale Point',
+            'Order',
+            'Collection',
+            'Report',
         ];
 
         foreach ($menus as $menu) {

@@ -48,91 +48,27 @@
                 </div>
 
                 @php
-                    $accessPermissions = [
-                        ['setting', 'designations'],
-                        ['setting', 'menus'],
-                        ['setting', 'sub-menus'],
+                    $accessControlPermissions = [
+                        ['user-management', 'permissions'],
                         ['user-management', 'roles'],
-                        ['user-management', 'users'],
-                        ['user-management', 'permissions']
-                    ];
-
-                    $settingPermissions = [
-                        ['setting', 'designations'],
-                        ['setting', 'menus'],
-                        ['setting', 'sub-menus']
+                        ['user-management', 'users']
                     ];
                     
                     $userManagementPermissions = [
+                        ['user-management', 'permissions'],
                         ['user-management', 'roles'],
-                        ['user-management', 'users'],
-                        ['user-management', 'permissions']
+                        ['user-management', 'users']
                     ];
                 @endphp
 
                 <!--Access Control-->
-                @if(collect($accessPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
+                @if(collect($accessControlPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
                     <div class="menu-item">
                         <div class="menu-content pt-8 pb-2">
                             <span class="menu-section text-muted text-uppercase fs-8 ls-1">Access Control</span>
                         </div>
                     </div>
                 @endif
-                    
-                <!--Setting-->
-                {{-- @if(collect($settingPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
-                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion @if(Route::is('access.*')) here show mb-1 @endif">
-                        <span class="menu-link">
-                            <span class="menu-icon">
-                                <!--begin::Svg Icon | path: assets/media/icons/duotune/coding/cod009.svg-->
-                                <span class="svg-icon svg-icon-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path opacity="0.3" d="M22.0318 8.59998C22.0318 10.4 21.4318 12.2 20.0318 13.5C18.4318 15.1 16.3318 15.7 14.2318 15.4C13.3318 15.3 12.3318 15.6 11.7318 16.3L6.93177 21.1C5.73177 22.3 3.83179 22.2 2.73179 21C1.63179 19.8 1.83177 18 2.93177 16.9L7.53178 12.3C8.23178 11.6 8.53177 10.7 8.43177 9.80005C8.13177 7.80005 8.73176 5.6 10.3318 4C11.7318 2.6 13.5318 2 15.2318 2C16.1318 2 16.6318 3.20005 15.9318 3.80005L13.0318 6.70007C12.5318 7.20007 12.4318 7.9 12.7318 8.5C13.3318 9.7 14.2318 10.6001 15.4318 11.2001C16.0318 11.5001 16.7318 11.3 17.2318 10.9L20.1318 8C20.8318 7.2 22.0318 7.59998 22.0318 8.59998Z" fill="currentColor"/>
-                                        <path d="M4.23179 19.7C3.83179 19.3 3.83179 18.7 4.23179 18.3L9.73179 12.8C10.1318 12.4 10.7318 12.4 11.1318 12.8C11.5318 13.2 11.5318 13.8 11.1318 14.2L5.63179 19.7C5.23179 20.1 4.53179 20.1 4.23179 19.7Z" fill="currentColor"/>
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon-->
-                            </span>
-                            <span class="menu-title">Setting</span>
-                            <span class="menu-arrow"></span>
-                        </span>
-
-                        <div class="menu-sub menu-sub-accordion">
-                            @if(auth()->user()->hasPermission('user-management', 'roles', 'read'))
-                                <div class="menu-item">
-                                    <a class="menu-link @if(Route::is('access.roles')) active @endif" href="{{ route('access.roles') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Designatins</span>
-                                    </a>
-                                </div>
-                            @endif
-
-                            @if(auth()->user()->hasPermission('user-management', 'roles', 'read'))
-                                <div class="menu-item">
-                                    <a class="menu-link @if(Route::is('access.roles')) active @endif" href="{{ route('access.roles') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Menu</span>
-                                    </a>
-                                </div>
-                            @endif
-
-                            @if(auth()->user()->hasPermission('user-management', 'roles', 'read'))
-                                <div class="menu-item">
-                                    <a class="menu-link @if(Route::is('access.roles')) active @endif" href="{{ route('access.roles') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Sub Menu</span>
-                                    </a>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endif --}}
 
                 <!--User Management-->
                 @if(collect($userManagementPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
@@ -194,8 +130,6 @@
                         ['catalog', 'categories'],
                         ['catalog', 'sub-categories'],
                         ['catalog', 'products'],
-                        ['raw-material', 'raw-materials'],
-                        ['warehouse', 'warehouse'],
                         ['stock', 'stocks'],
                     ];
 
@@ -274,48 +208,6 @@
                     </div>
                 @endif
 
-                <!--Purchases-->
-                {{-- @if(auth()->user()->hasPermission('raw-material', 'raw-materials', 'read'))
-                    <div class="menu-item">
-                        <a class="menu-link @if(Route::is('salePoints')) active @endif" href="{{ route('salePoints') }}">
-                            <span class="menu-icon">
-                                <!--begin::Svg Icon | path: assets/media/icons/duotune/abstract/abs029.svg-->
-                                <span class="svg-icon svg-icon-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path opacity="0.3" d="M18.041 22.041C18.5932 22.041 19.041 21.5932 19.041 21.041C19.041 20.4887 18.5932 20.041 18.041 20.041C17.4887 20.041 17.041 20.4887 17.041 21.041C17.041 21.5932 17.4887 22.041 18.041 22.041Z" fill="currentColor" />
-                                        <path opacity="0.3" d="M6.04095 22.041C6.59324 22.041 7.04095 21.5932 7.04095 21.041C7.04095 20.4887 6.59324 20.041 6.04095 20.041C5.48867 20.041 5.04095 20.4887 5.04095 21.041C5.04095 21.5932 5.48867 22.041 6.04095 22.041Z" fill="currentColor" />
-                                        <path opacity="0.3" d="M7.04095 16.041L19.1409 15.1409C19.7409 15.1409 20.141 14.7409 20.341 14.1409L21.7409 8.34094C21.9409 7.64094 21.4409 7.04095 20.7409 7.04095H5.44095L7.04095 16.041Z" fill="currentColor" />
-                                        <path d="M19.041 20.041H5.04096C4.74096 20.041 4.34095 19.841 4.14095 19.541C3.94095 19.241 3.94095 18.841 4.14095 18.541L6.04096 14.841L4.14095 4.64095L2.54096 3.84096C2.04096 3.64096 1.84095 3.04097 2.14095 2.54097C2.34095 2.04097 2.94096 1.84095 3.44096 2.14095L5.44096 3.14095C5.74096 3.24095 5.94096 3.54096 5.94096 3.84096L7.94096 14.841C7.94096 15.041 7.94095 15.241 7.84095 15.441L6.54096 18.041H19.041C19.641 18.041 20.041 18.441 20.041 19.041C20.041 19.641 19.641 20.041 19.041 20.041Z" fill="currentColor" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon-->
-                            </span>
-                            <span class="menu-title">Raw Materials</span>
-                        </a>
-                    </div>
-                @endif --}}
-
-                <!--Warehouse-->
-                {{-- @if(auth()->user()->hasPermission('raw-material', 'raw-materials', 'read'))
-                    <div class="menu-item">
-                        <a class="menu-link @if(Route::is('salePoints')) active @endif" href="{{ route('salePoints') }}">
-                            <span class="menu-icon">
-                                <!--begin::Svg Icon | path: assets/media/icons/duotune/abstract/abs029.svg-->
-                                <span class="svg-icon svg-icon-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <path opacity="0.3" d="M18.041 22.041C18.5932 22.041 19.041 21.5932 19.041 21.041C19.041 20.4887 18.5932 20.041 18.041 20.041C17.4887 20.041 17.041 20.4887 17.041 21.041C17.041 21.5932 17.4887 22.041 18.041 22.041Z" fill="currentColor" />
-                                        <path opacity="0.3" d="M6.04095 22.041C6.59324 22.041 7.04095 21.5932 7.04095 21.041C7.04095 20.4887 6.59324 20.041 6.04095 20.041C5.48867 20.041 5.04095 20.4887 5.04095 21.041C5.04095 21.5932 5.48867 22.041 6.04095 22.041Z" fill="currentColor" />
-                                        <path opacity="0.3" d="M7.04095 16.041L19.1409 15.1409C19.7409 15.1409 20.141 14.7409 20.341 14.1409L21.7409 8.34094C21.9409 7.64094 21.4409 7.04095 20.7409 7.04095H5.44095L7.04095 16.041Z" fill="currentColor" />
-                                        <path d="M19.041 20.041H5.04096C4.74096 20.041 4.34095 19.841 4.14095 19.541C3.94095 19.241 3.94095 18.841 4.14095 18.541L6.04096 14.841L4.14095 4.64095L2.54096 3.84096C2.04096 3.64096 1.84095 3.04097 2.14095 2.54097C2.34095 2.04097 2.94096 1.84095 3.44096 2.14095L5.44096 3.14095C5.74096 3.24095 5.94096 3.54096 5.94096 3.84096L7.94096 14.841C7.94096 15.041 7.94095 15.241 7.84095 15.441L6.54096 18.041H19.041C19.641 18.041 20.041 18.441 20.041 19.041C20.041 19.641 19.641 20.041 19.041 20.041Z" fill="currentColor" />
-                                    </svg>
-                                </span>
-                                <!--end::Svg Icon-->
-                            </span>
-                            <span class="menu-title">Warehouse</span>
-                        </a>
-                    </div>
-                @endif --}}
-
                 <!--Stocks-->
                 @if(auth()->user()->hasPermission('stock', 'stocks', 'read'))
                     <div class="menu-item">
@@ -341,7 +233,7 @@
                         ['location', 'divisions'],
                         ['location', 'regions'],
                         ['location', 'areas'],
-                        ['location', 'territorys'],
+                        ['location', 'territories'],
                         ['location', 'designs'],
                         ['sale-point', 'sale-points']
                     ];
@@ -351,12 +243,8 @@
                         ['location', 'divisions'],
                         ['location', 'regions'],
                         ['location', 'areas'],
-                        ['location', 'territorys'],
+                        ['location', 'territories'],
                         ['location', 'designs']
-                    ];
-
-                    $salesPermissions = [
-                        ['sale-point', 'sale-points'],
                     ];
                 @endphp
 
@@ -437,7 +325,7 @@
                             @endif
 
                             <!--Terrtories-->
-                            @if(auth()->user()->hasPermission('location', 'territorys', 'read'))
+                            @if(auth()->user()->hasPermission('location', 'territories', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('location.territories')) active @endif" href="{{ route('location.territories') }}">
                                         <span class="menu-bullet">
@@ -464,7 +352,7 @@
                 @endif
 
                 <!--Sale Points-->
-                @if(collect($salesPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
+                {{-- @if(collect($salesPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read'))) --}}
                     @if(auth()->user()->hasPermission('sale-point', 'sale-points', 'read'))
                         <div class="menu-item">
                             <a class="menu-link @if(Route::is('salePoints')) active @endif" href="{{ route('salePoints') }}">
@@ -482,23 +370,24 @@
                             </a>
                         </div>
                     @endif
-                @endif
+                {{-- @endif --}}
                 
                 @php
                     $salesPermissions = [
                         ['order', 'invoices'],
-                        ['order', 'symmary'],
-                        ['order', 'store-out']
+                        ['order', 'accepted-invoices'],
+                        ['collection', 'dues'],
+                        ['collection', 'update-dues']
                     ];
 
                     $orderPermissions = [
                         ['order', 'invoices'],
-                        ['order', 'symmary'],
-                        ['order', 'store-out']
+                        ['order', 'accepted-invoices']
                     ];
 
                     $collectionPermissions = [
-                        ['collection', 'dues']
+                        ['collection', 'dues'],
+                        ['collection', 'update-dues']
                     ];
                 @endphp
 
@@ -538,17 +427,6 @@
                                             <span class="bullet bullet-dot"></span>
                                         </span>
                                         <span class="menu-title">Invoices</span>
-                                    </a>
-                                </div>
-                            @endif
-
-                            @if(auth()->user()->hasPermission('order', 'summary', 'read'))
-                                <div class="menu-item">
-                                    <a class="menu-link @if(Route::is('order.order_summary')) active @endif" href="{{ route('order.order_summary') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Summary</span>
                                     </a>
                                 </div>
                             @endif
@@ -597,7 +475,7 @@
                                 </div>
                             @endif
 
-                            @if(auth()->user()->hasPermission('collection', 'dues', 'read'))
+                            @if(auth()->user()->hasPermission('collection', 'update-dues', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('collection.dues_copy')) active @endif" href="{{ route('collection.dues_copy') }}">
                                         <span class="menu-bullet">
@@ -612,17 +490,15 @@
                 @endif
 
                 @php
-                    $reportSectionPermissions = [
+                    $reportPermissions = [
+                        ['report', 'order-summary'],
                         ['report', 'sales'],
-                    ];
-                    
-                    $salesReportPermissions = [
-                        ['report', 'sales'],
+                        ['report', 'transections'],
                     ];
                 @endphp
 
                 <!--Report Section-->
-                @if(collect($reportSectionPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
+                @if(collect($reportPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
                     <div class="menu-item">
                         <div class="menu-content pt-8 pb-2">
                             <span class="menu-section text-muted text-uppercase fs-8 ls-1">Report</span>
@@ -630,7 +506,7 @@
                     </div>
                 @endif
 
-                @if(collect($salesReportPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
+                @if(collect($reportPermissions)->some(fn($p) => auth()->user()->hasPermission($p[0], $p[1], 'read')))
                     <div data-kt-menu-trigger="click" class="menu-item menu-accordion @if(Route::is('report.*')) here show mb-1 @endif">
                         <span class="menu-link">
                             <span class="menu-icon">
@@ -650,6 +526,17 @@
                         </span>
 
                         <div class="menu-sub menu-sub-accordion">
+                            @if(auth()->user()->hasPermission('report', 'order-summary', 'read'))
+                                <div class="menu-item">
+                                    <a class="menu-link @if(Route::is('report.order_summary')) active @endif" href="{{ route('report.order_summary') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Order Summary</span>
+                                    </a>
+                                </div>
+                            @endif
+
                             @if(auth()->user()->hasPermission('report', 'sales', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('report.sales')) active @endif" href="{{ route('report.sales') }}">
@@ -661,7 +548,7 @@
                                 </div>
                             @endif
 
-                            @if(auth()->user()->hasPermission('report', 'sales', 'read'))
+                            @if(auth()->user()->hasPermission('report', 'transections', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('report.transections')) active @endif" href="{{ route('report.transections') }}">
                                         <span class="menu-bullet">

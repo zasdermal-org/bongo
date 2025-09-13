@@ -59,13 +59,13 @@ class User extends Authenticatable
 
     public function hasPermission($menuSlug, $subMenuSlug, $action)
     {
-        // if ($this->role->slug === 'admin') {
-        //     return true;
-        // }
-
-        if (in_array($this->role->slug, ['admin', 'depot'])) {
+        if ($this->role->slug === 'admin') {
             return true;
         }
+
+        // if (in_array($this->role->slug, ['admin', 'depot'])) {
+        //     return true;
+        // }
 
         return $this->role->permissions->contains(function ($permission) use ($menuSlug, $subMenuSlug, $action) {
             return $permission->subMenu->menu->slug === $menuSlug &&
