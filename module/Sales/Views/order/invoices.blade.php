@@ -169,8 +169,6 @@
                                                         View
                                                     </a>
                                                 </div>
-
-                                                {{-- ?returnUrl={{ urlencode(url()->full()) }} --}}
                                                 <!--end::Menu item-->
 
                                                 <!--begin::Menu item-->
@@ -182,11 +180,13 @@
                                                 <!--end::Menu item-->
 
                                                 <!--begin::Menu item-->
-                                                {{-- <div class="menu-item px-3">
-                                                    <a href="javascript:void(0);" onclick="destroy({{ $orderInvoice->id }}, '{{ route('order.cancel_invoice', ['id' => ':id']) }}')" class="menu-link px-3">
-                                                        Cancel
-                                                    </a>
-                                                </div> --}}
+                                                @if (auth()->user()->role->slug === 'admin')
+                                                    <div class="menu-item px-3">
+                                                        <a href="javascript:void(0);" onclick="destroy({{ $orderInvoice->id }}, '{{ route('order.cancel_invoice', ['id' => ':id']) }}')" class="menu-link px-3">
+                                                            Cancel
+                                                        </a>
+                                                    </div>
+                                                @endif
                                                 <!--end::Menu item-->
                                             </div>
                                             <!--end::Menu-->
