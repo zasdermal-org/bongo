@@ -24,7 +24,7 @@
                                     <option></option>
                                     @foreach ($salePoints as $salePoint)
                                         <option value="{{ $salePoint->id }}" {{ request('sale_point_id') == $salePoint->id ? 'selected' : '' }}>
-                                            {{ $salePoint->name }} / ({{ $salePoint->address }})
+                                            {{ $salePoint->name }} / ({{ $salePoint->code_number }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -50,10 +50,10 @@
                                 <th class="min-w-10px">S.N</th>
                                 <th class="min-w-80px">Invoice No</th>
                                 <th class="min-w-80px">Sale Point Name</th>
-                                <th class="min-w-80px">Order By</th>
-                                <th class="min-w-50px">Territory</th>
-                                <th class="min-w-80px">Invoice Date/Time</th>
-                                <th class="min-w-60px">Amount</th>
+                                <th class="min-w-80px">Type</th>
+                                <th class="min-w-50px">Payment Type</th>
+                                <th class="min-w-80px">Invoice Date</th>
+                                <th class="min-w-60px">Invoice Value</th>
                                 <th class="min-w-60px">Discount</th>
                                 <th class="min-w-60px">Payable Amount</th>
                                 <th class="min-w-60px">Paid</th>
@@ -70,7 +70,7 @@
 
                         <!--begin::Table body-->
                         <tbody class="text-black-600">
-                            @foreach ($collections as $key => $collection)
+                            @foreach ($orderInvoices as $key => $orderInvoice)
                                 <tr class="invoice-row">
                                     <!--begin::S.N=-->
                                     <td>{{ $key + 1 }}</td>
@@ -78,30 +78,30 @@
 
                                     <!--begin::Invoice number=-->
                                     <td>
-                                        <a href="javascript:void(0)">{{ $collection->orderInvoice->invoice_number }}</a>
+                                        <a href="javascript:void(0)">{{ $orderInvoice->invoice_number }}</a>
                                     </td>
                                     <!--end::Invoice number=-->
 
                                     <!--begin::Sale point name=-->
-                                    <td>{{ $collection->orderInvoice->salePoint->name }} ({{ $collection->orderInvoice->salePoint->code_number }})</td>
+                                    <td>{{ $orderInvoice->salePoint->name }} ({{ $orderInvoice->salePoint->code_number }})</td>
                                     <!--end::Sale point name=-->
 
                                     <!--begin::Order by=-->
-                                    <td>{{ $collection->orderInvoice->user->name }}</td>
+                                    <td>{{ $orderInvoice->type }}</td>
                                     <!--end::Order by=-->
 
                                     <!--begin::Territory name=-->
-                                    <td>{{ $collection->orderInvoice->territory->name }}</td>
+                                    <td>{{ $orderInvoice->payment_type }}</td>
                                     <!--end::Territory name=-->
 
-                                    <!--begin::Invoice Date/Time=-->
-                                    <td>{{ $collection->orderInvoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A') }}</td>
-                                    <!--end::Invoice Date/Time=-->
+                                    <!--begin::Invoice Date=-->
+                                    <td>{{ $orderInvoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y') }}</td>
+                                    <!--end::Invoice Date=-->
 
                                     <!--begin::Amount=-->
                                     <td>
-                                        {{ $collection->collection_amount }} Tk
-                                        <input type="hidden" class="total-amount" value="{{ $collection->collection_amount }}">
+                                        {{ $orderInvoice->total_amount }} Tk
+                                        <input type="hidden" class="total-amount" value="{{ $orderInvoice->total_amount }}">
                                     </td>
                                     <!--end::Amount=-->
 
@@ -113,7 +113,7 @@
 
                                     <td class="text-end">
                                         <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                            <input class="form-check-input row-checkbox" type="checkbox" value="1" data-collection_id="{{ $collection->id }}" />
+                                            <input class="form-check-input row-checkbox" type="checkbox" value="1" data-collection_id="{{ $orderInvoice->id }}" />
                                         </div>
                                     </td>
                                 </tr>

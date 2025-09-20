@@ -39,10 +39,12 @@ class CollectionController extends Controller
             ['title' => 'Dues', 'url' => null]
         ];
 
-        $query = Collection::query();
-        $today = Carbon::today();
+        $data['salePoints'] = SalePoint::all();
 
-        // Parse date filters
+        $query = OrderInvoice::query();
+        $queryTwo = OrderInvoice::query();
+        $sale_point_id = $request->sale_point_id;
+
         $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
             ? Carbon::parse($request->from_date)->startOfDay()
             : null;
@@ -51,95 +53,132 @@ class CollectionController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : null;
 
-        // if ($request->filled('invoice_number')) {
-        //     $invoice_number = $request->invoice_number;
-        //     $query->whereHas('order_invoice', function ($subQ) use ($invoice_number) {
-        //         $subQ->where('invoice_number', $invoice_number);
-        //     });
-        // }
-
-        // if ($request->filled('username')) {
-        //     $user_id = User::where('username', $request->username)->value('id');
-        //     $query->whereHas('order_invoice', function ($subQ) use ($user_id) {
-        //         $subQ->where('user_id', $user_id);
-        //     });
-        // }
-
-        // if ($request->filled('code_number')) {
-        //     $code_number = $request->code_number;
-        //     $query->whereHas('order_invoice.sales_point', function ($subQ) use ($code_number) {
-        //         $subQ->where('code_number', $code_number);
-        //     });
-        // }
-
-        // if ($request->filled('depot_id')) {
-        //     $depot_id = $request->depot_id;
-        //     $query->whereHas('order_invoice.sales_point', function ($subQ) use ($depot_id) {
-        //         $subQ->where('depot_id', $depot_id);
-        //     });
-        // }
-
-        // if ($request->filled('payment_type')) {
-        //     $payment_type = $request->payment_type;
-        //     $query->whereHas('order_invoice.sales_point', function ($subQ) use ($payment_type) {
-        //         $subQ->where('payment_type', $payment_type);
-        //     });
-        // }
-
-        $query->whereHas('orderInvoice', function ($subQuery) use ($fromDate, $toDate, $today) {
-            if ($fromDate && $toDate) {
-                    $subQuery->whereBetween('order_invoices.updated_at', [$fromDate, $toDate]);
-            } else {
-                $subQuery->whereDate('order_invoices.updated_at', $today);
-            }
-        });
-        
-        $query->whereIn('status', ['Due', 'Partial Payment']);
-
-        $collections = $query->orderBy('id', 'desc')->get();
-
-        foreach ($collections as $collection) {
-            $total_partial_paid = Collection::where('order_invoice_id', $collection->order_invoice_id)
-                ->where('status', 'Partial | Paid')
-                ->sum('partial_paid');
-
-            $total_addi_dis_amount = Collection::where('order_invoice_id', $collection->order_invoice_id)
-                ->where('status', 'Partial | Paid')
-                ->sum('addi_dis_amount');
-
-            // $total_return_amount = Collection::where('order_invoice_id', $collection->order_invoice_id)
-            //     // ->where('status', 'Partial | Paid')
-            //     ->sum('return_amount');
-
-            $collection->previous_payment = $total_partial_paid;
-            $collection->previous_addi_dis_amount = $total_addi_dis_amount;
-            // $collection->previous_return_amount = $total_return_amount;
+        if ($request->payment_type && $request->payment_type !== 'all') {
+            $query->where('payment_type', $request->payment_type);
         }
-        
-        $data['collections'] = $collections;
+
+        $data['orderInvoices'] = $query->where('sale_point_id', $sale_point_id)
+            ->whereNotIn('status', ['Requested', 'Cancel'])
+            ->whereIn('payment_status', ['Due', 'Partial Paid'])
+            ->get();
+
+        foreach ($data['orderInvoices'] as $invoice) {
+            $invoice->discount_value = ($invoice->total_amount * $invoice->discount) / 100;
+        }
+
+        //for sale point total calculation of a given date range
+
+        if ($fromDate && $toDate) {
+            $queryTwo->where('sale_point_id', $sale_point_id)->whereBetween('invoice_date', [$fromDate, $toDate]);
+            $total_query = $queryTwo->get();
+
+            // $total_discount = 0;
+            // foreach ($total_query as $invoice) {
+            //     $total_discount += ($invoice->total_amount * $invoice->discount) / 100;
+            // }
+
+            $total_discount = $total_query->sum(function ($invoice) {
+                return ($invoice->total_amount * $invoice->discount) / 100;
+            });
+
+            // $data['invoice'] = $total_query->count();
+            $data['invoice_value'] = $total_query->sum('total_amount');
+            $data['discount_value'] = $total_discount;
+            // $data['return_value'] = $total_query->sum('return_amount');
+            $data['payable_value'] = $data['invoice_value'] - $data['discount_value'];
+            $data['paid'] = $total_query->sum('paid');
+            $data['adjustment'] = $total_query->sum('addi_discount');
+            $data['due'] = $total_query->sum('due');
+        }
 
         return view('Sales::collection.dues', $data);
     }
 
-    public function dues_copy(Request $request)
+    public function updateDue(Request $request)
     {
-        $data['breadcrumbs'] = [
-            ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Collection', 'url' => null],
-            ['title' => 'Dues', 'url' => null]
-        ];
+        $request->validate([
+            'selected_invoices'   => 'required|array',
+            'selected_invoices.*' => 'exists:order_invoices,id',
+            'addi_discount'       => 'nullable|numeric|min:0',
+            'total_collect'       => 'required|numeric|min:0',
+        ]);
 
-        $sale_point_id = $request->sale_point_id;
-        $data['salePoints'] = SalePoint::all();
-        
-        $data['collections'] = Collection::whereHas('orderInvoice.salePoint', function ($subQuery) use ($sale_point_id) {
-            $subQuery->where('id', $sale_point_id);
-        })
-        ->whereIn('status', ['Due', 'Partial Payment'])
-        ->get();
+        DB::beginTransaction();
 
-        return view('Sales::collection.dues_copy', $data);
+        try {
+            $totalCollect  = $request->total_collect;
+            $extraDiscount = $request->addi_discount ?? 0;
+
+            // Get invoices in the same order as selected
+            $invoices = OrderInvoice::whereIn('id', $request->selected_invoices)
+                ->orderBy('id') // or invoice_date if that's your order
+                ->get();
+
+            // --- STEP 1: apply payments FIFO (front to back)
+            foreach ($invoices as $invoice) {
+                if ($totalCollect > 0) {
+                    $dueBefore = $invoice->due;
+                    $payNow    = min($totalCollect, $dueBefore);
+
+                    $invoice->paid = ($invoice->paid ?? 0) + $payNow;
+                    $invoice->due  = $dueBefore - $payNow;
+
+                    $totalCollect -= $payNow;
+                }
+            }
+
+            // --- STEP 2: apply extra discount LIFO (back to front)
+            if ($extraDiscount > 0) {
+                foreach ($invoices->reverse() as $invoice) {
+                    if ($extraDiscount <= 0) break;
+
+                    $dueBefore = $invoice->due;
+                    $discountNow = min($extraDiscount, $dueBefore);
+
+                    $invoice->addi_discount = ($invoice->addi_discount ?? 0) + $discountNow;
+                    $invoice->due = $dueBefore - $discountNow;
+
+                    $extraDiscount -= $discountNow;
+                }
+            }
+
+            // --- STEP 3: update statuses
+            foreach ($invoices as $invoice) {
+                if ($invoice->due <= 0) {
+                    $invoice->payment_status = 'Paid';
+                } elseif ($invoice->paid > 0 && $invoice->due > 0) {
+                    $invoice->payment_status = 'Partial Paid';
+                } else {
+                    $invoice->payment_status = 'Due';
+                }
+
+                $invoice->save();
+            }
+
+            $invoiceNumbers = $invoices->pluck('invoice_number')->implode(', ');
+
+            Collection::create([
+                'user_id'        => auth()->user()->id,
+                'sale_point_id'  => $invoices->first()->sale_point_id ?? null, // taking from first invoice
+                'invoice_numbers'=> $invoiceNumbers,
+                'total_collect'  => $request->total_collect,
+                // 'payment_type'   => $request->payment_type,
+                // 'tracking_number'=> $request->tracking_number ?? null,
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->back()
+                ->with('success', 'Payment has been updated successfully.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to update payment: ' . $e->getMessage());
+        }
     }
+
 
     public function due($id)
     {
@@ -629,122 +668,6 @@ class CollectionController extends Controller
         return view('pages.collections.edit', $data);
     }
 
-    // public function return_order_and_update_invoice(Request $request, $id)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-
-    //         $collection = Collection::findOrFail($id);
-    //         $invoice = $collection->order_invoice;
-    //         $return_note = $request->return_note;
-
-    //         if (!$invoice) {
-    //             DB::rollBack();
-    //             return back()->with('error', 'Order invoice not found.');
-    //         }
-
-    //         $total_order_amount = 0;
-    //         $total_return_value = 0;
-
-    //         foreach ($invoice->orders as $order) {
-    //             $order_id = $order->id;
-
-    //             $data = $request->validate([
-    //                 'return_qty.' . $order_id => 'nullable|numeric|min:0'
-    //             ]);
-
-    //             $return_qty = $data['return_qty'][$order_id] ?? 0;
-
-    //             if ($return_qty > $order->quantity) {
-    //                 DB::rollBack();
-    //                 return back()->with('error', "Return quantity for order {$order->order_number} exceeds original quantity.");
-    //             }
-
-    //             $remain_qty = $order->quantity - $return_qty;
-    //             $return_value = $order->unit_price * $return_qty;
-
-    //             $order->update([
-    //                 'quantity' => $remain_qty,
-    //                 'return_qty' => $order->return_qty + $return_qty,
-    //                 'total_amount' => $order->unit_price * $remain_qty,
-    //             ]);
-
-    //             $total_order_amount += $order->unit_price * $remain_qty;
-    //             $total_return_value += $return_value;
-
-    //             $depot_stock_product = $order->depot_stock_product;
-    //             if (!$depot_stock_product) {
-    //                 DB::rollBack();
-    //                 return back()->with('error', "Depot stock product not found for order {$order->order_number}.");
-    //             }
-
-    //             $previous_stock = $depot_stock_product->quantity;
-    //             $updated_quantity = $previous_stock + $return_qty;
-
-    //             $depot_stock_product->update([
-    //                 'quantity' => $updated_quantity,
-    //             ]);
-
-    //             if ($return_qty > 0) {
-    //                 $warehouse_stock = WarehouseStock::find($depot_stock_product->warehouse_stock_id);
-    //                 if (!$warehouse_stock) {
-    //                     DB::rollBack();
-    //                     return back()->with('error', 'Warehouse stock not found.');
-    //                 }
-
-    //                 $curr_all_de_stock = DepotStockProduct::where('sku', $order->sku)->get();
-    //                 $total_stock = $curr_all_de_stock->sum('quantity') + $warehouse_stock->quantity;
-
-    //                 Transection::create([
-    //                     'depot_id' => $depot_stock_product->depot_id,
-    //                     'product_name' => $order->product_name,
-    //                     'sku' => $order->sku,
-    //                     'invoice_number' => $invoice->invoice_number,
-    //                     'order_number' => $order->order_number,
-    //                     'tran_type' => 'Sales Point to Depot',
-    //                     'status' => 'Return',
-    //                     'pre_stock' => $previous_stock,
-    //                     'tran_quant' => $return_qty,
-    //                     'curr_stock' => $updated_quantity,
-    //                     'national_stock' => $total_stock,
-    //                     'sales_value' => $return_value,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Update invoice
-    //         $discount_amount = 0;
-    //         if ($invoice->sell_discount > 0) {
-    //             $discount_amount = ($invoice->sell_discount / 100) * $total_order_amount;
-    //         }
-
-    //         $invoice->update([
-    //             'sell_discount_amount' => $discount_amount,
-    //             'status' => 'Partial Return',
-    //             'return_amount' => $invoice->return_amount + $total_return_value,
-    //             'return_note' => $return_note ?? $invoice->return_note
-    //         ]);
-
-    //         // Update collection
-    //         $collection_amount = $invoice->total_amount - $discount_amount;
-    //         $collection->update([
-    //             'collection_amount' => $collection_amount,
-    //             'return_amount' => $collection->return_amount + $total_return_value,
-    //             'due' => $collection->collection_amount - $total_return_value - $collection->return_amount,
-    //         ]);
-
-    //         $this->daily_stock_service->storeDailyStock();
-
-    //         DB::commit();
-
-    //         return redirect()->route('collections_report.dues')->with('success', 'Return processed successfully.');
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return back()->with('error', 'Something went wrong: ' . $e->getMessage());
-    //     }
-    // }
-
     public function return_order_and_update_invoice(Request $request, $id)
     {
         try {
@@ -856,204 +779,5 @@ class CollectionController extends Controller
             DB::rollBack();
             return back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
-    }
-
-
-    // public function return_order_and_update_invoice(Request $request, $id) // worked perfectly
-    // {
-    //     $collection = Collection::find($id);
-    //     $return_note = $request->return_note;
-
-    //     if ($collection) {
-    //         $total_return_value = 0;
-
-    //         foreach ($collection->order_invoice->orders as $order) {
-    //             $order_id = $order->id;
-                
-    //             $data = $request->validate([
-    //                 'return_qty.' . $order_id => 'nullable|numeric'
-    //             ]);
-
-    //             $return_qty = $data['return_qty'][$order_id];
-
-    //             // if ($return_qty != 0) {
-
-    //             $order = Order::find($order_id);
-    //             $remain_qty = $order->quantity - $return_qty;
-    //             $order->update([
-    //                 'quantity' => $order->quantity - $return_qty,
-    //                 'return_qty' => $order->return_qty + $return_qty,
-    //                 'total_amount' => $order->sell_unit_price * $remain_qty
-    //             ]);
-
-    //             $previous_stock = $order->depot_stock_product->quantity;
-    //             $updated_quantity = $previous_stock + $return_qty;
-    //             $order->depot_stock_product->update([
-    //                 'quantity' => $updated_quantity,
-    //             ]);
-
-    //             if ($return_qty != 0) {
-    //                 $ware_house_stock = WarehouseStock::where('id', $order->depot_stock_product->warehouse_stock_id)->first();
-    //                 $curr_all_de_stock = DepotStockProduct::where('sku', $order->sku)->get();
-    //                 $total_stock = $curr_all_de_stock->sum('quantity') + $ware_house_stock->quantity;
-
-    //                 $return_value = $order->sell_unit_price * $return_qty;
-    //                 $total_return_value += $return_value;
-
-    //                 ReturnTrack::create([
-    //                     'order_invoice_id' => $collection->order_invoice->id,
-    //                     'order_id' => $order->id,
-    //                     'user_id' => auth()->user()->id,
-    //                     'product_name' => $order->product_name,
-    //                     'sku' => $order->sku,
-    //                     'return_qty' => $return_qty
-    //                 ]);
-
-    //                 Transection::create([
-    //                     'depot_id' => $order->depot_stock_product->depot_id,
-    //                     'product_name' => $order->product_name,
-    //                     'sku' => $order->sku,
-    //                     'invoice_number' => $collection->order_invoice->invoice_number,
-    //                     'order_number' => $order->order_number,
-    //                     'tran_type' => 'Sales Point to Depot',
-    //                     'status' => 'Return',
-    //                     'pre_stock' => $previous_stock,
-    //                     'tran_quant' => $return_qty,
-    //                     'curr_stock' => $order->depot_stock_product->quantity,
-    //                     'national_stock' => $total_stock,
-    //                     'sales_value' => $return_value
-    //                 ]);
-    //             }
-    //         }
-
-    //         $collection->order_invoice->update([
-    //             'status' => 'Partial Return',
-    //             'return_amount' => $collection->order_invoice->return_amount + $total_return_value,
-    //             'return_note' => $return_note ?? $collection->order_invoice->return_note
-    //         ]);
-
-    //         $collection->update([
-    //             'return_amount' => $collection->return_amount + $total_return_value,
-    //             'due' => $collection->collection_amount - ($collection->return_amount + $total_return_value)
-    //         ]);
-    //     }
-
-    //     $this->daily_stock_service->storeDailyStock();
-
-    //     return redirect()->route('collections_report.dues');
-    // }
-
-    // public function return_order_and_update_invoice(Request $request, $id)
-    // {
-    //     $collection = Collection::find($id);
-
-    //     if ($collection) {
-    //         $validated_data = $request->validate([
-    //             'invoice_total_amount' => 'required|numeric',
-    //         ]);
-
-    //         if ($collection->order_invoice->sell_discount > 0) {
-    //             $get_percent_amount = ($collection->order_invoice->sell_discount / 100) * $validated_data['invoice_total_amount'];
-                
-    //             $collection->order_invoice->update([
-    //                 'sell_discount_amount' => $get_percent_amount
-    //             ]);
-    //         }
-
-    //         foreach ($collection->order_invoice->orders as $order) {
-    //             $order_id = $order->id;
-                
-    //             $validated_order_data = $request->validate([
-    //                 'quantity.' . $order_id => 'required|numeric',
-    //                 'product_total_amount.' . $order_id => 'required|numeric',
-    //                 // Add validation rules for other product fields as needed
-    //             ]);
-
-    //             $order = Order::find($order_id);
-    //             $return_value = $order->total_amount - $validated_order_data['product_total_amount'][$order_id];
-    //             $return_quantity = $order->quantity - $validated_order_data['quantity'][$order_id];
-    //             \Log::info('return quantity: ' . $return_quantity);
-    //             $order->update([
-    //                 'quantity' => $validated_order_data['quantity'][$order_id],
-    //                 'return_qty' => $order->return_qty + $return_quantity,
-    //                 'total_amount' => $validated_order_data['product_total_amount'][$order_id],
-    //             ]);
-
-    //             // $depot_stock = $order->depot_stock;
-    //             // \Log::info('data: ', ['depot' => $depot_stock]);
-
-    //             $previous_stock = $order->depot_stock_product->quantity;
-    //             $updated_quantity = $previous_stock + $return_quantity;
-    //             \Log::info('updated quantity: ' . $updated_quantity);
-    //             $order->depot_stock_product->update([
-    //                 'quantity' => $updated_quantity,
-    //             ]);
-
-    //             if ($return_quantity !== 0) {
-    //                 $ware_house_stock = WarehouseStock::where('id', $order->depot_stock_product->warehouse_stock_id)->first();
-    //                 $curr_all_de_stock = DepotStockProduct::where('sku', $order->sku)->get();
-    //                 $total_stock = $curr_all_de_stock->sum('quantity') + $ware_house_stock->quantity;
-
-    //                 // $previous_stock = Transection::where('sku', $order->sku)
-    //                 //     ->orderBy('created_at', 'desc') // or use 'id' if your transactions are sequential
-    //                 //     ->first();
-
-    //                 // $previous_national_stock = $previous_stock ? $previous_stock->curr_national_stock : 0;
-
-    //                 Transection::create([
-    //                     'depot_id' => $order->depot_stock_product->depot_id,
-    //                     'product_name' => $order->product_name,
-    //                     'sku' => $order->sku,
-    //                     'invoice_number' => $collection->order_invoice->invoice_number,
-    //                     'order_number' => $order->order_number,
-    //                     'tran_type' => 'Sales Point to Depot',
-    //                     'status' => 'Return',
-    //                     'pre_stock' => $previous_stock,
-    //                     'tran_quant' => $return_quantity,
-    //                     'curr_stock' => $order->depot_stock_product->quantity,
-    //                     'national_stock' => $total_stock,
-    //                     'sales_value' => $return_value
-    //                 ]);
-    //             }
-    //         }
-
-    //         $collection_amount = $collection->order_invoice->total_amount - $collection->order_invoice->sell_discount_amount;
-    //         $return_amount = $collection->order_invoice->total_amount - $collection->order_invoice->return_amount - $validated_data['invoice_total_amount'];
-
-    //         $collection->order_invoice->update([
-    //             'status' => 'Partial Return',
-    //             'return_amount' => $collection->order_invoice->return_amount += $return_amount
-    //         ]);
-
-    //         if ($collection->order_invoice->sell_discount > 0) {
-    //             $collection->update([
-    //                 'collection_amount' => $collection_amount,
-    //                 'return_amount' => $return_amount,
-    //                 'due' => $collection_amount - $return_amount
-    //             ]);
-    //         } else {
-    //             $collection->update([
-    //                 'return_amount' => $return_amount,
-    //                 'due' => $collection->collection_amount - $return_amount
-    //             ]);
-    //         }
-            
-    //     }
-
-    //     $this->daily_stock_service->storeDailyStock();
-
-    //     return redirect()->route('collections_report.dues');
-    // }
-
-    public function bulk_upload_collections(Request $request)
-    {
-        // dd($request->file('file'));
-        $request->validate([
-            'file' => 'required|mimes:xlsx',
-        ]);
-
-        Excel::import(new CollectionsImport, $request->file('file'));
-
-        return redirect()->back()->with('success', 'File uploaded successfully!');
     }
 }

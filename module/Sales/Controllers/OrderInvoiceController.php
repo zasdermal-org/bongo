@@ -111,7 +111,6 @@ class OrderInvoiceController extends Controller
             'type' => 'nullable',
             'orders' => 'required|array',
             'orders.*.stock_id' => 'required|exists:stocks,id',
-            // 'orders.*.product_name' => 'required',
             'orders.*.sku' => 'required',
             'orders.*.quantity' => 'required|numeric|min:1',
             'orders.*.unit_price' => 'required|numeric',
@@ -122,6 +121,16 @@ class OrderInvoiceController extends Controller
         // Log::info('OrderInvoice request received', ['data' => $data]);
 
         $auth_user = Auth::user();
+        $totalAmount = $data['total_amount'];
+
+        if ($data['payment_type'] === 'Cash') {
+            $discount = $data['discount'];
+            $discount_value = ($totalAmount * $discount) / 100;
+
+            $due = $totalAmount - $discount_value;
+        } else {
+            $due = $totalAmount;
+        }
 
         $orderInvoice = OrderInvoice::create([
             'user_id' => $data['user_id'],
@@ -130,9 +139,10 @@ class OrderInvoiceController extends Controller
             'territory_id' => $data['territory_id'],
             'depot_id' => $data['depot_id'],
             'invoice_number' => $this->generate_unique_invoice_number(),
-            'total_amount' => $data['total_amount'],
             'payment_type' => $data['payment_type'],
+            'total_amount' => $totalAmount,
             'discount' => $data['discount'] ?? null,
+            'due' => $due,
             'type' => $data['type'] ?? null,
             'created_at' => $data['date'], // temporary
             'updated_at' => $data['date'], // temporary
@@ -142,7 +152,6 @@ class OrderInvoiceController extends Controller
             $order = Order::create([
                 'stock_id' => $order['stock_id'],
                 'order_number' => $this->generate_unique_order_number(),
-                // 'product_name' => $order['product_name'],
                 'sku' => $order['sku'],
                 'quantity' => $order['quantity'],
                 'unit_price' => $order['unit_price'],

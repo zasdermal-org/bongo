@@ -370,6 +370,14 @@ INSERT INTO `sale_points` (`id`, `territory_id`, `name`, `code_number`, `address
 (364, 20, 'M/S Rustom Enterprise', 'SFP366', 'Hat Krishnopur Bazar,Sadorpur,Foridpur', 'Md.Rustom Mia', '01713502635', 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10'),
 (365, 34, 'Crystal Crop Care Ltd.', 'CCCC01', 'Betgari,Shajahanpur,Bogura.', 'Kbd.Khondokar Moqbul Hossain', '01714068370', 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10'),
 (366, 34, 'Concern World Wide', 'CCWW02', 'Rathnapalong, Ukhiya, Coxs Bazar', NULL, NULL, 'Deller', 'Active', '2025-09-04 06:40:10', '2025-09-04 06:40:10'),
-(367, 29, 'M/S Harun Store', 'ECB370\n', 'Shamlapur Bazar,Teknaf,Cox\'s Bazar', 'Md.harunar Rashied', '01862477598', 'Deller', 'Active', '2025-09-10 11:42:06', '2025-09-10 11:42:06'),
-(368, 29, 'M/S Allaher Dan Beej Bhander', 'ECB369', 'Teknaf Bazar,Cox\'s Bazar', 'Md.ashik Elahie', '01852006062', 'Deller', 'Active', '2025-09-10 11:43:36', '2025-09-10 11:43:36'),
-(369, 34, 'World Vision Bangladesh', 'CWVB03', 'Shanta Western Tower (Level 14), 186 Bir Uttam Mir Shawkat Sarak (Gulshan-Tejgaon Link Road', '', NULL, 'Deller', 'Active', '2025-09-10 11:59:35', '2025-09-10 11:59:35');
+(367, 29, 'M/S Harun Store', 'ECB370', 'Shamlapur Bazar,Teknaf,Coxs Bazar', 'Md.harunar Rashied', '01862477598', 'Deller', 'Active', '2025-09-10 11:42:06', '2025-09-10 11:42:06'),
+(368, 29, 'M/S Allaher Dan Beej Bhander', 'ECB369', 'Teknaf Bazar,Coxs Bazar', 'Md.ashik Elahie', '01852006062', 'Deller', 'Active', '2025-09-10 11:43:36', '2025-09-10 11:43:36'),
+(369, 34, 'World Vision Bangladesh', 'CWVB03', 'Shanta Western Tower (Level 14), 186 Bir Uttam Mir Shawkat Sarak (Gulshan-Tejgaon Link Road', '', NULL, 'Deller', 'Active', '2025-09-10 11:59:35', '2025-09-10 11:59:35'),
+(370, 29, 'M/S Harun Store', 'ECB370', 'Shamlapur Bazar,Teknaf,Coxs Bazar', 'Md.harunar Rashied', '01862477598', 'Deller', 'Active', '2025-09-16 09:35:14', '2025-09-16 09:35:14'),
+(371, 5, 'M/S Krishi Uddan', 'SPK371', 'kolapara Sadar,patuakhali', 'Md.mirajul Islam', '01760777726', 'Deller', 'Active', '2025-09-16 09:37:39', '2025-09-16 09:37:39'),
+(372, 5, 'M/S Akhi Store', 'SBN372', 'Hajarbigha,Chorokgaciya,Borguna', 'Md. Tuku Hawladar', '01725962282', 'Deller', 'Active', '2025-09-16 09:38:57', '2025-09-16 09:38:57'),
+(373, 15, 'M/S Kamal Traders', 'SKN373', 'Shadal Bazae,Botiyaghata,khulna', 'Md.kamal Hossain', '01983138115', 'Deller', 'Active', '2025-09-16 09:40:18', '2025-09-16 09:40:18'),
+(374, 21, 'M/S Malek Traders', 'NTG374', 'Uttar maloncha,Pirgonj,Thakugoan', 'Md.abdul Malek', '01733258718', 'Deller', 'Active', '2025-09-16 09:41:22', '2025-09-16 09:41:22'),
+(375, 24, 'M/S Farid Traders', 'NRH375', 'Seenpur Bazar,Pabna Sadar,Pabna', 'Md.karim', '01751862107', 'Deller', 'Active', '2025-09-16 09:42:16', '2025-09-16 09:42:16'),
+(376, 22, 'M/S Helal Traders', 'NNG376', 'Hasenbegpur,Bamil,Pantitola', 'Md.helalujjaman', '01761715532', 'Deller', 'Active', '2025-09-16 09:43:18', '2025-09-16 09:43:18'),
+(377, 23, 'M/S Delowar Traders', 'NDP345', 'Dolar Dorga,Nawabganj,Dinajpur', 'Md.mostafizur Rahman', '01861988239', 'Deller', 'Active', '2025-09-18 10:54:27', '2025-09-18 10:54:27');

@@ -21,11 +21,14 @@ Route::prefix('/order')->name('order.')->group(function () {
 });
 
 Route::prefix('/collection')->name('collection.')->group(function () {
+    // Route::get('/dues', [CollectionController::class, 'dues'])->name('dues');
     Route::get('/dues', [CollectionController::class, 'dues'])->name('dues');
-    Route::get('/dues-copy', [CollectionController::class, 'dues_copy'])->name('dues_copy');
-    Route::get('/due/{id}', [CollectionController::class, 'due'])->name('due');
-    Route::post('/update-due/{id}', [CollectionController::class, 'update'])->name('update_due');
-    Route::post('/update-due-copy', [CollectionController::class, 'update_copy'])->name('update_due_copy');
+    Route::post('/update-due', [CollectionController::class, 'updateDue'])->name('update_due');
+
+
+    // Route::get('/due/{id}', [CollectionController::class, 'due'])->name('due');
+    // Route::post('/update-due/{id}', [CollectionController::class, 'update'])->name('update_due');
+    // Route::post('/update-due-copy', [CollectionController::class, 'update_copy'])->name('update_due_copy');
 
     //not needed
     // Route::get('/partial-dues', [CollectionController::class, 'partial_dues'])->name('partial_dues');

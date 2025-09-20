@@ -159,16 +159,6 @@ class ReportController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : null;
 
-        if ($request->filled('invoice_number')) {
-            $invoice_number = $request->invoice_number;
-            $query->where('invoice_number', $invoice_number);
-        }
-
-        if ($request->filled('username')) {
-            $user_id = User::where('username', $request->username)->value('id');
-            $query->where('user_id', $user_id);
-        }
-
         if ($request->filled('code_number')) {
             $code_number = $request->code_number;
             $query->whereHas('salePoint', function ($subQ) use ($code_number) {
@@ -192,53 +182,21 @@ class ReportController extends Controller
         $total_query = $query->get();
         $order_invoices = $query->orderBy('id', 'desc')->paginate(30);
 
-        foreach ($order_invoices as $order_invoice) {
-            $total_addi_dis_amount = Collection::where('order_invoice_id', $order_invoice->id)
-                ->whereIn('status', ['Paid', 'Partial | Paid'])
-                ->sum('addi_dis_amount');
-
-            $total_partial_paid = Collection::where('order_invoice_id', $order_invoice->id)
-                ->where('status', 'Partial | Paid')
-                ->sum('partial_paid');
-
-            $total_full_paid = Collection::where('order_invoice_id', $order_invoice->id)
-                ->where('status', 'Paid')
-                ->sum('full_paid');
-            
-            $collection = Collection::where('order_invoice_id', $order_invoice->id)->get()->last();
-
-            $order_invoice->previous_payment = $total_partial_paid + $total_full_paid;
-            $order_invoice->previous_addi_dis_amount = $total_addi_dis_amount;
-            $order_invoice->due = $collection ? $collection->due : $order_invoice->total_amount - $order_invoice->sell_discount_amount - $order_invoice->return_amount;
+        foreach ($order_invoices as $invoice) {
+            $invoice->discount_value = ($invoice->total_amount * $invoice->discount) / 100;
         }
 
         $data['order_invoices'] = $order_invoices;
         
         $data['invoice'] = $total_query->count();
-        $data['order_value'] = $total_query->sum('total_amount');
-        $data['discount_value'] = $total_query->sum('sell_discount_amount');
+        $data['invoice_value'] = $total_query->sum('total_amount');
+
+        $data['discount_value'] = $total_query->sum(function ($invoice) {
+            return ($invoice->total_amount * $invoice->discount) / 100;
+        });
+
         $data['return_value'] = $total_query->sum('return_amount');
-        $data['payable_value'] = $data['order_value'] - $data['discount_value'] - $data['return_value'];
-
-        $total_partial_paid = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->where('status', 'Partial | Paid')
-            ->sum('partial_paid');
-
-        $total_full_paid = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->where('status', 'Paid')
-            ->sum('full_paid');
-
-        $data['total_previous_payment'] = $total_partial_paid + $total_full_paid;
-
-        $data['addi_dis_value'] = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->whereIn('status', ['Paid', 'Partial | Paid'])
-            ->sum('addi_dis_amount');
-
-        $collection = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->whereIn('status', ['Due', 'Partial Payment'])
-            ->get();
-
-        $data['due'] = $collection ? $collection->sum('due') : $data['order_value'] - $data['discount_value'] - $data['return_value'];
+        $data['payable_value'] = $data['invoice_value'] - $data['discount_value'];
 
         return view('Report::sales', $data);
     }

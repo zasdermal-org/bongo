@@ -26,7 +26,7 @@ JOIN sale_points sp ON
 WHERE
     sp.code_number = 'WGP273';
 
-// update orderInvoice table for type
+// update orderInvoice table for type // done
 UPDATE
     order_invoices oi
 JOIN order_order_invoice ooi ON
@@ -43,9 +43,27 @@ SET
     oi.type = CASE WHEN c.slug = 'seed' THEN 'seed' ELSE 'agrochemicals'
 END;
 
-// update orderInvoice table for depot_id
+// update orderInvoice table for depot_id // done
 UPDATE
     order_invoices
 SET
     depot_id = CASE WHEN TYPE = 'seed' THEN 1 WHEN TYPE = 'agrochemicals' THEN 2
 END;
+
+// udate the due field for credit payment_type
+UPDATE
+    order_invoices
+SET
+    due = total_amount
+WHERE
+    payment_type = 'Credit';
+
+// udate the due field for cash payment_type
+UPDATE
+    order_invoices
+SET
+    due = total_amount -(
+        total_amount *(discount / 100)
+    )
+WHERE
+    payment_type = 'Cash';

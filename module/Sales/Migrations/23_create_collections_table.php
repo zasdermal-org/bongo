@@ -13,17 +13,12 @@ return new class extends Migration
     {
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_invoice_id')->constrained('order_invoices')->cascadeOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->enum('status', ['Due', 'Paid', 'Partial Payment', 'Partial | Paid', 'Return'])->default('Due');
-            $table->decimal('collection_amount', 10, 2);
-            $table->decimal('addi_dis_amount', 10, 2)->nullable();
-            $table->decimal('ait', 10, 2)->nullable();
-            $table->decimal('return_amount', 10, 2)->nullable();
-            $table->decimal('partial_paid', 10, 2)->nullable();
-            $table->decimal('full_paid', 10, 2)->nullable();
-            $table->decimal('due', 10, 2)->nullable();
-            // $table->enum('money_receipt_status', ['done'])->nullable();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('sale_point_id')->constrained('sale_points')->cascadeOnDelete();
+            $table->text('invoice_numbers');
+            $table->decimal('total_collect', 10, 2);
+            $table->enum('payment_type', ['Cash', 'Cheque', 'AC Transfer'])->nullable(); // cash or cheque
+            $table->string('tracking_number')->nullable(); // transection details
             $table->timestamps();
         });
     }

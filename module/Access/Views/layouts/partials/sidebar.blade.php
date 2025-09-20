@@ -376,8 +376,7 @@
                     $salesPermissions = [
                         ['order', 'invoices'],
                         ['order', 'accepted-invoices'],
-                        ['collection', 'dues'],
-                        ['collection', 'update-dues']
+                        ['collection', 'dues']
                     ];
 
                     $orderPermissions = [
@@ -386,8 +385,7 @@
                     ];
 
                     $collectionPermissions = [
-                        ['collection', 'dues'],
-                        ['collection', 'update-dues']
+                        ['collection', 'dues']
                     ];
                 @endphp
 
@@ -415,7 +413,7 @@
                                 </span>
                                 <!--end::Svg Icon-->
                             </span>
-                            <span class="menu-title">Orders & Invoices</span>
+                            <span class="menu-title">Order & Invoice</span>
                             <span class="menu-arrow"></span>
                         </span>
 
@@ -471,17 +469,6 @@
                                             <span class="bullet bullet-dot"></span>
                                         </span>
                                         <span class="menu-title">Dues</span>
-                                    </a>
-                                </div>
-                            @endif
-
-                            @if(auth()->user()->hasPermission('collection', 'update-dues', 'read'))
-                                <div class="menu-item">
-                                    <a class="menu-link @if(Route::is('collection.dues_copy')) active @endif" href="{{ route('collection.dues_copy') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Update Dues</span>
                                     </a>
                                 </div>
                             @endif

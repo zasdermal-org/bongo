@@ -12,17 +12,12 @@ class Collection extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_invoice_id',
         'user_id',
-        'status',
-        'collection_amount',
-        'addi_dis_amount',
-        'ait',
-        'partial_paid',
-        'full_paid',
-        'return_amount',
-        'due',
-        // 'money_receipt_status'
+        'sale_point_id',
+        'invoice_numbers',
+        'total_collect',
+        'payment_type',
+        'tracking_number'
     ];
 
     public function orderInvoice()

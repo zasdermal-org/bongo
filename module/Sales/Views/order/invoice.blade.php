@@ -79,8 +79,7 @@
                                             <div class="flex-root d-flex flex-column">
                                                 <span class="text-muted">Order By</span>
                                                 <span class="fs-6">
-                                                    User ID: {{ $orderInvoice->user->username }}
-                                                    <br />Name: {{ $orderInvoice->user->name }}
+                                                    Territory: {{ $orderInvoice->territory->name }}
                                                 </span>
 
                                                 {{-- @if ($orderInvoice->delivery_man)

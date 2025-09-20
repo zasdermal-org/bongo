@@ -143,6 +143,7 @@
                                     @if (auth()->user()->role->slug === 'admin')
                                         <th class="min-w-50px">Type</th>
                                     @endif
+                                    <th class="min-w-50px">Payment Type</th>
                                     <th class="min-w-50px">Territory</th>
                                     <th class="min-w-80px">Order Date</th>
                                     <th class="min-w-80px">Invoice Date</th>
@@ -194,6 +195,8 @@
                                         @if (auth()->user()->role->slug === 'admin')
                                             <td>{{ $orderInvoice->type }}</td>
                                         @endif
+
+                                        <td>{{ $orderInvoice->payment_type }}</td>
 
                                         <!--begin::Territory=-->
                                         <td>{{ $orderInvoice->territory->name }}</td>
