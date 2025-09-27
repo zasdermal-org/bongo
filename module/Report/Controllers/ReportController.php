@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 use Module\Access\Models\User;
+use Module\Market\Models\Area;
+use Module\Market\Models\Region;
 use Module\Market\Models\SalePoint;
 use Module\Market\Models\Territory;
 use Module\Sales\Models\Collection;
@@ -144,9 +146,11 @@ class ReportController extends Controller
             ['title' => 'Sales', 'url' => null]
         ];
 
+        $data['areas'] = Area::all();
+        $data['regions'] = Region::all();
+        $data['territories'] = Territory::all();
         $data['sale_points'] = SalePoint::where('is_active', 'Active')->orderBy('id', 'desc')->get();
 
-        $data['territories'] = Territory::all();
         $today = Carbon::today();
         $query = OrderInvoice::query();
 
@@ -163,6 +167,25 @@ class ReportController extends Controller
             $code_number = $request->code_number;
             $query->whereHas('salePoint', function ($subQ) use ($code_number) {
                 $subQ->where('code_number', $code_number);
+            });
+        }
+
+        // if ($request->filled('area_id')) {
+        //     $territoryIds = Territory::where('area_id', $request->area_id)->pluck('id');
+        //     if ($territoryIds->isNotEmpty()) {
+        //         $query->whereIn('territory_id', $territoryIds);
+        //     }
+        // }
+
+        if ($request->filled('region_id')) {
+            $query->whereHas('territory.area.region', function ($q) use ($request) {
+                $q->where('id', $request->region_id);
+            });
+        }
+
+        if ($request->filled('area_id')) {
+            $query->whereHas('territory.area', function ($q) use ($request) {
+                $q->where('id', $request->area_id);
             });
         }
 

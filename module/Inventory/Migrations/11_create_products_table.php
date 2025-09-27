@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories')->nullOnDelete();
             $table->foreignId('pack_size_id')->nullable()->constrained('pack_sizes')->nullOnDelete();
-            $table->string('title')->unique();
+            $table->string('title');
             $table->string('slug')->unique();
             $table->string('sku')->unique();
             $table->decimal('unit_price', 10, 2);

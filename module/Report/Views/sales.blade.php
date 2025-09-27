@@ -30,18 +30,32 @@
                             </div>
                             <!--end::Search-->
 
-                            <!--begin::Depot-->
                             <div class="w-110 mw-120px me-2">
-                                <!--begin::Select2-->
-                                <select name="territory_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Territory" data-kt-ecommerce-product-filter="status">
+                                <select name="region_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Regions">
+                                    <option></option>
+                                    @foreach ($regions as $region)
+                                        <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="w-110 mw-120px me-2">
+                                <select name="area_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Areas">
+                                    <option></option>
+                                    @foreach ($areas as $area)
+                                        <option value="{{ $area->id }}" {{ request('area_id') == $area->id ? 'selected' : '' }}>{{ $area->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="w-110 mw-120px me-2">
+                                <select name="territory_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Territory">
                                     <option></option>
                                     @foreach ($territories as $territory)
                                         <option value="{{ $territory->id }}" {{ request('territory_id') == $territory->id ? 'selected' : '' }}>{{ $territory->name }}</option>
                                     @endforeach
                                 </select>
-                                <!--end::Select2-->
                             </div>
-                            <!--end::Depot-->
 
                             <div class="w-110 mw-120px me-2">
                                 <input name="from_date" type="date" value="{{ request('from_date') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />

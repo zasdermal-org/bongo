@@ -129,7 +129,6 @@ class TerritoriesTableSeeder extends Seeder
                 'area_id' => $rajshahi->id,
                 'name' => 'Pabna'
             ],
-
             [
                 'area_id' => $naogaon->id,
                 'name' => 'Niamatpur'
@@ -169,6 +168,14 @@ class TerritoriesTableSeeder extends Seeder
             [
                 'area_id' => $corporate->id,
                 'name' => 'Corporate'
+            ],
+            [
+                'area_id' => $jamalpur->id,
+                'name' => 'Mymonshing'
+            ],
+            [
+                'area_id' => $faridpur->id,
+                'name' => 'Rajbari'
             ],
         ];
 
