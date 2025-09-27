@@ -170,13 +170,6 @@ class ReportController extends Controller
             });
         }
 
-        // if ($request->filled('area_id')) {
-        //     $territoryIds = Territory::where('area_id', $request->area_id)->pluck('id');
-        //     if ($territoryIds->isNotEmpty()) {
-        //         $query->whereIn('territory_id', $territoryIds);
-        //     }
-        // }
-
         if ($request->filled('region_id')) {
             $query->whereHas('territory.area.region', function ($q) use ($request) {
                 $q->where('id', $request->region_id);
@@ -225,7 +218,17 @@ class ReportController extends Controller
     }
 
 
+    public function getAreas($region_id)
+    {
+        $areas = Area::where('region_id', $region_id)->get(['id', 'name']);
+        return response()->json($areas);
+    }
 
+    public function getTerritories($area_id)
+    {
+        $territories = Territory::where('area_id', $area_id)->get(['id', 'name']);
+        return response()->json($territories);
+    }
 
 
 

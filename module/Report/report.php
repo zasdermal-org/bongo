@@ -29,4 +29,7 @@ Route::prefix('/report')->name('report.')->group(function () {
     // Route::get('/receipt/{id}', [SalesReportController::class, 'receipt'])->name('receipt');
 
     Route::get('/transections', [TransectionController::class, 'transections'])->name('transections');
+
+    Route::get('/get-areas/{region_id}', [ReportController::class, 'getAreas'])->name('get_areas');
+    Route::get('/get-territories/{area_id}', [ReportController::class, 'getTerritories'])->name('get_territories');
 });

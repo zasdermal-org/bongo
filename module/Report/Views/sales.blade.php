@@ -30,8 +30,8 @@
                             </div>
                             <!--end::Search-->
 
-                            <div class="w-110 mw-120px me-2">
-                                <select name="region_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Regions">
+                            {{-- <div class="w-110 mw-120px me-2">
+                                <select name="region_id" id="region_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Regions">
                                     <option></option>
                                     @foreach ($regions as $region)
                                         <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
@@ -40,7 +40,7 @@
                             </div>
 
                             <div class="w-110 mw-120px me-2">
-                                <select name="area_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Areas">
+                                <select name="area_id" id="area_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Areas">
                                     <option></option>
                                     @foreach ($areas as $area)
                                         <option value="{{ $area->id }}" {{ request('area_id') == $area->id ? 'selected' : '' }}>{{ $area->name }}</option>
@@ -49,13 +49,101 @@
                             </div>
 
                             <div class="w-110 mw-120px me-2">
-                                <select name="territory_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Territory">
+                                <select name="territory_id" id="territory_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Territory">
                                     <option></option>
                                     @foreach ($territories as $territory)
                                         <option value="{{ $territory->id }}" {{ request('territory_id') == $territory->id ? 'selected' : '' }}>{{ $territory->name }}</option>
                                     @endforeach
                                 </select>
+                            </div> --}}
+
+                            <!-- Region -->
+                            {{-- <div class="w-110 mw-120px me-2">
+                                <select name="region_id" id="region_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Regions">
+                                    <option></option>
+                                    @foreach ($regions as $region)
+                                        <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>
+                                            {{ $region->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
+
+                            <!-- Area (empty, will load via AJAX) -->
+                            <div class="w-110 mw-120px me-2">
+                                <select name="area_id" id="area_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Areas">
+                                    <option value="">Select Area</option>
+                                    @if(request('region_id'))
+                                        @foreach ($areas->where('region_id', request('region_id')) as $area)
+                                            <option value="{{ $area->id }}" {{ request('area_id') == $area->id ? 'selected' : '' }}>
+                                                {{ $area->name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <!-- Territory (empty, will load via AJAX) -->
+                            <div class="w-110 mw-120px me-2">
+                                <select name="territory_id" id="territory_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Territory">
+                                    <option></option>
+                                    <option value="">All Territories</option>
+                                    @if(request('area_id'))
+                                        @foreach ($territories->where('area_id', request('area_id')) as $territory)
+                                            <option value="{{ $territory->id }}" {{ request('territory_id') == $territory->id ? 'selected' : '' }}>
+                                                {{ $territory->name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div> --}}
+
+                            <!-- Region -->
+                            <div class="w-110 mw-120px me-2">
+                                <select name="region_id" id="region_id" class="form-select form-select-solid"
+                                    data-control="select2"
+                                    onchange="loadAreas(this.value)">
+                                    <option value="">All Regions</option>
+                                    @foreach ($regions as $region)
+                                        <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>
+                                            {{ $region->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Area -->
+                            <div class="w-110 mw-120px me-2">
+                                <select name="area_id" id="area_id" class="form-select form-select-solid"
+                                    data-control="select2"
+                                    onchange="loadTerritories(this.value)">
+                                    <option value="">All Areas</option>
+                                    @if(request('region_id'))
+                                        @foreach ($areas->where('region_id', request('region_id')) as $area)
+                                            <option value="{{ $area->id }}" {{ request('area_id') == $area->id ? 'selected' : '' }}>
+                                                {{ $area->name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <!-- Territory -->
+                            <div class="w-110 mw-120px me-2">
+                                <select name="territory_id" id="territory_id" class="form-select form-select-solid"
+                                    data-control="select2">
+                                    <option value="">All Territories</option>
+                                    @if(request('area_id'))
+                                        @foreach ($territories->where('area_id', request('area_id')) as $territory)
+                                            <option value="{{ $territory->id }}" {{ request('territory_id') == $territory->id ? 'selected' : '' }}>
+                                                {{ $territory->name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+
 
                             <div class="w-110 mw-120px me-2">
                                 <input name="from_date" type="date" value="{{ request('from_date') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />
@@ -220,3 +308,122 @@
     <!--end::Post-->
 </div>  
 @endsection
+
+{{-- <script>
+$(document).ready(function () {
+
+    // ===== When region changes → load areas =====
+    $('#region_id').on('change', function () {
+        let regionId = $(this).val();
+        $('#area_id').empty().append('<option value="">Select Area</option>');
+        $('#territory_id').empty().append('<option value="">Select Territory</option>');
+
+        if (regionId) {
+            $.ajax({
+                url: "{{ route('report.get_areas', ':id') }}".replace(':id', regionId),
+                type: "GET",
+                success: function (data) {
+                    $.each(data, function (key, area) {
+                        $('#area_id').append('<option value="' + area.id + '">' + area.name + '</option>');
+                    });
+
+                    // If page has old selected area → reselect it
+                    let selectedArea = "{{ request('area_id') }}";
+                    if (selectedArea) {
+                        $('#area_id').val(selectedArea).trigger('change');
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching areas:", xhr.responseText);
+                }
+            });
+        }
+    });
+
+    // ===== When area changes → load territories =====
+    $('#area_id').on('change', function () {
+        let areaId = $(this).val();
+        $('#territory_id').empty().append('<option value="">Select Territory</option>');
+
+        if (areaId) {
+            $.ajax({
+                url: "{{ route('report.get_territories', ':id') }}".replace(':id', areaId),
+                type: "GET",
+                success: function (data) {
+                    $.each(data, function (key, territory) {
+                        $('#territory_id').append('<option value="' + territory.id + '">' + territory.name + '</option>');
+                    });
+
+                    // If page has old selected territory → reselect it
+                    let selectedTerritory = "{{ request('territory_id') }}";
+                    if (selectedTerritory) {
+                        $('#territory_id').val(selectedTerritory).trigger('change');
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Error fetching territories:", xhr.responseText);
+                }
+            });
+        }
+    });
+
+    // ===== Auto-load if region already selected =====
+    let selectedRegion = "{{ request('region_id') }}";
+    if (selectedRegion) {
+        $('#region_id').trigger('change');
+    }
+});
+</script> --}}
+
+<script>
+function loadAreas(regionId) {
+    let areaSelect = document.getElementById('area_id');
+    let territorySelect = document.getElementById('territory_id');
+
+    // Reset areas and territories
+    areaSelect.innerHTML = '<option value="">All Areas</option>';
+    territorySelect.innerHTML = '<option value="">All Territories</option>';
+
+    if (!regionId) return; // Nothing selected
+
+    fetch('/report/get-areas/' + regionId)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(area => {
+                let option = document.createElement('option');
+                option.value = area.id;
+                option.text = area.name;
+                areaSelect.add(option);
+            });
+
+            // Trigger Select2 refresh
+            $('#area_id').val('').trigger('change.select2');
+        })
+        .catch(err => console.error('Error fetching areas:', err));
+}
+
+function loadTerritories(areaId) {
+    let territorySelect = document.getElementById('territory_id');
+    territorySelect.innerHTML = '<option value="">All Territories</option>';
+
+    if (!areaId) return;
+
+    fetch('/report/get-territories/' + areaId)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(territory => {
+                let option = document.createElement('option');
+                option.value = territory.id;
+                option.text = territory.name;
+                territorySelect.add(option);
+            });
+
+            // Trigger Select2 refresh
+            $('#territory_id').val('').trigger('change.select2');
+        })
+        .catch(err => console.error('Error fetching territories:', err));
+}
+</script>
+
+
+
