@@ -223,10 +223,7 @@
 
                                     <td class="pe-0">
                                         {{-- <a href="{{ route('order_management.order_invoice', $order_invoice->id) }}" class="text-gray-700 text-hover-primary fs-5 fw-bolder"> --}}
-                                        {{-- <a href="{{ route('order_management.order_invoice', $order_invoice->id) }}"> --}}
-                                        <a href="javascript:void(0)">
-                                            {{ $order_invoice->invoice_number }}
-                                        </a>
+                                        <a href="{{ route('order.invoice', $order_invoice->id) }}">{{ $order_invoice->invoice_number }}</a>
                                     </td>
 
                                     <td>{{ $order_invoice->user->name }}</td>
