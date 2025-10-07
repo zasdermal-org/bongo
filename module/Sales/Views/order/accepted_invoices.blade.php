@@ -18,9 +18,9 @@
                         <div class="card-title">
                             <form class="d-flex align-items-center position-relative my-1" action="{{ route('order.accepted_invoices') }}" method="GET">
                                 <!--begin::Search-->
-                                {{-- <div class="w-110 mw-120px me-2">
-                                    <input name="invoice_number" value="{{ request('invoice_number') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Invoice Number" />
-                                </div> --}}
+                                <div class="w-110 mw-120px me-2">
+                                    <input type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Invoice Number" />
+                                </div>
                                 <!--end::Search-->
 
                                 <!--begin::Search-->
@@ -252,7 +252,7 @@
 
                             <tfoot>
                                 <tr>
-                                    <td colspan="8" class="text-end fw-bold">
+                                    <td colspan="9" class="text-end fw-bold">
                                         <div class="badge badge-light-info" style="font-size: 14px;">Total:</div>
                                     </td>
                                     <td class="fw-bold">
