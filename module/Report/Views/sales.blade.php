@@ -30,79 +30,20 @@
                             </div>
                             <!--end::Search-->
 
-                            {{-- <div class="w-110 mw-120px me-2">
-                                <select name="region_id" id="region_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Regions">
-                                    <option></option>
-                                    @foreach ($regions as $region)
-                                        <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
-                                    @endforeach
+                            <!--begin::Search-->
+                            <div class="w-110 mw-120px me-2">
+                                <select name="type" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Type">
+                                    <option></option> {{-- placeholder --}}
+                                    <option value="all" {{ request('type') == 'all' ? 'selected' : '' }}>All</option>
+                                    <option value="seed" {{ request('type') == 'seed' ? 'selected' : '' }}>Seed</option>
+                                    <option value="agrochemicals" {{ request('type') == 'agrochemicals' ? 'selected' : '' }}>Agrochemicals</option>
                                 </select>
                             </div>
-
-                            <div class="w-110 mw-120px me-2">
-                                <select name="area_id" id="area_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Areas">
-                                    <option></option>
-                                    @foreach ($areas as $area)
-                                        <option value="{{ $area->id }}" {{ request('area_id') == $area->id ? 'selected' : '' }}>{{ $area->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="w-110 mw-120px me-2">
-                                <select name="territory_id" id="territory_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Territory">
-                                    <option></option>
-                                    @foreach ($territories as $territory)
-                                        <option value="{{ $territory->id }}" {{ request('territory_id') == $territory->id ? 'selected' : '' }}>{{ $territory->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
-
-                            <!-- Region -->
-                            {{-- <div class="w-110 mw-120px me-2">
-                                <select name="region_id" id="region_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Regions">
-                                    <option></option>
-                                    @foreach ($regions as $region)
-                                        <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>
-                                            {{ $region->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Area (empty, will load via AJAX) -->
-                            <div class="w-110 mw-120px me-2">
-                                <select name="area_id" id="area_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Areas">
-                                    <option value="">Select Area</option>
-                                    @if(request('region_id'))
-                                        @foreach ($areas->where('region_id', request('region_id')) as $area)
-                                            <option value="{{ $area->id }}" {{ request('area_id') == $area->id ? 'selected' : '' }}>
-                                                {{ $area->name }}
-                                            </option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-
-                            <!-- Territory (empty, will load via AJAX) -->
-                            <div class="w-110 mw-120px me-2">
-                                <select name="territory_id" id="territory_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Territory">
-                                    <option></option>
-                                    <option value="">All Territories</option>
-                                    @if(request('area_id'))
-                                        @foreach ($territories->where('area_id', request('area_id')) as $territory)
-                                            <option value="{{ $territory->id }}" {{ request('territory_id') == $territory->id ? 'selected' : '' }}>
-                                                {{ $territory->name }}
-                                            </option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div> --}}
+                            <!--end::Search-->
 
                             <!-- Region -->
                             <div class="w-110 mw-120px me-2">
-                                <select name="region_id" id="region_id" class="form-select form-select-solid"
-                                    data-control="select2"
-                                    onchange="loadAreas(this.value)">
+                                <select onchange="loadAreas(this.value)" name="region_id" id="region_id" class="form-select form-select-solid" data-control="select2">
                                     <option value="">All Regions</option>
                                     @foreach ($regions as $region)
                                         <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>
@@ -114,9 +55,7 @@
 
                             <!-- Area -->
                             <div class="w-110 mw-120px me-2">
-                                <select name="area_id" id="area_id" class="form-select form-select-solid"
-                                    data-control="select2"
-                                    onchange="loadTerritories(this.value)">
+                                <select onchange="loadTerritories(this.value)" name="area_id" id="area_id" class="form-select form-select-solid" data-control="select2">
                                     <option value="">All Areas</option>
                                     @if(request('region_id'))
                                         @foreach ($areas->where('region_id', request('region_id')) as $area)
@@ -130,8 +69,7 @@
 
                             <!-- Territory -->
                             <div class="w-110 mw-120px me-2">
-                                <select name="territory_id" id="territory_id" class="form-select form-select-solid"
-                                    data-control="select2">
+                                <select name="territory_id" id="territory_id" class="form-select form-select-solid" data-control="select2">
                                     <option value="">All Territories</option>
                                     @if(request('area_id'))
                                         @foreach ($territories->where('area_id', request('area_id')) as $territory)

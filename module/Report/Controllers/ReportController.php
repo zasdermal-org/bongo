@@ -170,6 +170,10 @@ class ReportController extends Controller
             });
         }
 
+        if ($request->type && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+
         if ($request->filled('region_id')) {
             $query->whereHas('territory.area.region', function ($q) use ($request) {
                 $q->where('id', $request->region_id);
