@@ -252,7 +252,7 @@
 
                             <tfoot>
                                 <tr>
-                                    <td colspan="9" class="text-end fw-bold">
+                                    <td colspan="{{ auth()->user()->role->slug === 'admin' ? 9 : 8 }}" class="text-end fw-bold">
                                         <div class="badge badge-light-info" style="font-size: 14px;">Total:</div>
                                     </td>
                                     <td class="fw-bold">
