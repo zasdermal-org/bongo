@@ -42,6 +42,17 @@
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <!--begin::Label-->
+                        <label class="fs-6 form-label required">Code</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input class="form-control form-control-solid" placeholder="Type code" name="code_number" />
+                        <!--end::Input-->
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <!--begin::Label-->
                         <label class="fs-6 form-label">Address</label>
                         <!--end::Label-->
                         <!--begin::Input-->

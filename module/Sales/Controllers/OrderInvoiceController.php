@@ -424,6 +424,47 @@ class OrderInvoiceController extends Controller
         return view('Sales::order.accepted_invoices', $data);
     }
 
+    public function return_invoice(Request $request, $id)
+    {
+        $auth_user = Auth::user()->id;
+        $invoice = OrderInvoice::findOrFail($id);
+
+        foreach ($invoice->orders as $order) {
+            $order->update([
+                'quantity' => 0,
+                'return_qty' => $order->quantity,
+                'total_amount' => 0.00
+            ]);
+
+            $stockProduct = $order->stock;
+
+            $previous_stock = $stockProduct->quantity;
+            $stockProduct->update([
+                'quantity' => $previous_stock + $order->return_qty
+            ]);
+
+            Transection::create([
+                'user_id' => $auth_user,
+                'stock_id' => $stockProduct->id,
+                'order_invoice_id' => $invoice->id,
+                'sku' => $order->sku,
+                'pre_stock' => $previous_stock,
+                'tran_quant' => $order->return_qty,
+                'curr_stock' => $stockProduct->quantity,
+                'tran_type' => 'Sale Point to Warehouse',
+                'status' => 'Return'
+            ]);
+        }
+
+        $invoice->update([
+            'status' => 'Cancel',
+            'payment_status' => 'Return',
+            'return_amount' => $invoice->total_amount
+        ]);
+
+        return redirect()->back();
+    }
+
     // helper
     private function generate_unique_invoice_number()
     {

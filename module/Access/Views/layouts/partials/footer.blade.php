@@ -5,7 +5,7 @@
         <div class="text-dark order-2 order-md-1">
             <span class="text-muted fw-bold me-1">&copy;</span>
             <span id="current_year" class="text-muted fw-bold me-1"></span>
-            <a href="https://eusufahamed.me" target="_blank" class="text-gray-800 text-hover-primary">Eusuf Ahamed.</a>
+            <a class="text-gray-800 text-hover-primary">Bongo Agritech.</a>
             All rights reserved
         </div>
         <!--end::Copyright-->

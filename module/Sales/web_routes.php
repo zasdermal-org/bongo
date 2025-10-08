@@ -18,6 +18,7 @@ Route::prefix('/order')->name('order.')->group(function () {
     Route::post('/update-order/{id}', [OrderInvoiceController::class, 'update_order'])->name('update_order');
 
     Route::get('/accepted-invoices', [OrderInvoiceController::class, 'accepted_invoices'])->name('accepted_invoices');
+    Route::get('/return-invoice/{id}', [OrderInvoiceController::class, 'return_invoice'])->name('return_invoice');
 });
 
 Route::prefix('/collection')->name('collection.')->group(function () {

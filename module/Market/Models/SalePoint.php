@@ -16,13 +16,6 @@ class SalePoint extends Model
         'address',
         'contact_name',
         'contact_number',
-        // 'pharmacy_type',
-        // 'payment_type',
-        // 'credit_limit',
-        // 'credit_duration',
-        // 'sell_discount_type',
-        // 'sell_discount',
-        // 'lat_lng',
         'is_active'
     ];
 

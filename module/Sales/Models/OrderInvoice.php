@@ -32,7 +32,7 @@ class OrderInvoice extends Model
         'payment_type',
         'status',
         'payment_status',
-        // 'return_amount',
+        'return_amount',
         'return_note',
         'invoice_date',
 

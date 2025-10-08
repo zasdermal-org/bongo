@@ -44,6 +44,7 @@ class SalePointController extends Controller
         $data = $request->validate([
             'territory_id' => 'nullable|exists:territories,id',
             'name' => 'required|string',
+            'code_number' => 'required|string|unique:sale_points,code_number',
             'address' => 'nullable|string',
             'contact_name' => 'nullable|string',
             'contact_number' => 'nullable|numeric'
@@ -52,7 +53,8 @@ class SalePointController extends Controller
         SalePoint::create([
             'territory_id' => $data['territory_id'],
             'name' => Str::title($data['name']),
-            'code_number' => $this->generate_unique_code_number(),
+            // 'code_number' => $this->generate_unique_code_number(),
+            'code_number' => $data['code_number'],
             'address' => $data['address'],
             'contact_name' => Str::title($data['contact_name']),
             'contact_number' => $data['contact_number']
@@ -247,26 +249,26 @@ class SalePointController extends Controller
     }
 
     // helper
-    private function generate_unique_code_number()
-    {
-        $code_number = $this->code_number();
+    // private function generate_unique_code_number()
+    // {
+    //     $code_number = $this->code_number();
 
-        $existing_check = SalePoint::where('code_number', $code_number)->first();
+    //     $existing_check = SalePoint::where('code_number', $code_number)->first();
 
-        if ($existing_check) {
-            return $this->generate_unique_code_number();
-        }
+    //     if ($existing_check) {
+    //         return $this->generate_unique_code_number();
+    //     }
 
-        return $code_number;
-    }
+    //     return $code_number;
+    // }
 
-    private function code_number()
-    {
-        $date = now();
-        $year = substr($date->year, -2);
-        $month = str_pad($date->month, 2, '0', STR_PAD_LEFT);
-        $day = str_pad($date->day, 2, '0', STR_PAD_LEFT);
+    // private function code_number()
+    // {
+    //     $date = now();
+    //     $year = substr($date->year, -2);
+    //     $month = str_pad($date->month, 2, '0', STR_PAD_LEFT);
+    //     $day = str_pad($date->day, 2, '0', STR_PAD_LEFT);
 
-        return 'S' . $year . $month . $day . rand(0, 999);
-    }
+    //     return 'S' . $year . $month . $day . rand(0, 999);
+    // }
 }

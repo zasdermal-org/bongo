@@ -149,7 +149,9 @@
                                     <th class="min-w-80px">Invoice Date</th>
                                     <th class="min-w-60px">Payable Amount</th>
                                     <th class="min-w-60px text-end">status</th>
-                                    
+                                    @if (auth()->user()->role->slug === 'admin')
+                                        <th class="min-w-50px text-end">Actions</th>
+                                    @endif
                                 </tr>
                                 <!--end::Table row-->
                             </thead>
@@ -244,6 +246,34 @@
                                             <div class="badge badge-light-warning">{{ $orderInvoice->status }}</div>
                                         </td>
                                         <!--end::Status=-->
+
+                                        @if (auth()->user()->role->slug === 'admin')
+                                            <td class="text-end">
+                                                <a href="#" class="btn btn-sm btn-light btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                                    Actions
+
+                                                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr072.svg-->
+                                                    <span class="svg-icon svg-icon-5 m-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                            <path d="M11.4343 12.7344L7.25 8.55005C6.83579 8.13583 6.16421 8.13584 5.75 8.55005C5.33579 8.96426 5.33579 9.63583 5.75 10.05L11.2929 15.5929C11.6834 15.9835 12.3166 15.9835 12.7071 15.5929L18.25 10.05C18.6642 9.63584 18.6642 8.96426 18.25 8.55005C17.8358 8.13584 17.1642 8.13584 16.75 8.55005L12.5657 12.7344C12.2533 13.0468 11.7467 13.0468 11.4343 12.7344Z" fill="currentColor" />
+                                                        </svg>
+                                                    </span>
+                                                    <!--end::Svg Icon-->
+                                                </a>
+
+                                                <!--begin::Menu-->
+                                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
+                                                    <!--begin::Menu item-->
+                                                    <div class="menu-item px-3">
+                                                        <a id="full_return_invoice_{{ $orderInvoice->id }}" data-invoice_id="{{ $orderInvoice->id }}" href="javascript:void(0);" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#full_return_confirmation">
+                                                            Full Return
+                                                        </a>
+                                                    </div>
+                                                    <!--end::Menu item-->
+                                                </div>
+                                                <!--end::Menu-->
+                                            </td>
+                                        @endif
                                     </tr>
                                 @endforeach
                                 <!--end::Table row-->
@@ -272,6 +302,24 @@
                     <!--end::Card body-->
                 </div>
                 <!--end::Card-->
+
+                <div class="modal fade" id="full_return_confirmation" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Full Return Confirmation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to Fully Return all orders?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" id="confirmReturn">Return</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!--end::Container-->
         </div>
@@ -281,52 +329,67 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            let selected_delivery_man_id = null;
+        // $(document).ready(function() {
+        //     let selected_delivery_man_id = null;
 
-            // Show the confirmation modal on select change
-            $('.status_select').on('change', function() {
-                selected_delivery_man_id = $(this).val();
-                if (selected_delivery_man_id) {
-                    $('#confirmation_modal').modal('show');
-                }
-            });
+        //     // Show the confirmation modal on select change
+        //     $('.status_select').on('change', function() {
+        //         selected_delivery_man_id = $(this).val();
+        //         if (selected_delivery_man_id) {
+        //             $('#confirmation_modal').modal('show');
+        //         }
+        //     });
 
-            // Handle the confirmation button click
-            $('#confirm_update_button').on('click', function() {
-                // Collect all selected order invoice IDs
-                let selected_order_invoice_ids = [];
-                $('.row-checkbox:checked').each(function() {
-                    selected_order_invoice_ids.push($(this).data('order_invoice_id'));
-                });
+        //     // Handle the confirmation button click
+        //     $('#confirm_update_button').on('click', function() {
+        //         // Collect all selected order invoice IDs
+        //         let selected_order_invoice_ids = [];
+        //         $('.row-checkbox:checked').each(function() {
+        //             selected_order_invoice_ids.push($(this).data('order_invoice_id'));
+        //         });
 
-                // Send AJAX requests to update each selected item
-                selected_order_invoice_ids.forEach(function(order_invoice_id) {
-                    let action = url.replace(':order_invoice_id', order_invoice_id);
+        //         // Send AJAX requests to update each selected item
+        //         selected_order_invoice_ids.forEach(function(order_invoice_id) {
+        //             let action = url.replace(':order_invoice_id', order_invoice_id);
 
-                    $.ajax({
-                        url: action,
-                        type: 'PUT',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        data: {
-                            delivery_man_id: selected_delivery_man_id
-                        },
-                        success: function(response) {
-                            console.log('Order invoice updated successfully');
-                        },
-                        error: function(xhr) {
-                            console.error('Failed to update order invoice', xhr);
-                        }
-                    });
-                });
+        //             $.ajax({
+        //                 url: action,
+        //                 type: 'PUT',
+        //                 headers: {
+        //                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                 },
+        //                 data: {
+        //                     delivery_man_id: selected_delivery_man_id
+        //                 },
+        //                 success: function(response) {
+        //                     console.log('Order invoice updated successfully');
+        //                 },
+        //                 error: function(xhr) {
+        //                     console.error('Failed to update order invoice', xhr);
+        //                 }
+        //             });
+        //         });
 
-                // Optionally, reload the page after updates
-                location.reload();
+        //         // Optionally, reload the page after updates
+        //         location.reload();
 
-                // Hide the modal
-                $('#confirmation_modal').modal('hide');
+        //         // Hide the modal
+        //         $('#confirmation_modal').modal('hide');
+        //     });
+        // });
+
+        document.querySelectorAll('[id^="full_return_invoice_"]').forEach(link => {
+            // console.log(test);
+            
+            link.addEventListener('click', function () {
+                const invoiceId = this.getAttribute('data-invoice_id');
+                const confirmButton = document.getElementById('confirmReturn');
+
+                // Update the click event for the confirm button dynamically
+                confirmButton.onclick = function () {
+                    const url = "{{ route('order.return_invoice', ':id') }}".replace(':id', invoiceId);
+                    window.location.href = url;
+                };
             });
         });
     </script>
