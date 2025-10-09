@@ -278,6 +278,56 @@
         body.chalan-mode .hide-in-chalan {
             display: none !important;
         }
+
+       /***** 2) Page-margin / top-gap for dot-matrix printers *****/
+        /* Adjust this value to the blank header height you need (e.g. 30mm = 3cm). */
+        /* Use mm/cm for finer control. */
+        @page {
+            /* top margin that will be reserved on EVERY printed page */
+            margin-top: 50mm;
+            /* tune left/right/bottom as you like */
+            margin-left: 10mm;
+            margin-right: 10mm;
+            margin-bottom: 10mm;
+        }
+
+        /* If you want the FIRST page to have a smaller top-gap,
+           set :first to a smaller value (or remove this block to keep the same gap on all pages). */
+        @page :first {
+            margin-top: 10mm; /* e.g. smaller top-gap on page 1 */
+        }
+
+        /* 3) Fallback visual placeholder so print-preview shows the gap */
+        /* Some browsers/printers ignore @page in preview; this fixed pseudo-element is a visual fallback.
+           It is transparent/empty, repeated on every page (fixed), and won't print text. */
+        body::before {
+            content: "";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30mm;              /* match @page margin-top */
+            visibility: visible !important;
+            /* background: transparent;  keep it empty so it prints blank space */
+        }
+
+        body.chalan-mode #invoice-content {
+            margin-top: 10mm !important; /* adjust this gap */
+        }
+
+        /* Ensure the invoice content isn't accidentally hidden behind the placeholder in preview */
+        #invoice-content, #invoice-footer {
+            /* keep them positioned below the visible area in preview — but @page controls printed layout */
+            /* This margin only affects layout in the preview; real printed pages follow @page margins. */
+            margin-top: 0;
+        }
+
+        /* 4) Avoid breaking important rows across pages if possible */
+        /* (won't always prevent breaks for very large rows) */
+        tr, td {
+            page-break-inside: avoid;
+        }
     }
 </style>
 
