@@ -48,29 +48,59 @@ class ReportController extends Controller
 
         // $orders = DB::table('orders')
         //     ->select(
-        //         DB::raw('MIN(stock_id) as stock_id'), // pick one stock_id per SKU
-        //         'sku',
-        //         'product_name',
-        //         DB::raw('SUM(quantity) as total_quantity')
+        //         DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
+        //         'orders.sku',
+        //         DB::raw('SUM(orders.quantity) as total_quantity'),
+        //         'products.title as product_name'
         //     )
-        //     ->whereBetween('created_at', [$fromDate, $toDate])
-        //     ->groupBy('sku', 'product_name')
+        //     ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
+        //     ->join('products', 'stocks.product_id', '=', 'products.id')
+        //     ->whereBetween('orders.created_at', [$fromDate, $toDate])
+        //     ->groupBy('orders.sku', 'products.title')
         //     ->orderBy('stock_id', 'asc')
         //     ->get();
 
-        $orders = DB::table('orders')
+
+        // ------------------------------ new
+        // Start base query
+        $ordersQuery = DB::table('orders')
             ->select(
-                DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
+                DB::raw('MIN(orders.stock_id) as stock_id'),
                 'orders.sku',
                 DB::raw('SUM(orders.quantity) as total_quantity'),
                 'products.title as product_name'
             )
             ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
             ->join('products', 'stocks.product_id', '=', 'products.id')
-            ->whereBetween('orders.created_at', [$fromDate, $toDate])
+            ->whereBetween('orders.created_at', [$fromDate, $toDate]);
+
+        $userDepot = auth()->user()->employee->depot->name ?? null;
+
+        // Always join once
+        $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+
+        if ($request->filled('type') && $request->type !== 'all') {
+            // $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+
+            if ($request->type === 'seed') {
+                $ordersQuery->where('categories.slug', 'seed');
+            } elseif ($request->type === 'agrochemicals') {
+                $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+            }
+        } else {
+            if ($userDepot && strtolower($userDepot) === 'mirpur') {
+                $ordersQuery->where('categories.slug', 'seed');
+            } elseif ($userDepot && strtolower($userDepot) === 'bogura') {
+                $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+            }
+        }
+
+        $orders = $ordersQuery
             ->groupBy('orders.sku', 'products.title')
             ->orderBy('stock_id', 'asc')
             ->get();
+
+        // ------------------------------ end new
 
         $skuList = $orders->pluck('sku');
         $stocks = DB::table('stocks')
@@ -105,7 +135,7 @@ class ReportController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : Carbon::today()->endOfDay();
 
-        $orders = DB::table('orders')
+        $ordersQuery = DB::table('orders')
             ->select(
                 DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
                 'orders.sku',
@@ -117,7 +147,30 @@ class ReportController extends Controller
             ->join('order_order_invoice', 'orders.id', '=', 'order_order_invoice.order_id')
             ->join('order_invoices', 'order_order_invoice.order_invoice_id', '=', 'order_invoices.id')
             ->where('order_invoices.status', 'Accepted')
-            ->whereBetween('orders.created_at', [$fromDate, $toDate])
+            ->whereBetween('orders.created_at', [$fromDate, $toDate]);
+            
+        $userDepot = auth()->user()->employee->depot->name ?? null;
+
+        // Always join once
+        $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+            
+        if ($request->filled('type') && $request->type !== 'all') {
+            // $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+
+            if ($request->type === 'seed') {
+                $ordersQuery->where('categories.slug', 'seed');
+            } elseif ($request->type === 'agrochemicals') {
+                $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+            }
+        } else {
+            if ($userDepot && strtolower($userDepot) === 'mirpur') {
+                $ordersQuery->where('categories.slug', 'seed');
+            } elseif ($userDepot && strtolower($userDepot) === 'bogura') {
+                $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+            }
+        }
+
+        $orders = $ordersQuery
             ->groupBy('orders.sku', 'products.title')
             ->orderBy('stock_id', 'asc')
             ->get();

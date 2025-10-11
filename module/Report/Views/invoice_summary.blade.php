@@ -24,6 +24,17 @@
                                 <div class="w-110 mw-120px me-2">
                                     <input name="to_date" type="date" value="{{ request('to_date') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />
                                 </div>
+
+                                @if (auth()->user()->role->slug === 'admin')
+                                    <div class="w-110 mw-120px me-2">
+                                        <select name="type" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Type">
+                                            <option></option> {{-- placeholder --}}
+                                            <option value="all" {{ request('type') == 'all' ? 'selected' : '' }}>All</option>
+                                            <option value="seed" {{ request('type') == 'seed' ? 'selected' : '' }}>Seed</option>
+                                            <option value="agrochemicals" {{ request('type') == 'agrochemicals' ? 'selected' : '' }}>Agrochemicals</option>
+                                        </select>
+                                    </div>
+                                @endif
         
                                 <button type="submit" class="btn btn-light-primary">Search</button>
                             </form>

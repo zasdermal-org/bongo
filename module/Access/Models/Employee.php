@@ -66,4 +66,9 @@ class Employee extends Model
     {
         return $this->belongsTo(Territory::class);
     }
+
+    public function depot()
+    {
+        return $this->belongsTo(Depot::class);
+    }
 }
