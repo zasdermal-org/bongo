@@ -9,7 +9,8 @@ Route::prefix('/report')->name('report.')->group(function () {
     Route::get('/order-summary', [ReportController::class, 'order_summary'])->name('order_summary');
     Route::get('/invoice-summary', [ReportController::class, 'invoice_summary'])->name('invoice_summary');
     Route::get('/sales', [ReportController::class, 'sales'])->name('sales');
-    // Route::get('/brand-wise-sales', [SalesReportController::class, 'brand_wise_sales'])->name('brand_wise_sales');
+    Route::get('/customer-sales', [ReportController::class, 'customer_sales'])->name('customer_sales');
+    Route::get('/customer-sale-details/{id}', [ReportController::class, 'customer_sale_details'])->name('customer_sale_details');
 
     // Route::get('/delivery-top-sheet', [SalesReportController::class, 'delivery_top_sheet'])->name('delivery_top_sheet');
     // Route::get('/delivery-top-sheet-products/{id}', [SalesReportController::class, 'delivery_top_sheet_products'])->name('delivery_top_sheet_products');

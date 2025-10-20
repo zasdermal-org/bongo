@@ -129,7 +129,7 @@ class ReportController extends Controller
         // Parse date filters
         $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
             ? Carbon::parse($request->from_date)->startOfDay()
-            : Carbon::today()->startOfDay();;
+            : Carbon::today()->startOfDay();
 
         $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
             ? Carbon::parse($request->to_date)->endOfDay()
@@ -273,6 +273,99 @@ class ReportController extends Controller
 
         return view('Report::sales', $data);
     }
+
+    public function customer_sales(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Report', 'url' => null],
+            ['title' => 'Customer Sales', 'url' => null]
+        ];
+
+        // Load active sale points (if needed in view)
+        $data['sale_points'] = SalePoint::where('is_active', 'Active')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $today = Carbon::today();
+
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : null;
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : null;
+
+        // Default query: customers who have invoices today
+        $query = SalePoint::whereHas('orderInvoices', function ($q) use ($today, $fromDate, $toDate) {
+            $q->whereNotIn('status', ['Requested', 'Cancel']);
+
+            if ($fromDate && $toDate) {
+                $q->whereBetween('invoice_date', [$fromDate, $toDate]);
+            } else {
+                $q->whereDate('invoice_date', $today);
+            }
+        });
+
+        if ($request->filled('code_number')) {
+            $code_number = $request->code_number;
+            $query->where('code_number', $code_number);
+        }
+
+        $salePoints = $query->orderBy('id', 'desc')->paginate(30);
+
+        foreach ($salePoints as $salePoint) {
+            $salePoint->invoice_count = $salePoint->orderInvoices()
+                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->when($fromDate && $toDate, fn($q) => $q->whereBetween('invoice_date', [$fromDate, $toDate]))
+                ->when(!$fromDate || !$toDate, fn($q) => $q->whereDate('invoice_date', $today))
+                ->count();
+        }
+
+        $data['salePoints'] = $salePoints;
+
+        return view('Report::customer_sales', $data);
+    }
+
+    public function customer_sale_details(Request $request, $id)
+    {
+        // dd($request->all());
+        $today = Carbon::today();
+
+        $fromDateStr = $request->query('from_date');
+        $toDateStr = $request->query('to_date');
+
+        $fromDate = ($fromDateStr && Carbon::hasFormat($fromDateStr, 'Y-m-d'))
+            ? Carbon::parse($fromDateStr)->startOfDay()
+            : null;
+
+        $toDate = ($toDateStr && Carbon::hasFormat($toDateStr, 'Y-m-d'))
+            ? Carbon::parse($toDateStr)->endOfDay()
+            : null;
+
+        $query = OrderInvoice::where('sale_point_id', $id)
+            ->whereNotIn('status', ['Requested', 'Cancel']);
+
+        if ($fromDate && $toDate) {
+            $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+        } else {
+            $query->whereDate('invoice_date', $today);
+        }
+
+        $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
+        // $data['fromDate'] = $fromDate ?? $today;
+        // $data['toDate'] = $toDate ?? $today;
+        // $data['today'] = $today;
+
+        // dd($fromDateStr);
+        // dd($toDateStr);
+        // dd($data['orderInvoices']);
+
+        return view('Report::customer_sale_details', $data);
+    }
+
 
 
     public function getAreas($region_id)

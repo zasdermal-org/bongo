@@ -67,3 +67,22 @@ SET
     )
 WHERE
     payment_type = 'Cash';
+
+
+// find invoices for sku
+SELECT
+    oi.invoice_number,
+    oi.depot_id,
+    o.order_number,
+    o.sku,
+    o.quantity,
+    o.unit_price,
+    o.total_amount
+FROM
+    orders o
+JOIN order_order_invoice ooi ON
+    o.id = ooi.order_id
+JOIN order_invoices oi ON
+    oi.id = ooi.order_invoice_id
+WHERE
+    o.sku = 'SSG6789';

@@ -17,7 +17,6 @@
                     <!--begin::Card title-->
                     <div class="card-title">
                         <form class="d-flex align-items-center position-relative my-1" action="{{ route('report.sales') }}" method="GET">
-                            <!--begin::Search-->
                             <div class="w-110 mw-120px me-2">
                                 <select name="code_number" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Sales Point">
                                     <option></option>
@@ -28,9 +27,7 @@
                                     @endforeach
                                 </select>                                
                             </div>
-                            <!--end::Search-->
 
-                            <!--begin::Search-->
                             <div class="w-110 mw-120px me-2">
                                 <select name="type" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Type">
                                     <option></option> {{-- placeholder --}}
@@ -39,7 +36,6 @@
                                     <option value="agrochemicals" {{ request('type') == 'agrochemicals' ? 'selected' : '' }}>Agrochemicals</option>
                                 </select>
                             </div>
-                            <!--end::Search-->
 
                             <!-- Region -->
                             <div class="w-110 mw-120px me-2">
@@ -80,8 +76,6 @@
                                     @endif
                                 </select>
                             </div>
-
-
 
                             <div class="w-110 mw-120px me-2">
                                 <input name="from_date" type="date" value="{{ request('from_date') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />
@@ -131,8 +125,6 @@
                     <!--begin::Table-->
                     <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
                         <!--begin::Table head-->
-                        
-
                         <thead>
                             <!--begin::Table row-->
                             <tr class="text-start text-black-400 fw-bolder fs-7 text-uppercase gs-0">
@@ -243,72 +235,6 @@
     <!--end::Post-->
 </div>  
 @endsection
-
-{{-- <script>
-$(document).ready(function () {
-
-    // ===== When region changes → load areas =====
-    $('#region_id').on('change', function () {
-        let regionId = $(this).val();
-        $('#area_id').empty().append('<option value="">Select Area</option>');
-        $('#territory_id').empty().append('<option value="">Select Territory</option>');
-
-        if (regionId) {
-            $.ajax({
-                url: "{{ route('report.get_areas', ':id') }}".replace(':id', regionId),
-                type: "GET",
-                success: function (data) {
-                    $.each(data, function (key, area) {
-                        $('#area_id').append('<option value="' + area.id + '">' + area.name + '</option>');
-                    });
-
-                    // If page has old selected area → reselect it
-                    let selectedArea = "{{ request('area_id') }}";
-                    if (selectedArea) {
-                        $('#area_id').val(selectedArea).trigger('change');
-                    }
-                },
-                error: function (xhr) {
-                    console.error("Error fetching areas:", xhr.responseText);
-                }
-            });
-        }
-    });
-
-    // ===== When area changes → load territories =====
-    $('#area_id').on('change', function () {
-        let areaId = $(this).val();
-        $('#territory_id').empty().append('<option value="">Select Territory</option>');
-
-        if (areaId) {
-            $.ajax({
-                url: "{{ route('report.get_territories', ':id') }}".replace(':id', areaId),
-                type: "GET",
-                success: function (data) {
-                    $.each(data, function (key, territory) {
-                        $('#territory_id').append('<option value="' + territory.id + '">' + territory.name + '</option>');
-                    });
-
-                    // If page has old selected territory → reselect it
-                    let selectedTerritory = "{{ request('territory_id') }}";
-                    if (selectedTerritory) {
-                        $('#territory_id').val(selectedTerritory).trigger('change');
-                    }
-                },
-                error: function (xhr) {
-                    console.error("Error fetching territories:", xhr.responseText);
-                }
-            });
-        }
-    });
-
-    // ===== Auto-load if region already selected =====
-    let selectedRegion = "{{ request('region_id') }}";
-    if (selectedRegion) {
-        $('#region_id').trigger('change');
-    }
-});
-</script> --}}
 
 <script>
 function loadAreas(regionId) {
