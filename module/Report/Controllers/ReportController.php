@@ -331,7 +331,6 @@ class ReportController extends Controller
 
     public function customer_sale_details(Request $request, $id)
     {
-        // dd($request->all());
         $today = Carbon::today();
 
         $fromDateStr = $request->query('from_date');
@@ -355,13 +354,14 @@ class ReportController extends Controller
         }
 
         $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
-        // $data['fromDate'] = $fromDate ?? $today;
-        // $data['toDate'] = $toDate ?? $today;
-        // $data['today'] = $today;
 
-        // dd($fromDateStr);
-        // dd($toDateStr);
-        // dd($data['orderInvoices']);
+        $data['totalQuantity'] = $data['orderInvoices']
+            ->pluck('orders')
+            ->flatten()
+            ->sum('quantity');
+
+        $data['salePoint'] = SalePoint::findOrFail($id);
+        $data['today'] = $today;
 
         return view('Report::customer_sale_details', $data);
     }

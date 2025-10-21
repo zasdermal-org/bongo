@@ -15,18 +15,13 @@
                             <div id="invoice-content">
                                 <!-- begin::Header-->
                                 <div class="d-flex justify-content-between flex-column flex-sm-row mb-10">
-                                    <h4 class="fw-boldest text-gray-800 fs-2qx pe-5 pb-7">Customer Sales</h4>
+                                    <h4 class="fw-boldest text-gray-800 fs-2qx pe-5 pb-7">{{ $salePoint->name }}</h4>
                                     <!--end::Logo-->
                                     <div class="text-sm-end fs-4">
                                         <!--begin::Message-->
-                                        {{-- <div class="fs-6">
-                                            ({{ $delivery_man->employee->user->username }})
-                                            <span class="fw-bolder fs-6"> Employee ID</span>
-                                            <br />
-                                            @if ($delivery_man->employee->name)
-                                                ({{ $delivery_man->employee->name }})
-                                            @endif
-                                            <span class="fw-bolder fs-6"> Employee Name</span>
+                                        <div class="fs-6">
+                                            ({{ $salePoint->address }})
+                                            <span class="fw-bolder fs-6"> Address</span>
                                             <br />
                                             @if (request('from_date') && request('to_date'))
                                                 (
@@ -36,8 +31,8 @@
                                             @else
                                                 ({{ $today->format('d M, Y') }} to {{ $today->format('d M, Y') }})
                                             @endif
-                                            <span class="fw-bolder fs-6"> Order Date From/To</span>
-                                        </div> --}}
+                                            <span class="fw-bolder fs-6"> Invoice Date From/To</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <!--end::Header-->
@@ -79,7 +74,10 @@
                                                                         <td rowspan="{{ $rowCount }}">
                                                                             <div class="d-flex align-items-center">
                                                                                 <a class="symbol symbol-50px">
-                                                                                    <div class="fw-bolder">{{ $invoice->invoice_number }}</div>
+                                                                                    <div class="fw-bolder">
+                                                                                        {{ $invoice->invoice_number }} <br>
+                                                                                        {{ $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y') }}
+                                                                                    </div>
                                                                                 </a>
                                                                             </div>
                                                                         </td>
@@ -98,18 +96,10 @@
                                                         @endforeach
                                                 
                                                         <!-- Totals -->
-                                                        {{-- <tr>
-                                                            <td colspan="4" class="text-end">Total Qty</td>
-                                                            <td class="text-end"></td>
-                                                        </tr>
                                                         <tr>
-                                                            <td colspan="4" class="text-end">Total R.Qty</td>
-                                                            <td class="text-end"></td>
+                                                            <td colspan="3" class="text-end">Total Qty</td>
+                                                            <td class="text-end">{{ $totalQuantity }}</td>
                                                         </tr>
-                                                        <tr>
-                                                            <td colspan="4" class="text-end">After Return SQ</td>
-                                                            <td class="text-end"></td>
-                                                        </tr> --}}
                                                     </tbody>
                                                 </table>
                                                 
@@ -124,11 +114,11 @@
                             </div>
 
                             <!-- begin::Footer-->
-                            <div class="d-flex flex-stack flex-wrap mt-lg-20 pt-13">
+                            {{-- <div class="d-flex flex-stack flex-wrap mt-lg-20 pt-13">
                                 <!-- begin::Action-->
                                 <button type="button" class="btn btn-success my-1 me-12" onclick="window.print();">Print Invoice</button>
                                 <!-- end::Action-->
-                            </div>
+                            </div> --}}
                             <!-- end::Footer-->
                         </div>
                         <!-- end::Wrapper-->
