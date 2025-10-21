@@ -20,7 +20,7 @@
                                     <div class="text-sm-end fs-4">
                                         <!--begin::Message-->
                                         <div class="fs-6">
-                                            ({{ $salePoint->address }})
+                                            ( {{ $salePoint->address }})
                                             <span class="fw-bolder fs-6"> Address</span>
                                             <br />
                                             @if (request('from_date') && request('to_date'))
@@ -49,23 +49,25 @@
                                         <div class="d-flex justify-content-between flex-column">
                                             <!--begin::Table-->
                                             <div class="table-responsive border-bottom mb-9">
-                                                
-
                                                 <table class="table align-middle table-row-dashed fs-6 gy-5 mb-0">
                                                     <thead>
-                                                        <tr class="border-bottom fs-6 fw-bolder text-muted">
+                                                        <tr class="border-bottom fs-6 fw-bolder">
                                                             <th class="min-w-100px pb-2">Invoices</th>
                                                             <th class="min-w-100px text-end pb-2">Products</th>
                                                             <th class="min-w-70px text-end pb-2">SKU</th>
-                                                            <th class="min-w-80px text-end pb-2">Qty</th>
+                                                            <th class="min-w-70px text-end pb-2">Unit Price</th>
+                                                            <th class="min-w-50px text-end pb-2">Qty</th>
+                                                            <th class="min-w-80px text-end pb-2">Total</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody class="fw-bold text-gray-600">
+
+                                                    <tbody class="fw-bold text-black-600">
                                                         <!-- Iterate through Sales Points -->
                                                         @foreach ($orderInvoices as $key => $invoice)
                                                             <!-- Calculate rowspan for Sales Point -->
                                                             @php
                                                                 $rowCount = count($invoice->orders);
+                                                                $invoiceTotalQty = $invoice->orders->sum('quantity');
                                                             @endphp
                                                             @foreach ($invoice->orders as $order)
                                                                 <tr>
@@ -75,7 +77,7 @@
                                                                             <div class="d-flex align-items-center">
                                                                                 <a class="symbol symbol-50px">
                                                                                     <div class="fw-bolder">
-                                                                                        {{ $invoice->invoice_number }} <br>
+                                                                                        {{ $invoice->invoice_number }} / {{ $invoice->payment_type }} @if ($invoice->payment_type === 'Cash') ({{ $invoice->discount }} %) @endif <br>
                                                                                         {{ $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y') }}
                                                                                     </div>
                                                                                 </a>
@@ -89,16 +91,38 @@
                                                                     <!-- SKU -->
                                                                     <td class="text-end">{{ $order->sku }}</td>
                                                 
+                                                                    <td class="text-end">{{ $order->unit_price }} Tk</td>
+
                                                                     <!-- Quantity -->
                                                                     <td class="text-end">{{ $order->quantity }}</td>
+
+                                                                    <td class="text-end">{{ number_format($order->total_amount, 2) }} Tk</td>
+
                                                                 </tr>
                                                             @endforeach
+
+                                                            <tr class="bg-light fw-bold">
+                                                                <td colspan="5" class="text-end text-dark">Subtotal</td>
+                                                                <td class="text-end text-dark">{{ number_format($invoice->total_amount, 2) }} Tk</td>
+                                                            </tr>
+
+                                                            <tr class="bg-light fw-bold">
+                                                                <td colspan="5" class="text-end text-dark">Discount</td>
+                                                                <td class="text-end text-dark">{{ number_format($invoice->discount_amount, 2) }} Tk</td>
+                                                            </tr>
+
+                                                            <tr class="bg-light fw-bold">
+                                                                <td colspan="4" class="text-end fw-bolder">Invoice Total</td>
+                                                                <td class="text-end fw-bolder">{{ $invoiceTotalQty }}</td>
+                                                                <td class="text-end fw-bolder">{{ number_format($invoice->total_amount - $invoice->discount_amount, 2) }} Tk</td>
+                                                            </tr>
                                                         @endforeach
                                                 
                                                         <!-- Totals -->
                                                         <tr>
-                                                            <td colspan="3" class="text-end">Total Qty</td>
-                                                            <td class="text-end">{{ $totalQuantity }}</td>
+                                                            <td colspan="4" class="text-end fw-bolder">Total Qty</td>
+                                                            <td class="text-end fw-bolder">{{ $totalQuantity }}</td>
+                                                            <td class="text-end fw-bolder">{{ number_format($totalInvoiceValue, 2) }} Tk</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>

@@ -360,6 +360,18 @@ class ReportController extends Controller
             ->flatten()
             ->sum('quantity');
 
+        foreach ($data['orderInvoices'] as $invoice) {
+            $invoice->discount_amount = 0;
+            $invoice->total_after_discount = $invoice->total_amount;
+
+            if ($invoice->payment_type === 'Cash' && $invoice->discount > 0) {
+                $invoice->discount_amount = ($invoice->total_amount * $invoice->discount) / 100;
+                $invoice->total_after_discount = $invoice->total_amount - $invoice->discount_amount;
+            }
+        }
+
+        $data['totalInvoiceValue'] = $data['orderInvoices']->sum('total_after_discount');
+
         $data['salePoint'] = SalePoint::findOrFail($id);
         $data['today'] = $today;
 
