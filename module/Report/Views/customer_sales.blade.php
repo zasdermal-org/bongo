@@ -18,8 +18,8 @@
                     <div class="card-title">
                         <form class="d-flex align-items-center position-relative my-1" action="{{ route('report.customer_sales') }}" method="GET">
                             <div class="w-110 mw-120px me-2">
-                                <select name="code_number" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Sales Point">
-                                    <option></option>
+                                <select name="code_number" class="form-select form-select-solid" data-control="select2">
+                                    <option value="">All Sale Points</option>
                                     @foreach ($sale_points as $sale_point)
                                         <option value="{{ $sale_point->code_number }}" {{ request('code_number') == $sale_point->code_number ? 'selected' : '' }}>
                                             {{ $sale_point->name }} — ({{ $sale_point->code_number }})
