@@ -120,7 +120,7 @@
                                                 
                                                         <!-- Totals -->
                                                         <tr>
-                                                            <td colspan="4" class="text-end fw-bolder">Total Qty</td>
+                                                            <td colspan="4" class="text-end fw-bolder">Grand Total</td>
                                                             <td class="text-end fw-bolder">{{ $totalQuantity }}</td>
                                                             <td class="text-end fw-bolder">{{ number_format($totalInvoiceValue, 2) }} Tk</td>
                                                         </tr>
