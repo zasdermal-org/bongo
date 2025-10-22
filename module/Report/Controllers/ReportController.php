@@ -322,6 +322,12 @@ class ReportController extends Controller
                 ->when($fromDate && $toDate, fn($q) => $q->whereBetween('invoice_date', [$fromDate, $toDate]))
                 ->when(!$fromDate || !$toDate, fn($q) => $q->whereDate('invoice_date', $today))
                 ->count();
+
+            $salePoint->total_amount = $salePoint->orderInvoices()
+                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->when($fromDate && $toDate, fn($q) => $q->whereBetween('invoice_date', [$fromDate, $toDate]))
+                ->when(!$fromDate || !$toDate, fn($q) => $q->whereDate('invoice_date', $today))
+                ->sum('total_amount');
         }
 
         $data['salePoints'] = $salePoints;

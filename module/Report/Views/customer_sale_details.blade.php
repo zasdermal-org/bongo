@@ -20,7 +20,7 @@
                                     <div class="text-sm-end fs-4">
                                         <!--begin::Message-->
                                         <div class="fs-6">
-                                            ( {{ $salePoint->address }})
+                                            ({{ $salePoint->address }})
                                             <span class="fw-bolder fs-6"> Address</span>
                                             <br />
                                             @if (request('from_date') && request('to_date'))
@@ -97,7 +97,6 @@
                                                                     <td class="text-end">{{ $order->quantity }}</td>
 
                                                                     <td class="text-end">{{ number_format($order->total_amount, 2) }} Tk</td>
-
                                                                 </tr>
                                                             @endforeach
 
