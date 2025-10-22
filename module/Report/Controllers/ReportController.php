@@ -322,9 +322,35 @@ class ReportController extends Controller
                 ->when($fromDate && $toDate, fn($q) => $q->whereBetween('invoice_date', [$fromDate, $toDate]))
                 ->when(!$fromDate || !$toDate, fn($q) => $q->whereDate('invoice_date', $today));
 
-            $salePoint->invoice_count = $query->count();
-            $salePoint->total_amount = $query->sum('total_amount');
+            // Fetch invoices for calculations
+            $invoices = $query->get();
+
+            // Basic aggregates
+            $salePoint->invoice_count = $invoices->count();
+            $salePoint->total_amount = $invoices->sum('total_amount');
+
+            // Calculate total discount and after-discount total
+            $totalDiscount = 0;
+            $totalAfterDiscount = 0;
+
+            foreach ($invoices as $invoice) {
+                $discountAmount = 0;
+                $afterDiscount = $invoice->total_amount;
+
+                if ($invoice->payment_type === 'Cash' && $invoice->discount > 0) {
+                    $discountAmount = ($invoice->total_amount * $invoice->discount) / 100;
+                    $afterDiscount = $invoice->total_amount - $discountAmount;
+                }
+
+                $totalDiscount += $discountAmount;
+                $totalAfterDiscount += $afterDiscount;
+            }
+
+            // Assign results
+            $salePoint->total_discount = $totalDiscount;
+            $salePoint->total_after_discount = $totalAfterDiscount;
         }
+
 
         $data['salePoints'] = $salePoints;
 

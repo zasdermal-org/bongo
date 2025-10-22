@@ -55,7 +55,9 @@
                                 <th class="min-w-80px">Sales Point Name</th>
                                 <th class="min-w-50px">Code Number</th>
                                 <th class="min-w-150px">Address</th>
-                                <th class="min-w-80px text-end">Value</th>
+                                <th class="min-w-80px text-end">Invoice Value</th>
+                                <th class="min-w-80px text-end">Discount</th>
+                                <th class="min-w-80px text-end">Payable</th>
                                 <th class="min-w-60px text-end">Invoice Count</th>
                             </tr>
                             <!--end::Table row-->
@@ -77,6 +79,10 @@
                                     <td>{{ $salePoint->address }}</td>
 
                                     <td class="text-end">{{ number_format($salePoint->total_amount, 2) }} Tk</td>
+
+                                    <td class="text-end">{{ number_format($salePoint->total_discount, 2) }} Tk</td>
+
+                                    <td class="text-end">{{ number_format($salePoint->total_after_discount, 2) }} Tk</td>
 
                                     <td class="text-end">
                                         <div class="badge badge-light-info">
