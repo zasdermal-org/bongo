@@ -317,17 +317,13 @@ class ReportController extends Controller
         $salePoints = $query->orderBy('id', 'desc')->paginate(30);
 
         foreach ($salePoints as $salePoint) {
-            $salePoint->invoice_count = $salePoint->orderInvoices()
+            $query = $salePoint->orderInvoices()
                 ->whereNotIn('status', ['Requested', 'Cancel'])
                 ->when($fromDate && $toDate, fn($q) => $q->whereBetween('invoice_date', [$fromDate, $toDate]))
-                ->when(!$fromDate || !$toDate, fn($q) => $q->whereDate('invoice_date', $today))
-                ->count();
+                ->when(!$fromDate || !$toDate, fn($q) => $q->whereDate('invoice_date', $today));
 
-            $salePoint->total_amount = $salePoint->orderInvoices()
-                ->whereNotIn('status', ['Requested', 'Cancel'])
-                ->when($fromDate && $toDate, fn($q) => $q->whereBetween('invoice_date', [$fromDate, $toDate]))
-                ->when(!$fromDate || !$toDate, fn($q) => $q->whereDate('invoice_date', $today))
-                ->sum('total_amount');
+            $salePoint->invoice_count = $query->count();
+            $salePoint->total_amount = $query->sum('total_amount');
         }
 
         $data['salePoints'] = $salePoints;
