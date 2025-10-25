@@ -175,9 +175,9 @@ class StockController extends Controller
                 $serializeStocks[] = [
                     'stock_id' => $stock->id,
                     'category' => $product->category->name,
-                    'product_name' => $stock->product_name,
+                    'product_name' => $product->title,
                     'sku' => $stock->sku,
-                    'unit_price' => $stock->mrp
+                    'unit_price' => $stock->unit_price
                 ];
             }
 
