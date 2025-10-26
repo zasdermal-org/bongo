@@ -92,7 +92,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $user = User::on('mysql_test')->where('username', $credentials['username'])->first();
+        $user = User::where('username', $credentials['username'])->first();
 
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json([
