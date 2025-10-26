@@ -158,7 +158,8 @@ class StockController extends Controller
     public function availabel_stocks(Request $request)
     {
         try {
-            $stocks = Stock::whereNot('quantity', 0)->get();
+            $stocks = DB::connection('mysql_test')->table('stocks')->whereNot('quantity', 0)->get();
+            // $stocks = Stock::whereNot('quantity', 0)->get();
 
             // Check if any products are not found
             if ($stocks->isEmpty()) {
@@ -171,7 +172,8 @@ class StockController extends Controller
             // Serialize products using a foreach loop
             $serializeStocks = [];
             foreach ($stocks as $stock) {
-                $product = Product::where('sku', $stock->sku)->first();
+                // $product = Product::where('sku', $stock->sku)->first();
+                $product = DB::connection('mysql_test')->table('products')->where('sku', $stock->sku)->first();
                 $serializeStocks[] = [
                     'stock_id' => $stock->id,
                     'category' => $product->category->name,
