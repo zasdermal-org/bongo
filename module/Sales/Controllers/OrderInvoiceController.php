@@ -511,4 +511,77 @@ class OrderInvoiceController extends Controller
 
         return 'O' . $year . $month . $day . mt_rand(1000, 9999);
     }
+
+    public function api_store(Request $request)
+    {
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'sale_point_id' => 'required|exists:sale_points,id',
+            'territory_id' => 'required|exists:territories,id',
+            'depot_id' => 'required|exists:depots,id',
+            'total_amount' => 'required|numeric',
+            'date' => 'nullable',
+            'payment_type' => 'nullable',
+            'discount' => 'nullable|numeric',
+            'type' => 'nullable',
+            'orders' => 'required|array',
+            'orders.*.stock_id' => 'required|exists:stocks,id',
+            'orders.*.sku' => 'required',
+            'orders.*.quantity' => 'required|numeric|min:1',
+            'orders.*.unit_price' => 'required|numeric',
+            'orders.*.order_total_amount' => 'required|numeric'
+        ]);
+
+        // dd($data);
+        // Log::info('OrderInvoice request received', ['data' => $data]);
+
+        $auth_user = Auth::user();
+        $totalAmount = $data['total_amount'];
+
+        if ($data['payment_type'] === 'Cash') {
+            $discount = $data['discount'];
+            $discount_value = ($totalAmount * $discount) / 100;
+
+            $due = $totalAmount - $discount_value;
+        } else {
+            $due = $totalAmount;
+        }
+
+        $orderInvoice = OrderInvoice::on('mysql_test')->create([
+            'user_id' => $data['user_id'],
+            'submitted_by_user_id' => $auth_user->id,
+            'sale_point_id' => $data['sale_point_id'],
+            'territory_id' => $data['territory_id'],
+            'depot_id' => $data['depot_id'],
+            'invoice_number' => $this->generate_unique_invoice_number(),
+            'payment_type' => $data['payment_type'],
+            'total_amount' => $totalAmount,
+            'discount' => $data['discount'] ?? null,
+            'due' => $due,
+            'type' => $data['type'] ?? null,
+            'created_at' => $data['date'], // temporary
+            'updated_at' => $data['date'], // temporary
+        ]);
+
+        foreach ($data['orders'] as $order) {
+            $order = Order::on('mysql_test')->create([
+                'stock_id' => $order['stock_id'],
+                'order_number' => $this->generate_unique_order_number(),
+                'sku' => $order['sku'],
+                'quantity' => $order['quantity'],
+                'unit_price' => $order['unit_price'],
+                'discount' => $data['discount'] ?? null,
+                'total_amount' => $order['order_total_amount'],
+                'created_at' => $data['date'], // temporary
+                'updated_at' => $data['date'], // temporary
+            ]);
+
+            $orderInvoice->orders()->attach($order);
+        }
+
+        return response()->json([
+            'status' => 'SUCCESS',
+            'message' => 'The order has been submited successfully',
+        ], 200);
+    }
 }

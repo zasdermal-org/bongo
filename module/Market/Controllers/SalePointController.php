@@ -190,14 +190,20 @@ class SalePointController extends Controller
 
             if ($request->filled('region_id') && $request->region_id != 0) {
                 $region_id = $request->region_id;
-                $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+                // $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+                //     $query->where('id', $region_id);
+                // })->pluck('id');
+                $territoryIds = Territory::on('mysql_test')->whereHas('area.region', function ($query) use ($region_id) {
                     $query->where('id', $region_id);
                 })->pluck('id');
             }
 
             if ($request->filled('area_id') && $request->area_id != 0) {
                 $area_id = $request->area_id;
-                $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+                // $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+                //     $query->where('id', $area_id);
+                // })->pluck('id');
+                $territoryIds = Territory::on('mysql_test')->whereHas('area', function ($query) use ($area_id) {
                     $query->where('id', $area_id);
                 })->pluck('id');
             }
@@ -210,13 +216,18 @@ class SalePointController extends Controller
             $serializeData = [];
 
             // Fetch and format sales points data
-            $salePoints = SalePoint::where('is_active', 'Active')
+            // $salePoints = SalePoint::where('is_active', 'Active')
+            //     ->whereIn('territory_id', $territoryIds)
+            //     // ->whereHas('territories', function ($query) use ($territoryIds) {
+            //     //     if ($territoryIds->isNotEmpty()) {
+            //     //         $query->whereIn('territory_id', $territoryIds);
+            //     //     }
+            //     // })
+            //     ->orderBy('id', 'desc')
+            //     ->get();
+
+            $salePoints = SalePoint::on('mysql_test')->where('is_active', 'Active')
                 ->whereIn('territory_id', $territoryIds)
-                // ->whereHas('territories', function ($query) use ($territoryIds) {
-                //     if ($territoryIds->isNotEmpty()) {
-                //         $query->whereIn('territory_id', $territoryIds);
-                //     }
-                // })
                 ->orderBy('id', 'desc')
                 ->get();
 
