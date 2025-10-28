@@ -298,6 +298,7 @@ class OrderInvoiceController extends Controller
         $grandTotalInWords = ucwords($formatter->format($orderInvoice->total_amount)) . ' Taka Only';
 
         $data['grand_total_in_words'] = $grandTotalInWords;
+        $data['title'] = $orderInvoice->salePoint->name . ' - ' . $orderInvoice->salePoint->code_number . '(' . $id . ')';
 
         return view('Sales::order.invoice', $data);
     }

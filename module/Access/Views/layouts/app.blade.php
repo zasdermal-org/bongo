@@ -8,7 +8,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? 'Set Title' }} - Bongo Agritech</title>
+        <title>
+			@if (Route::currentRouteName() === 'order.invoice')
+				{{ $title ?? 'Set Title' }}
+			@else
+				{{ $title ?? 'Set Title' }} - Bongo Agritech
+			@endif
+		</title>
 		
         <link rel="shortcut icon" href="assets/media/logos/logo.jpeg" />
 		<!--begin::Fonts-->
