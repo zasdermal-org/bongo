@@ -74,7 +74,12 @@
                                         <a href="{{ route('report.customer_sale_details', $salePoint->id) }}?from_date={{ request('from_date') }}&to_date={{ request('to_date') }}">{{ $salePoint->name }}</a>
                                     </td>
 
-                                    <td>{{ $salePoint->code_number }}</td>
+                                    {{-- <td>{{ $salePoint->code_number }}</td> --}}
+
+                                    <td>
+                                        <a href="{{ route('report.customer_sale_details_copy', $salePoint->id) }}?from_date={{ request('from_date') }}&to_date={{ request('to_date') }}">{{ $salePoint->code_number }}</a>
+                                        
+                                    </td>
 
                                     <td>{{ $salePoint->address }}</td>
 
