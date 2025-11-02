@@ -195,47 +195,118 @@ class OrderInvoiceController extends Controller
         return view('Sales::order.update_invoice', $data);
     }
 
+    // before the double transcection or double stock substraction
+    // public function update(Request $request, $id)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+
+    //         $orderInvoice = OrderInvoice::findOrFail($id);
+    //         $userId = auth()->user()->id;
+    //         // $paymentType = $orderInvoice->payment_type;
+            
+    //         // if ($paymentType === 'Cash') {
+    //         //     $totalAmount = $orderInvoice->total_amount;
+    //         //     $discount = $orderInvoice->discount;
+    //         //     $discountAmount = ($totalAmount * $discount) / 100;
+    //         //     $totalAfterDiscount = $totalAmount - $discountAmount;
+    //         // }
+
+    //         foreach ($orderInvoice->orders as $order) {
+    //             $stock = $order->stock;
+
+    //             if (!$stock) {
+    //                 DB::rollBack();
+    //                 return response()->json(['error' => 'Stock not found.'], 404);
+    //             }
+    
+    //             $previous_quantity = $stock->quantity;
+    //             $new_quantity = $previous_quantity - $order->quantity;
+
+    //             if ($new_quantity < 0) {
+    //                 DB::rollBack();
+    //                 return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
+    //             }
+
+    //             $stock->update([
+    //                 'quantity' => $new_quantity
+    //             ]);
+    
+    //             Transection::create([
+    //                 'user_id' => $userId,
+    //                 'stock_id' => $stock->id,
+    //                 'order_invoice_id' => $orderInvoice->id,
+    //                 // 'product_name' => $order->product_name,
+    //                 'sku' => $order->sku,
+    //                 'pre_stock' => $previous_quantity,
+    //                 'tran_quant' => $order->quantity,
+    //                 'curr_stock' => $new_quantity,
+    //                 'tran_type' => 'Warehouse to Sale Point',
+    //                 'status' => 'Stock Out'
+    //             ]);
+    //         }
+
+    //         // Collection::create([
+    //         //     'order_invoice_id' => $orderInvoice->id,
+    //         //     'collection_amount' => $orderInvoice->total_amount,
+    //         //     'due' => $orderInvoice->total_amount
+    //         // ]);
+
+    //         $orderInvoice->update([
+    //             'updated_by_user_id' => $userId,
+    //             'status' => 'Accepted',
+    //             // 'invoice_date' => Carbon::now(),
+    //             'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
+    //         ]);
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Order Invoice approved Successfully'
+    //         ], 200);
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+    //     }
+    // }
+
     public function update(Request $request, $id)
     {
         try {
             DB::beginTransaction();
 
             $orderInvoice = OrderInvoice::findOrFail($id);
-            $userId = auth()->user()->id;
-            // $paymentType = $orderInvoice->payment_type;
             
-            // if ($paymentType === 'Cash') {
-            //     $totalAmount = $orderInvoice->total_amount;
-            //     $discount = $orderInvoice->discount;
-            //     $discountAmount = ($totalAmount * $discount) / 100;
-            //     $totalAfterDiscount = $totalAmount - $discountAmount;
-            // }
+            if ($orderInvoice->status === 'Accepted') {
+                return response()->json(['error' => 'Invoice already approved'], 409);
+            }
+
+            $userId = auth()->user()->id;
 
             foreach ($orderInvoice->orders as $order) {
-                $stock = $order->stock;
+                // $stock = $order->stock;
+                $stock = $order->stock()->lockForUpdate()->first();
 
                 if (!$stock) {
                     DB::rollBack();
                     return response()->json(['error' => 'Stock not found.'], 404);
                 }
-    
-                $previous_quantity = $stock->quantity;
-                $new_quantity = $previous_quantity - $order->quantity;
 
-                if ($new_quantity < 0) {
+                if ($stock->quantity < $order->quantity) {
                     DB::rollBack();
                     return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
                 }
-
-                $stock->update([
-                    'quantity' => $new_quantity
-                ]);
+    
+                $previous_quantity = $stock->quantity;
+                $stock->decrement('quantity', $order->quantity);
+                $new_quantity = $previous_quantity - $order->quantity;
     
                 Transection::create([
                     'user_id' => $userId,
                     'stock_id' => $stock->id,
                     'order_invoice_id' => $orderInvoice->id,
-                    // 'product_name' => $order->product_name,
                     'sku' => $order->sku,
                     'pre_stock' => $previous_quantity,
                     'tran_quant' => $order->quantity,
@@ -245,16 +316,9 @@ class OrderInvoiceController extends Controller
                 ]);
             }
 
-            // Collection::create([
-            //     'order_invoice_id' => $orderInvoice->id,
-            //     'collection_amount' => $orderInvoice->total_amount,
-            //     'due' => $orderInvoice->total_amount
-            // ]);
-
             $orderInvoice->update([
                 'updated_by_user_id' => $userId,
                 'status' => 'Accepted',
-                // 'invoice_date' => Carbon::now(),
                 'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
             ]);
 
