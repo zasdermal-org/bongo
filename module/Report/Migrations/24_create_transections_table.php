@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('sales_value', 10, 2)->nullable();
             $table->enum('tran_type', ['Warehouse Stock In',  'Warehouse to Sale Point', 'Sale Point to Warehouse']);
             $table->enum('status', ['Stock In', 'Stock Out', 'Return']);
+            // $table->enum('is_active', ['Active', 'Inactive'])->default('Active'); new field needed
             $table->timestamps();
         });
     }

@@ -407,71 +407,71 @@ class ReportController extends Controller
     }
 
     public function customer_sale_details_copy(Request $request, $id)
-{
-    $today = Carbon::today();
+    {
+        $today = Carbon::today();
 
-    $fromDateStr = $request->query('from_date');
-    $toDateStr = $request->query('to_date');
+        $fromDateStr = $request->query('from_date');
+        $toDateStr = $request->query('to_date');
 
-    $fromDate = ($fromDateStr && Carbon::hasFormat($fromDateStr, 'Y-m-d'))
-        ? Carbon::parse($fromDateStr)->startOfDay()
-        : null;
+        $fromDate = ($fromDateStr && Carbon::hasFormat($fromDateStr, 'Y-m-d'))
+            ? Carbon::parse($fromDateStr)->startOfDay()
+            : null;
 
-    $toDate = ($toDateStr && Carbon::hasFormat($toDateStr, 'Y-m-d'))
-        ? Carbon::parse($toDateStr)->endOfDay()
-        : null;
+        $toDate = ($toDateStr && Carbon::hasFormat($toDateStr, 'Y-m-d'))
+            ? Carbon::parse($toDateStr)->endOfDay()
+            : null;
 
-    $query = OrderInvoice::where('sale_point_id', $id)
-        ->whereNotIn('status', ['Requested', 'Cancel']);
+        $query = OrderInvoice::where('sale_point_id', $id)
+            ->whereNotIn('status', ['Requested', 'Cancel']);
 
-    if ($fromDate && $toDate) {
-        $query->whereBetween('invoice_date', [$fromDate, $toDate]);
-    } else {
-        $query->whereDate('invoice_date', $today);
-    }
-
-    $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
-
-    // ✅ Calculate total qty
-    $data['totalQuantity'] = $data['orderInvoices']
-        ->pluck('orders')
-        ->flatten()
-        ->sum('quantity');
-
-    // ✅ Process discount for each invoice
-    foreach ($data['orderInvoices'] as $invoice) {
-        $invoice->discount_amount = 0;
-        $invoice->total_after_discount = $invoice->total_amount;
-
-        if ($invoice->payment_type === 'Cash' && $invoice->discount > 0) {
-            $invoice->discount_amount = ($invoice->total_amount * $invoice->discount) / 100;
-            $invoice->total_after_discount = $invoice->total_amount - $invoice->discount_amount;
+        if ($fromDate && $toDate) {
+            $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+        } else {
+            $query->whereDate('invoice_date', $today);
         }
+
+        $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
+
+        // ✅ Calculate total qty
+        $data['totalQuantity'] = $data['orderInvoices']
+            ->pluck('orders')
+            ->flatten()
+            ->sum('quantity');
+
+        // ✅ Process discount for each invoice
+        foreach ($data['orderInvoices'] as $invoice) {
+            $invoice->discount_amount = 0;
+            $invoice->total_after_discount = $invoice->total_amount;
+
+            if ($invoice->payment_type === 'Cash' && $invoice->discount > 0) {
+                $invoice->discount_amount = ($invoice->total_amount * $invoice->discount) / 100;
+                $invoice->total_after_discount = $invoice->total_amount - $invoice->discount_amount;
+            }
+        }
+
+        // ✅ Final value after discount across all invoices
+        $data['totalInvoiceValue'] = $data['orderInvoices']->sum('total_after_discount');
+
+        // ✅ NEW: Group all orders product-wise
+        $data['groupedProducts'] = $data['orderInvoices']
+            ->flatMap(fn($invoice) => $invoice->orders) // take all orders from all invoices
+            ->groupBy('sku')
+            ->map(function ($orders) {
+                $first = $orders->first();
+                return [
+                    'product_name' => $first->stock->product->title,
+                    'sku' => $first->sku,
+                    'unit_price' => $first->unit_price,
+                    'quantity' => $orders->sum('quantity'),
+                    'total_amount' => $orders->sum('total_amount'),
+                ];
+            });
+
+        $data['salePoint'] = SalePoint::findOrFail($id);
+        $data['today'] = $today;
+
+        return view('Report::customer_sale_details_copy', $data);
     }
-
-    // ✅ Final value after discount across all invoices
-    $data['totalInvoiceValue'] = $data['orderInvoices']->sum('total_after_discount');
-
-    // ✅ NEW: Group all orders product-wise
-    $data['groupedProducts'] = $data['orderInvoices']
-        ->flatMap(fn($invoice) => $invoice->orders) // take all orders from all invoices
-        ->groupBy('sku')
-        ->map(function ($orders) {
-            $first = $orders->first();
-            return [
-                'product_name' => $first->stock->product->title,
-                'sku' => $first->sku,
-                'unit_price' => $first->unit_price,
-                'quantity' => $orders->sum('quantity'),
-                'total_amount' => $orders->sum('total_amount'),
-            ];
-        });
-
-    $data['salePoint'] = SalePoint::findOrFail($id);
-    $data['today'] = $today;
-
-    return view('Report::customer_sale_details_copy', $data);
-}
 
 
 
