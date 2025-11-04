@@ -187,10 +187,7 @@
                                         <!--end::Status=-->
 
                                         <!--begin::Tran Date=-->
-                                        <td class="pe-0">
-                                            {{ $transection->created_at->format('d M, Y') }} <br>
-                                            {{ $transection->created_at->format('h:i A') }}
-                                        </td>
+                                        <td class="pe-0">{{ $transection->created_at->format('d M, Y') }}</td>
                                         <!--end::Tran Date=-->
 
                                         <!--begin::Pre Stock=-->
