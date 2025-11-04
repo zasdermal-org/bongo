@@ -116,7 +116,8 @@
                                 @foreach ($transections as $key => $transection)
                                     <tr>
                                         <!--begin::S.N=-->
-                                        <td>{{ $key + 1 }}</td>
+                                        {{-- <td>{{ $key + 1 }}</td> --}}
+                                        <td>{{ $transection->id }}</td>
                                         <!--end::S.N=-->
 
                                         <!--begin::Product=-->
