@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     | Sales Route
     |--------------------------------------------------------------------------
     */
-    require __DIR__ . '/Sales/api_routes.php';
+    // require __DIR__ . '/Sales/api_routes.php';
 
     /*
     |--------------------------------------------------------------------------
@@ -52,3 +52,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+require __DIR__ . '/Sales/api_routes.php';
