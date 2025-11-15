@@ -724,7 +724,7 @@ class OrderInvoiceController extends Controller
 
         foreach ($order_invoices as $invoice) {
             // $payable_amount = $invoice->total_amount - $invoice->sell_discount_amount - $invoice->return_amount;
-            $sales_point = $invoice->sales_point->name . ' (' . $invoice->sales_point->code_number . ')';
+            $sales_point = $invoice->salePoint->name . ' (' . $invoice->salePoint->code_number . ')';
             
             $serializeInvoices[] = [
                 'invoice_id' => $invoice->id,
