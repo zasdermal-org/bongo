@@ -18,6 +18,7 @@ use Module\Access\Models\Depot;
 use Module\Access\Models\User;
 use Module\Inventory\Models\Stock;
 
+use Module\Market\Models\Territory;
 use Module\Report\Models\Transection;
 use Module\Sales\Models\Order;
 use Module\Sales\Models\Collection;
@@ -577,6 +578,7 @@ class OrderInvoiceController extends Controller
         return 'O' . $year . $month . $day . mt_rand(1000, 9999);
     }
 
+    // api
     public function api_store(Request $request)
     {
         $data = $request->validate([
@@ -649,4 +651,105 @@ class OrderInvoiceController extends Controller
             'message' => 'The order has been submited successfully',
         ], 200);
     }
+
+
+    public function sale_invoices(Request $request)
+    {
+        $query = OrderInvoice::query();
+
+        // Parse date filters
+        $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+            ? Carbon::parse($request->fromDate)->startOfDay()
+            : null;
+
+        $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+            ? Carbon::parse($request->toDate)->endOfDay()
+            : null;
+
+        if ($request->filled('depot_id') && $request->depot_id != 0) {
+            $depot_id = $request->depot_id;
+            $query->where('depot_id', $depot_id);
+        }
+
+        if ($request->filled('zone_id') && $request->zone_id != 0) {
+            $zone_id = $request->zone_id;
+            $territoryIds = Territory::whereHas('area.region.division.zone', function ($query) use ($zone_id) {
+                $query->where('id', $zone_id);
+            })->pluck('id');
+
+            $query->whereIn('territory_id', $territoryIds);
+        }
+
+        if ($request->filled('division_id') && $request->division_id != 0) {
+            $division_id = $request->division_id;
+            $territoryIds = Territory::whereHas('area.region.division', function ($query) use ($division_id) {
+                $query->where('id', $division_id);
+            })->pluck('id');
+
+            $query->whereIn('territory_id', $territoryIds);
+        }
+
+        if ($request->filled('region_id') && $request->region_id != 0) {
+            $region_id = $request->region_id;
+            $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+                $query->where('id', $region_id);
+            })->pluck('id');
+
+            $query->whereIn('territory_id', $territoryIds);
+        }
+
+        if ($request->filled('area_id') && $request->area_id != 0) {
+            $area_id = $request->area_id;
+            $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+                $query->where('id', $area_id);
+            })->pluck('id');
+
+            $query->whereIn('territory_id', $territoryIds);
+        }
+
+        if ($request->filled('territory_id') && $request->territory_id != 0) {
+            $territory_id = $request->territory_id;
+            $query->where('territory_id', $territory_id);
+        }
+
+        $query->whereBetween('created_at', [$fromDate, $toDate]);
+
+        $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
+            return $order_invoice->user->username;
+        });
+
+        $count_invoices = $order_invoices->count();
+
+        $serializeInvoices = [];
+
+        foreach ($order_invoices as $invoice) {
+            // $payable_amount = $invoice->total_amount - $invoice->sell_discount_amount - $invoice->return_amount;
+            $sales_point = $invoice->sales_point->name . ' (' . $invoice->sales_point->code_number . ')';
+            
+            $serializeInvoices[] = [
+                'invoice_id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
+                'status' => $invoice->status,
+                'invoice_value' => $invoice->total_amount,
+                // 'discount_value' => $invoice->sell_discount_amount ?? 0,
+                'return_amount' => $invoice->return_amount ?? 0,
+                'payable_amount' => $invoice->due,
+                'sale_point_name' => $sales_point,
+                'address' => $invoice->sales_point->address,
+                'order_date' => $invoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+                'invoice_date' => $invoice->updated_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+                'username' => $invoice->user->username,
+                'employee_name' => $invoice->user->name
+            ];
+        }
+
+        return response()->json([
+            'status' => 'SUCCESS',
+            'count' => $count_invoices,
+            'data' => $serializeInvoices,
+            'message' => 'Data retrieved successfully.'
+        ], 200);
+    }
+
+
 }

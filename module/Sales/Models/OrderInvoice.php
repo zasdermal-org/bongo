@@ -37,7 +37,7 @@ class OrderInvoice extends Model
         'invoice_date',
 
         'created_at', // temp
-        'updated_at' //temp
+        'updated_at' // temp
     ];
 
     protected $casts = [
