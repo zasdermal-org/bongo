@@ -735,7 +735,7 @@ class OrderInvoiceController extends Controller
                 'return_amount' => $invoice->return_amount ?? 0,
                 'payable_amount' => $invoice->due,
                 'sale_point_name' => $sales_point,
-                'address' => $invoice->sales_point->address,
+                'address' => $invoice->salePoint->address,
                 'order_date' => $invoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
                 'invoice_date' => $invoice->updated_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
                 'username' => $invoice->user->username,
