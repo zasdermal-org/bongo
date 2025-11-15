@@ -712,7 +712,7 @@ class OrderInvoiceController extends Controller
             $query->where('territory_id', $territory_id);
         }
 
-        $query->whereBetween('created_at', [$fromDate, $toDate]);
+        $query->whereBetween('invoice_date', [$fromDate, $toDate]);
 
         $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
             return $order_invoice->user->username;
@@ -737,7 +737,7 @@ class OrderInvoiceController extends Controller
                 'sale_point_name' => $sales_point,
                 'address' => $invoice->salePoint->address,
                 'order_date' => $invoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
-                'invoice_date' => $invoice->updated_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+                'invoice_date' => $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
                 'username' => $invoice->user->username,
                 'employee_name' => $invoice->user->name
             ];
