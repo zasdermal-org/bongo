@@ -747,9 +747,42 @@ class OrderInvoiceController extends Controller
             'status' => 'SUCCESS',
             'count' => $count_invoices,
             'data' => $serializeInvoices,
-            'message' => 'Data retrieved successfully.'
+            'message' => 'Invoices retrieved successfully.'
         ], 200);
     }
 
+    public function sale_invoice_orders(Request $request, $id)
+    {
+        $order_invoice = OrderInvoice::find($id);
+        // $payable_amount = $order_invoice->total_amount - $order_invoice->sell_discount_amount - $order_invoice->return_amount;
+        $sales_point = $order_invoice->salePoint->name . ' (' . $order_invoice->salePoint->code_number . ')';
 
+        $serializeOrders = [];
+
+        foreach ($order_invoice->orders as $order) {
+            $serializeOrders[] = [
+                'product_name' => $order->stock->product->title,
+                'quantity' => $order->quantity,
+                'return_qty' => $order->return_qty,
+                'order_value' => $order->total_amount
+            ];
+        }
+
+        $serializeInvoice = [
+            'sale_point_name' => $sales_point,
+            'invoice_number' => $order_invoice->invoice_number,
+            'address' => $order_invoice->salePoint->address,
+            'invoice_value' => $order_invoice->total_amount,
+            // 'discount_value' => $order_invoice->sell_discount_amount,
+            'return_amount' => $order_invoice->return_amount,
+            'payable_amount' => $order_invoice->due,
+            'orders' => $serializeOrders
+        ];
+
+        return response()->json([
+            'status' => 'SUCCESS',
+            'data' => $serializeInvoice,
+            'message' => 'Data retrieved successfully.'
+        ], 200);
+    }
 }
