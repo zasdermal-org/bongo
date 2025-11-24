@@ -17,36 +17,28 @@
                         <!--begin::Card title-->
                         <div class="card-title">
                             <form class="d-flex align-items-center position-relative my-1" action="{{ route('order.accepted_invoices') }}" method="GET">
-                                <!--begin::Search-->
                                 <div class="w-110 mw-120px me-2">
-                                    <input type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Invoice Number" />
+                                    <input type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Search..." />
                                 </div>
-                                <!--end::Search-->
 
-                                <!--begin::Search-->
-                                {{-- <div class="w-110 mw-120px me-2">
-                                    <input name="username" value="{{ request('username') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Employee ID" />
-                                </div> --}}
-                                <!--end::Search-->
-
-                                <!--begin::Search-->
-                                {{-- <div class="w-110 mw-120px me-2">
-                                    <input name="code_number" value="{{ request('code_number') }}" type="text" data-kt-ecommerce-category-filter="search" class="form-control form-control-solid" placeholder="Sale Point Number" />
-                                </div> --}}
-                                <!--end::Search-->
-
-                                <!--begin::Depot-->
-                                {{-- <div class="w-110 mw-120px me-2">
-                                    <!--begin::Select2-->
-                                    <select id="depot_id" name="depot_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Depot" data-kt-ecommerce-product-filter="status">
-                                        <option></option>
-                                        @foreach ($depots as $depot)
-                                            <option value="{{ $depot->id }}" {{ request('depot_id') == $depot->id ? 'selected' : '' }}>{{ $depot->name }}</option>
+                                <div class="w-110 mw-120px me-2">
+                                    <select name="code_number" class="form-select form-select-solid" data-control="select2">
+                                        <option value="">All Sales Point</option>
+                                        @foreach ($sale_points as $sale_point)
+                                            <option value="{{ $sale_point->code_number }}" {{ request('code_number') == $sale_point->code_number ? 'selected' : '' }}>
+                                                {{ $sale_point->name }} — ({{ $sale_point->code_number }})
+                                            </option>
                                         @endforeach
+                                    </select>                                
+                                </div>
+
+                                <div class="w-110 mw-120px me-2">
+                                    <select name="type" class="form-select form-select-solid" data-control="select2">
+                                        <option value="">All Type</option>
+                                        <option value="seed" {{ request('type') == 'seed' ? 'selected' : '' }}>Seed</option>
+                                        <option value="agrochemicals" {{ request('type') == 'agrochemicals' ? 'selected' : '' }}>Agrochemicals</option>
                                     </select>
-                                    <!--end::Select2-->
-                                </div> --}}
-                                <!--end::Depot-->
+                                </div>
 
                                 <div class="w-110 mw-120px me-2">
                                     <input name="from_date" type="date" value="{{ request('from_date') ?? \Carbon\Carbon::now()->toDateString() }}" class="form-control form-control-solid" />
@@ -140,9 +132,7 @@
                                     <th class="min-w-80px">Invoice No</th>
                                     <th class="min-w-80px">Order By</th>
                                     <th class="min-w-80px">Sale Point Name</th>
-                                    @if (auth()->user()->role->slug === 'admin')
-                                        <th class="min-w-50px">Type</th>
-                                    @endif
+                                    <th class="min-w-50px">Type</th>
                                     <th class="min-w-50px">Payment Type</th>
                                     <th class="min-w-50px">Territory</th>
                                     <th class="min-w-80px">Order Date</th>
@@ -193,10 +183,8 @@
                                             ({{ $orderInvoice->salePoint->code_number }})
                                         </td>
                                         <!--end::Sales Point Name=-->
-
-                                        @if (auth()->user()->role->slug === 'admin')
-                                            <td>{{ $orderInvoice->type }}</td>
-                                        @endif
+                                        
+                                        <td>{{ $orderInvoice->type }}</td>
 
                                         <td>{{ $orderInvoice->payment_type }}</td>
 
@@ -282,7 +270,8 @@
 
                             <tfoot>
                                 <tr>
-                                    <td colspan="{{ auth()->user()->role->slug === 'admin' ? 9 : 8 }}" class="text-end fw-bold">
+                                    {{-- <td colspan="{{ auth()->user()->role->slug === 'admin' ? 9 : 9 }}" class="text-end fw-bold"> --}}
+                                    <td colspan="9" class="text-end fw-bold">
                                         <div class="badge badge-light-info" style="font-size: 14px;">Total:</div>
                                     </td>
                                     <td class="fw-bold">

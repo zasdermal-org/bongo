@@ -112,3 +112,7 @@ GROUP BY
 ORDER BY
     total_sold_qty
 DESC
+
+double transection invoice
+INV2511161845 return done
+ay invoice nia function ta abar check korte hobe

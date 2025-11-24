@@ -51,6 +51,7 @@
                                                     @endif
                                                 </span>
                                             </div>
+
                                             <div class="flex-root d-flex flex-column">
                                                 <span class="text-muted">Depot</span>
                                                 <span class="fs-5">
@@ -132,16 +133,14 @@
 
                                                                 <td>
                                                                     <span class="quantity-display" onclick="showInputField(this)">{{ $order->quantity }}</span>
-                                                                    @if ($orderInvoice->status !== 'Accepted')
-                                                                        <input 
-                                                                            type="number" 
-                                                                            class="quantity-input d-none" 
-                                                                            value="{{ $order->quantity }}" 
-                                                                            data-order-id="{{ $order->id }}" 
-                                                                            min="1" 
-                                                                            style="width: 70px; text-align: left;"
-                                                                        />
-                                                                    @endif
+                                                                    <input 
+                                                                        type="number" 
+                                                                        class="quantity-input d-none" 
+                                                                        value="{{ $order->quantity }}" 
+                                                                        data-order-id="{{ $order->id }}" 
+                                                                        min="1" 
+                                                                        style="width: 70px; text-align: left;"
+                                                                    />
                                                                 </td>
                                                                 <!--end::Quantity-->
 

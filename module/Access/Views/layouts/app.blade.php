@@ -16,7 +16,7 @@
 			@endif
 		</title>
 		
-        <link rel="shortcut icon" href="assets/media/logos/logo.jpeg" />
+        <link rel="shortcut icon" href="assets/media/logos/logo.png" />
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500,600,700" />
 		<!--end::Fonts-->

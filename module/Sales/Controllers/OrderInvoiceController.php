@@ -18,6 +18,7 @@ use Module\Access\Models\Depot;
 use Module\Access\Models\User;
 use Module\Inventory\Models\Stock;
 
+use Module\Market\Models\SalePoint;
 use Module\Market\Models\Territory;
 use Module\Report\Models\Transection;
 use Module\Sales\Models\Order;
@@ -30,7 +31,7 @@ class OrderInvoiceController extends Controller
     {
         $data['breadcrumbs'] = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Orders & Invoices', 'url' => null],
+            ['title' => 'Order & Invoice', 'url' => null],
             ['title' => 'Orders', 'url' => null]
         ];
 
@@ -196,82 +197,54 @@ class OrderInvoiceController extends Controller
         return view('Sales::order.update_invoice', $data);
     }
 
-    // before the double transcection or double stock substraction
-    // public function update(Request $request, $id)
-    // {
-    //     try {
-    //         DB::beginTransaction();
+    public function update_order(Request $request, $id)
+    {
+        try {
+            $data = $request->validate([
+                'quantity' => 'required|numeric'
+            ]);
 
-    //         $orderInvoice = OrderInvoice::findOrFail($id);
-    //         $userId = auth()->user()->id;
-    //         // $paymentType = $orderInvoice->payment_type;
-            
-    //         // if ($paymentType === 'Cash') {
-    //         //     $totalAmount = $orderInvoice->total_amount;
-    //         //     $discount = $orderInvoice->discount;
-    //         //     $discountAmount = ($totalAmount * $discount) / 100;
-    //         //     $totalAfterDiscount = $totalAmount - $discountAmount;
-    //         // }
-
-    //         foreach ($orderInvoice->orders as $order) {
-    //             $stock = $order->stock;
-
-    //             if (!$stock) {
-    //                 DB::rollBack();
-    //                 return response()->json(['error' => 'Stock not found.'], 404);
-    //             }
+            DB::beginTransaction();
     
-    //             $previous_quantity = $stock->quantity;
-    //             $new_quantity = $previous_quantity - $order->quantity;
+            $order = Order::findOrFail($id);
+            $orderInvoice = $order->orderInvoices->firstOrFail();
 
-    //             if ($new_quantity < 0) {
-    //                 DB::rollBack();
-    //                 return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
-    //             }
+            $total_order_amount = $data['quantity'] * $order->unit_price;
+            $order->update([
+                'quantity' => $data['quantity'],
+                'total_amount' => $total_order_amount
+            ]);
 
-    //             $stock->update([
-    //                 'quantity' => $new_quantity
-    //             ]);
+             // Recalculate invoice total
+            $invoiceTotal = $orderInvoice->orders->sum(function ($order) {
+                return $order->unit_price * $order->quantity;
+            });
+
+            $orderInvoice->update([
+                'total_amount' => $invoiceTotal,
+            ]);
+
+            DB::commit();
     
-    //             Transection::create([
-    //                 'user_id' => $userId,
-    //                 'stock_id' => $stock->id,
-    //                 'order_invoice_id' => $orderInvoice->id,
-    //                 // 'product_name' => $order->product_name,
-    //                 'sku' => $order->sku,
-    //                 'pre_stock' => $previous_quantity,
-    //                 'tran_quant' => $order->quantity,
-    //                 'curr_stock' => $new_quantity,
-    //                 'tran_type' => 'Warehouse to Sale Point',
-    //                 'status' => 'Stock Out'
-    //             ]);
-    //         }
+            return response()->json([
+                'status' => true,
+                'message' => 'Order and Order Invoice updated Successfully'
+            ], 200);
 
-    //         // Collection::create([
-    //         //     'order_invoice_id' => $orderInvoice->id,
-    //         //     'collection_amount' => $orderInvoice->total_amount,
-    //         //     'due' => $orderInvoice->total_amount
-    //         // ]);
-
-    //         $orderInvoice->update([
-    //             'updated_by_user_id' => $userId,
-    //             'status' => 'Accepted',
-    //             // 'invoice_date' => Carbon::now(),
-    //             'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
-    //         ]);
-
-    //         DB::commit();
-
-    //         return response()->json([
-    //             'status' => true,
-    //             'message' => 'Order Invoice approved Successfully'
-    //         ], 200);
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
-    //     }
-    // }
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Order or Order Invoice not found.'
+            ], 404);
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function update(Request $request, $id)
     {
@@ -336,6 +309,85 @@ class OrderInvoiceController extends Controller
         }
     }
 
+    public function cancel($id)
+    {
+        $orderInvoice = OrderInvoice::findOrFail($id);
+        $orderInvoice->update([
+            'status' => 'Cancel'
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Invoice cancel successfully',
+        ]);
+    }
+
+    public function accepted_invoices(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Orders & Invoices', 'url' => null],
+            ['title' => 'Invoices', 'url' => null]
+        ];
+
+        $today = Carbon::today();
+        $authUser = auth()->user();
+        $query = OrderInvoice::query();
+        $data['sale_points'] = SalePoint::where('is_active', 'Active')->orderBy('id', 'desc')->get();
+
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : null;
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : null;
+
+        if ($authUser->role->slug === 'depot') {
+            $depot_id = auth()->user()->employee->depot_id;
+            $query->where('depot_id', $depot_id);
+        }
+
+        if ($request->filled('invoice_number')) {
+            $invoice_number = $request->invoice_number;
+            $query->where('invoice_number', $invoice_number);
+        }
+
+        if ($request->filled('username')) {
+            $user_id = User::where('username', $request->username)->value('id');
+            $query->where('user_id', $user_id);
+        }
+
+        if ($request->filled('code_number')) {
+            $code_number = $request->code_number;
+            $query->whereHas('salePoint', function ($subQ) use ($code_number) {
+                $subQ->where('code_number', $code_number);
+            });
+        }
+        
+        if ($request->filled('type')) {
+            $type = $request->type;
+            $query->where('type', $type);
+        }
+
+        if ($fromDate && $toDate) {
+                $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+        } else {
+            $query->whereDate('invoice_date', $today);
+        }
+
+        $query->whereNotIn('status', ['Requested', 'Cancel']);
+
+        $total_query = $query->get();
+        $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
+
+        $data['invoice'] = $total_query->count();
+        $data['order_value'] = $total_query->sum('total_amount');
+
+        return view('Sales::order.accepted_invoices', $data);
+    }
+
     public function invoice(Request $request, $id)
     {
         $data['breadcrumbs'] = [
@@ -366,128 +418,6 @@ class OrderInvoiceController extends Controller
         $data['title'] = $orderInvoice->salePoint->name . ' - ' . $orderInvoice->salePoint->code_number . ' (' . $id . ')';
 
         return view('Sales::order.invoice', $data);
-    }
-
-    public function cancel($id)
-    {
-        $orderInvoice = OrderInvoice::findOrFail($id);
-        $orderInvoice->update([
-            'status' => 'Cancel'
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Invoice cancel successfully',
-        ]);
-    }
-
-    public function update_order(Request $request, $id)
-    {
-        try {
-            $data = $request->validate([
-                'quantity' => 'required|numeric'
-            ]);
-
-            DB::beginTransaction();
-    
-            $order = Order::findOrFail($id);
-            $orderInvoice = $order->orderInvoices->firstOrFail();
-
-            $total_order_amount = $data['quantity'] * $order->unit_price;
-            $order->update([
-                'quantity' => $data['quantity'],
-                'total_amount' => $total_order_amount
-            ]);
-
-             // Recalculate invoice total
-            $invoiceTotal = $orderInvoice->orders->sum(function ($order) {
-                return $order->unit_price * $order->quantity;
-            });
-
-            $orderInvoice->update([
-                'total_amount' => $invoiceTotal,
-            ]);
-
-            DB::commit();
-    
-            return response()->json([
-                'status' => true,
-                'message' => 'Order and Order Invoice updated Successfully'
-            ], 200);
-
-        } catch (ModelNotFoundException $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'message' => 'Order or Order Invoice not found.'
-            ], 404);
-    
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'error' => 'Something went wrong: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function accepted_invoices(Request $request)
-    {
-        $data['breadcrumbs'] = [
-            ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Orders & Invoices', 'url' => null],
-            ['title' => 'Invoices', 'url' => null]
-        ];
-
-        $today = Carbon::today();
-        $query = OrderInvoice::query();
-
-        // Parse date filters
-        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
-            ? Carbon::parse($request->from_date)->startOfDay()
-            : null;
-
-        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
-            ? Carbon::parse($request->to_date)->endOfDay()
-            : null;
-
-        $authUser = auth()->user();
-        if ($authUser->role->slug === 'depot') {
-            $depot_id = auth()->user()->employee->depot_id;
-            $query->where('depot_id', $depot_id);
-        }
-
-        if ($request->filled('invoice_number')) {
-            $invoice_number = $request->invoice_number;
-            $query->where('invoice_number', $invoice_number);
-        }
-
-        if ($request->filled('username')) {
-            $user_id = User::where('username', $request->username)->value('id');
-            $query->where('user_id', $user_id);
-        }
-
-        // if ($request->filled('code_number')) {
-        //     $code_number = $request->code_number;
-        //     $query->whereHas('sales_point', function ($subQ) use ($code_number) {
-        //         $subQ->where('code_number', $code_number);
-        //     });
-        // }
-
-        if ($fromDate && $toDate) {
-                $query->whereBetween('invoice_date', [$fromDate, $toDate]);
-        } else {
-            $query->whereDate('invoice_date', $today);
-        }
-
-        $query->whereNotIn('status', ['Requested', 'Cancel']);
-
-        $total_query = $query->get();
-        $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
-
-        $data['invoice'] = $total_query->count();
-        $data['order_value'] = $total_query->sum('total_amount');
-
-        return view('Sales::order.accepted_invoices', $data);
     }
 
     public function return_invoice(Request $request, $id)
