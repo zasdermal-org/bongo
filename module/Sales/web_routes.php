@@ -17,7 +17,6 @@ Route::prefix('/order')->name('order.')->group(function () {
 
     Route::get('/accepted-invoices', [OrderInvoiceController::class, 'accepted_invoices'])->name('accepted_invoices');
     Route::get('/invoice/{id}', [OrderInvoiceController::class, 'invoice'])->name('invoice');
-
     Route::get('/return-invoice/{id}', [OrderInvoiceController::class, 'return_invoice'])->name('return_invoice');
 });
 

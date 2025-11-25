@@ -2,6 +2,7 @@
 
 namespace Module\Sales\Controllers;
 
+use App\Exports\OrderInvoiceExport;
 use App\Http\Controllers\Controller;
 
 use Carbon\Carbon;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Module\Access\Models\Depot;
 use Module\Access\Models\User;
 use Module\Inventory\Models\Stock;
@@ -379,9 +382,26 @@ class OrderInvoiceController extends Controller
 
         $query->whereNotIn('status', ['Requested', 'Cancel']);
 
-        $total_query = $query->get();
-        $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
+        // $total_query = $query->get();
+        $total_query = clone $query;
 
+        if ($request->has('export')) {
+            $orderInvoices = $query->with(['user', 'salePoint', 'territory'])->get();
+
+            switch ($request->export) {
+                case 'excel':
+                    return Excel::download(new OrderInvoiceExport($orderInvoices), 'accepted-invoices.xlsx');
+
+                case 'csv':
+                    return Excel::download(new OrderInvoiceExport($orderInvoices), 'accepted-invoices.csv');
+
+                case 'pdf':
+                    $pdf = Pdf::loadView('Sales::order.accepted_invoice_pdf', compact('orderInvoices'));
+                    return $pdf->download('accepted-invoices.pdf');
+            }
+        }
+
+        $data['orderInvoices'] = $query->orderBy('id', 'desc')->get();
         $data['invoice'] = $total_query->count();
         $data['order_value'] = $total_query->sum('total_amount');
 
@@ -460,6 +480,27 @@ class OrderInvoiceController extends Controller
 
         return redirect()->back();
     }
+
+    // public function export_accepted_invoices(Request $request)
+    // {
+    //     $orderInvoices = OrderInvoice::with(['user', 'salePoint', 'territory'])
+    //         ->filter(request())
+    //         ->get();
+
+    //     if ($request->export == "excel")
+    //         return Excel::download(new OrderInvoiceExport($orderInvoices), 'invoices.xlsx');
+
+    //     if ($request->export == "csv")
+    //         return Excel::download(new OrderInvoiceExport($orderInvoices), 'invoices.csv');
+
+    //     if ($request->export == "pdf") {
+    //         $pdf = PDF::loadView('exports.invoice_pdf', compact('orderInvoices'));
+    //         return $pdf->download('invoices.pdf');
+    //     }
+
+    //     return view('order.invoice_list', compact('orderInvoices'));
+    // }
+
 
     // helper
     private function generate_unique_invoice_number()

@@ -8,7 +8,7 @@
 
 		<title>Sign In - Bongo Agritech</title>
 		
-        <link rel="shortcut icon" href="assets/media/logos/logo.jpeg" />
+        <link rel="shortcut icon" href="assets/media/logos/logo.png" />
 
 		<!--begin::Fonts-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
