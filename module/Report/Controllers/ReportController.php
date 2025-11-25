@@ -2,6 +2,7 @@
 
 namespace Module\Report\Controllers;
 
+use App\Exports\OrderSummaryExport;
 use App\Http\Controllers\Controller;
 
 
@@ -26,6 +27,9 @@ use Module\Sales\Models\OrderInvoice;
 
 use Illuminate\Support\Facades\DB;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ReportController extends Controller
 {
@@ -45,21 +49,6 @@ class ReportController extends Controller
         $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
             ? Carbon::parse($request->to_date)->endOfDay()
             : Carbon::today()->endOfDay();
-
-        // $orders = DB::table('orders')
-        //     ->select(
-        //         DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
-        //         'orders.sku',
-        //         DB::raw('SUM(orders.quantity) as total_quantity'),
-        //         'products.title as product_name'
-        //     )
-        //     ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
-        //     ->join('products', 'stocks.product_id', '=', 'products.id')
-        //     ->whereBetween('orders.created_at', [$fromDate, $toDate])
-        //     ->groupBy('orders.sku', 'products.title')
-        //     ->orderBy('stock_id', 'asc')
-        //     ->get();
-
 
         // ------------------------------ new
         // Start base query
@@ -112,6 +101,24 @@ class ReportController extends Controller
             $item->available_stock = $stocks[$item->sku] ?? 0;
             return $item;
         });
+
+        // ================= Export Logic =================
+        if ($request->has('export')) {
+            switch ($request->export) {
+                case 'excel':
+                    return Excel::download(new OrderSummaryExport($orders), 'order_summary.xlsx');
+                case 'csv':
+                    return Excel::download(new OrderSummaryExport($orders), 'order_summary.csv');
+                case 'pdf':
+                    $pdf = Pdf::loadView('Report::order_summary_pdf', [
+                        'orders' => $orders,
+                        'fromDate' => $fromDate,
+                        'toDate' => $toDate,
+                    ]);
+                    return $pdf->download('order_summary.pdf');
+            }
+        }
+        // ===============================================
 
         $data['orders'] = $orders;
 
