@@ -8,7 +8,9 @@ use Module\Sales\Controllers\OrderInvoiceController;
 Route::prefix('/order')->name('order.')->group(function () {
     Route::get('/invoices', [OrderInvoiceController::class, 'invoices'])->name('invoices');
     Route::get('/create-invoice', [OrderInvoiceController::class, 'create'])->name('create_invoice');
+    Route::get('/create-invoice-cpy', [OrderInvoiceController::class, 'create_cpy'])->name('create_invoice_cpy'); // cpy for making older invoice 
     Route::post('/store-invoice', [OrderInvoiceController::class, 'store'])->name('store_invoice');
+    Route::post('/store-invoice-cpy', [OrderInvoiceController::class, 'store_cpy'])->name('store_invoice_cpy');
 
     Route::get('/edit-invoice/{id}', [OrderInvoiceController::class, 'edit'])->name('edit');
     Route::post('/update-order/{id}', [OrderInvoiceController::class, 'update_order'])->name('update_order');

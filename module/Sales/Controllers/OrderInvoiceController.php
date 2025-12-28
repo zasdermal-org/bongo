@@ -19,6 +19,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Module\Access\Models\Depot;
 use Module\Access\Models\User;
+use Module\Inventory\Models\Product;
 use Module\Inventory\Models\Stock;
 
 use Module\Market\Models\SalePoint;
@@ -102,6 +103,26 @@ class OrderInvoiceController extends Controller
         return view('Sales::order.create_invoice', $data);
     }
 
+    public function create_cpy(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Order', 'url' => null],
+            ['title' => 'Create Invoice', 'url' => null]
+        ];
+
+        // $data['users'] = User::whereHas('employee.designation', function ($query) {
+        //     $query->where('slug', 'marketing-officer');
+        // })
+        // ->get();
+        // $data['depots'] = Depot::all();
+
+        $data['salePoints'] = SalePoint::orderBy('id', 'desc')->get();
+        $data['products'] = Product::orderBy('id', 'desc')->get();
+
+        return view('Sales::order.create_invoice_cpy', $data);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -173,6 +194,84 @@ class OrderInvoiceController extends Controller
             'status' => 'SUCCESS',
             'message' => 'The order has been submited successfully',
         ], 200);
+    }
+
+    public function store_cpy(Request $request)
+    {
+        // ✅ VALIDATION
+        $request->validate([
+            'sale_point_id' => 'required|exists:sale_points,id',
+            'product_id'    => 'required|array|min:1',
+            'product_id.*'  => 'required|exists:products,id',
+            'quantity'      => 'required|array',
+            'quantity.*'    => 'required|integer|min:1',
+            'price'         => 'required|array',
+            'price.*'       => 'required|numeric|min:0',
+        ]);
+
+        $auth_user = Auth::user();
+        $salePoint = SalePoint::findOrFail($request->sale_point_id);
+
+        DB::beginTransaction();
+
+        try {
+            // ✅ CALCULATE GRAND TOTAL
+            $grandTotal = 0;
+
+            foreach ($request->quantity as $index => $qty) {
+                $grandTotal += $qty * $request->price[$index];
+            }
+
+            // ✅ CREATE INVOICE
+            $orderInvoice = OrderInvoice::create([
+                'user_id' => $auth_user->id,
+                'submitted_by_user_id' => $auth_user->id,
+                'sale_point_id' => $salePoint->id,
+                'territory_id' => $salePoint->territory_id,
+                'depot_id' => 3, // depot create korte hobe
+                'invoice_number' => $this->generate_unique_invoice_number(),
+                'payment_type' => 'Credit',
+                'total_amount' => $grandTotal,
+                'due' => $grandTotal,
+                'type' => 'agrochemicals',
+                'created_at' => '2025-06-30',
+                'updated_at' => '2025-06-30'
+            ]);
+
+            // ✅ CREATE ITEMS
+            foreach ($request->product_id as $index => $productId) {
+                $stock = Stock::where('product_id', $productId)->first();
+
+                $qty   = $request->quantity[$index];
+                $price = $request->price[$index];
+
+                $order = Order::create([
+                    'stock_id' => $stock->id,
+                    'order_number' => $this->generate_unique_order_number(),
+                    'sku' => $stock->sku,
+                    'quantity' => $qty,
+                    'unit_price' => $price,
+                    'total_amount' => $qty * $price,
+                    'created_at' => '2025-06-30',
+                    'updated_at' => '2025-06-30'
+                ]);
+
+                $orderInvoice->orders()->attach($order);
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('order.create_invoice_cpy')
+                ->with('success', 'Invoice created successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()
+                ->with('error', 'Something went wrong')
+                ->withInput();
+        }
     }
 
     public function edit(Request $request, $id)

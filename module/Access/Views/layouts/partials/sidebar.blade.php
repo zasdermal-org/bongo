@@ -439,6 +439,15 @@
                                     </a>
                                 </div>
                             @endif
+
+                            <div class="menu-item">
+                                <a class="menu-link @if(Route::is('order.create_invoice_cpy')) active @endif" href="{{ route('order.create_invoice_cpy') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Create Invoice CPY</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 @endif
