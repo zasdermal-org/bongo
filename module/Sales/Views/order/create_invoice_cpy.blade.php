@@ -56,13 +56,12 @@
                                         </td>
 
                                         <td>
-                                            <input type="number" name="quantity[]" value="1" min="1"
+                                            <input type="number" name="quantity[]" min="1"
                                                 class="form-control form-control-solid qty">
                                         </td>
 
                                         <td>
-                                            <input type="number" name="price[]" value="0"
-                                                class="form-control form-control-solid price text-end">
+                                            <input type="number" name="price[]" step="any" class="form-control form-control-solid price text-end">
                                         </td>
 
                                         <td class="text-end pt-3">
