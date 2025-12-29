@@ -44,12 +44,12 @@
                                 <tbody data-kt-items="body">
                                     <tr data-kt-item="row">
                                         <td>
-                                            <select name="product_id[]" class="form-select form-select-solid"
+                                            <select name="stock_id[]" class="form-select form-select-solid"
                                                 data-control="select2" data-placeholder="Select product" required>
                                                 <option></option>
-                                                @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}">
-                                                        {{ $product->title }}
+                                                @foreach ($stocks as $stock)
+                                                    <option value="{{ $stock->id }}">
+                                                        {{ $stock->product->title }}
                                                     </option>
                                                 @endforeach
                                             </select>

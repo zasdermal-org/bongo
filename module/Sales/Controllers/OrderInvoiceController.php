@@ -118,7 +118,7 @@ class OrderInvoiceController extends Controller
         // $data['depots'] = Depot::all();
 
         $data['salePoints'] = SalePoint::orderBy('id', 'desc')->get();
-        $data['products'] = Product::orderBy('id', 'desc')->get();
+        $data['stocks'] = Stock::orderBy('id', 'desc')->get();
 
         return view('Sales::order.create_invoice_cpy', $data);
     }
@@ -201,8 +201,8 @@ class OrderInvoiceController extends Controller
         // ✅ VALIDATION
         $request->validate([
             'sale_point_id' => 'required|exists:sale_points,id',
-            'product_id'    => 'required|array|min:1',
-            'product_id.*'  => 'required|exists:products,id',
+            'stock_id'    => 'required|array|min:1',
+            'stock_id.*'  => 'required|exists:stocks,id',
             'quantity'      => 'required|array',
             'quantity.*'    => 'required|integer|min:1',
             'price'         => 'required|array',
@@ -239,8 +239,8 @@ class OrderInvoiceController extends Controller
             ]);
 
             // ✅ CREATE ITEMS
-            foreach ($request->product_id as $index => $productId) {
-                $stock = Stock::where('product_id', $productId)->first();
+            foreach ($request->stock_id as $index => $stockId) {
+                $stock = Stock::findOrFail($stockId);
 
                 $qty   = $request->quantity[$index];
                 $price = $request->price[$index];
