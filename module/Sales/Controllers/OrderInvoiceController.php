@@ -78,7 +78,7 @@ class OrderInvoiceController extends Controller
         $query->where('status', 'Requested');
 
         $total_query = $query->get();
-        $data['orderInvoices'] = $query->paginate(20);
+        $data['orderInvoices'] = $query->paginate(300);
 
         $data['invoice'] = $total_query->count();
         $data['order_value'] = $total_query->sum('total_amount');
