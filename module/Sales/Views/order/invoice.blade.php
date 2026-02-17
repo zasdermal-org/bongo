@@ -72,6 +72,7 @@
                                                     @foreach (explode(',', $orderInvoice->salePoint->address) as $part)
                                                         <br />{{ trim($part) }},
                                                     @endforeach
+                                                    <br />Customer Name: {{ $orderInvoice->salePoint->contact_name }}
                                                     <br />Phone: {{ $orderInvoice->salePoint->contact_number }}
                                                 </span>
                                             </div>
