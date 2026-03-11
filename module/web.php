@@ -48,4 +48,8 @@ Route::middleware('web')->group(function () {
 
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
+
+    Route::get('/privacy-policy', function () {
+        return view('Access::privacy_policy');
+    })->name('privacy_policy');
 });
