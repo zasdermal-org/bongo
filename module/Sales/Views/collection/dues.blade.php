@@ -192,9 +192,18 @@
                                 <td class="fw-bold">
                                     <form id="paymentForm" action="{{ route('collection.update_due') }}" method="POST">
                                         @csrf
-                                        <input type="number" name="addi_discount" step="0.01" class="form-control mt-3 no-spinner" placeholder="Adjustment">
+                                        <input type="number" name="addi_discount" step="0.01" class="form-control mt-3 no-spinner" placeholder="Adjustment Amount">
 
                                         <input type="number" name="total_collect" step="0.01" class="form-control mt-3 no-spinner" placeholder="Collect Payment">
+
+                                        <select name="payment_type" class="form-control mt-3" data-control="select2" data-hide-search="true" data-placeholder="Payment Type">
+                                            <option></option>
+                                            <option value="Cash">Cash</option>
+                                            <option value="Cheque">Cheque</option>
+                                            <option value="AC Transfer">AC Transfer</option>
+                                        </select>
+
+                                        <input type="text" name="receipt_number" class="form-control mt-3" placeholder="Payment Receipt Number">
 
                                         <div id="selectedInvoicesContainer"></div>
 
@@ -217,6 +226,12 @@
 @endsection
 
 @push('scripts')
+     @if(session('success'))
+        <script>
+            toastr.success("{{ session('success') }}");
+        </script>
+    @endif
+
     <script>
         $(document).ready(function () {
             function numberFormat(num) {

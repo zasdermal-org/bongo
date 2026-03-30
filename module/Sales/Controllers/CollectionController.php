@@ -99,9 +99,18 @@ class CollectionController extends Controller
         $request->validate([
             'selected_invoices'   => 'required|array',
             'selected_invoices.*' => 'exists:order_invoices,id',
-            'addi_discount'       => 'nullable|numeric|min:0',
-            'total_collect'       => 'required|numeric|min:0',
+            'addi_discount'       => 'nullable|numeric|min:0|required_without:total_collect',
+            'total_collect'       => 'nullable|numeric|min:0|required_without:addi_discount',
+            'payment_type'        => 'required',
+            'receipt_number'      => 'nullable',
         ]);
+
+        // 🚫 STOP execution if both are empty/null/zero
+        // if (empty($request->addi_discount) && empty($request->total_collect)) {
+        //     return redirect()
+        //         ->back()
+        //         ->with('error', 'Nothing to process. Please enter collection or discount.');
+        // }
 
         DB::beginTransaction();
 
@@ -162,8 +171,9 @@ class CollectionController extends Controller
                 'sale_point_id'  => $invoices->first()->sale_point_id ?? null, // taking from first invoice
                 'invoice_numbers'=> $invoiceNumbers,
                 'total_collect'  => $request->total_collect,
-                // 'payment_type'   => $request->payment_type,
-                // 'tracking_number'=> $request->tracking_number ?? null,
+                'adjustment_amt'  => $request->addi_discount,
+                'payment_type'   => $request->payment_type,
+                'receipt_number'=> $request->receipt_number,
             ]);
 
             DB::commit();

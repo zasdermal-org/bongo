@@ -116,3 +116,6 @@ DESC
 double transection invoice
 INV2511161845 return done
 ay invoice nia function ta abar check korte hobe
+
+
+SELECT * FROM `order_invoices` WHERE `status` = 'Accepted' AND `created_at` BETWEEN '2025-06-01' AND '2025-06-30' 

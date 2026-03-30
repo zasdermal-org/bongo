@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('sale_point_id')->constrained('sale_points')->cascadeOnDelete();
             $table->text('invoice_numbers');
-            $table->decimal('total_collect', 10, 2);
+            $table->decimal('total_collect', 10, 2)->nullable();
+            $table->decimal('adjustment_amt', 10, 2)->nullable();
+            $table->decimal('return_amt', 10, 2)->nullable();
             $table->enum('payment_type', ['Cash', 'Cheque', 'AC Transfer'])->nullable(); // cash or cheque
-            $table->string('tracking_number')->nullable(); // transection details
+            $table->string('receipt_number')->nullable(); // transection details
             $table->timestamps();
         });
     }

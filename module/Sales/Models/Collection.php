@@ -16,8 +16,9 @@ class Collection extends Model
         'sale_point_id',
         'invoice_numbers',
         'total_collect',
+        'adjustment_amt',
         'payment_type',
-        'tracking_number'
+        'receipt_number'
     ];
 
     public function orderInvoice()
