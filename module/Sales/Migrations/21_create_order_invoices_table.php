@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('invoice_number')->unique();
             $table->decimal('total_amount', 10, 2);
             $table->integer('discount')->nullable(); // discount
-            $table->decimal('addi_discount', 10, 2)->nullable(); // new
+            $table->decimal('adjustment_amt', 10, 2)->nullable(); // new
             $table->decimal('paid', 10, 2)->nullable(); // new
             $table->decimal('due', 10, 2)->nullable(); // new
             $table->enum('type', ['seed', 'agrochemicals'])->nullable();

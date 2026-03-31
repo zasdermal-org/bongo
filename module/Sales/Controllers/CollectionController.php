@@ -88,7 +88,7 @@ class CollectionController extends Controller
             // $data['return_value'] = $total_query->sum('return_amount');
             $data['payable_value'] = $data['invoice_value'] - $data['discount_value'];
             $data['paid'] = $total_query->sum('paid');
-            $data['adjustment'] = $total_query->sum('addi_discount');
+            $data['adjustment'] = $total_query->sum('adjustment_amt');
             $data['due'] = $total_query->sum('due');
         }
 
@@ -195,8 +195,8 @@ class CollectionController extends Controller
         $request->validate([
             'selected_invoices'   => 'required|array',
             'selected_invoices.*' => 'exists:order_invoices,id',
-            'addi_discount'       => 'nullable|numeric|min:0|required_without:total_collect',
-            'total_collect'       => 'nullable|numeric|min:0|required_without:addi_discount',
+            'adjustment_amt'       => 'nullable|numeric|min:0|required_without:total_collect',
+            'total_collect'       => 'nullable|numeric|min:0|required_without:adjustment_amt',
             'payment_type'        => 'required',
             'receipt_number'      => 'nullable',
         ]);
@@ -205,7 +205,7 @@ class CollectionController extends Controller
 
         try {
             $totalCollect  = $request->total_collect ?? 0;
-            $extraDiscount = $request->addi_discount ?? 0;
+            $extraDiscount = $request->adjustment_amt ?? 0;
 
             // Get invoices in the same order as selected
             $invoices = OrderInvoice::whereIn('id', $request->selected_invoices)
@@ -240,7 +240,7 @@ class CollectionController extends Controller
                     $dueBefore = $invoice->due;
                     $discountNow = min($extraDiscount, $dueBefore);
 
-                    $invoice->addi_discount = ($invoice->addi_discount ?? 0) + $discountNow;
+                    $invoice->adjustment_amt = ($invoice->adjustment_amt ?? 0) + $discountNow;
                     $invoice->due = $dueBefore - $discountNow;
 
                     $extraDiscount -= $discountNow;
@@ -273,7 +273,7 @@ class CollectionController extends Controller
                 'sale_point_id'  => $invoices->first()->sale_point_id ?? null, // taking from first invoice
                 'invoice_numbers'=> $invoiceNumbers,
                 'total_collect'  => $request->total_collect,
-                'adjustment_amt'  => $request->addi_discount,
+                'adjustment_amt'  => $request->adjustment_amt,
                 'payment_type'   => $request->payment_type,
                 'receipt_number'=> $request->receipt_number,
             ]);

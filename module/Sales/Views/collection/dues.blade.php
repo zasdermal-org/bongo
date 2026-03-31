@@ -160,8 +160,8 @@
                                     </td>
 
                                     <td class="text-end">
-                                        @if ($orderInvoice->addi_discount)
-                                            {{ number_format($orderInvoice->addi_discount, 2) }} Tk
+                                        @if ($orderInvoice->adjustment_amt)
+                                            {{ number_format($orderInvoice->adjustment_amt, 2) }} Tk
                                         @endif
                                     </td>
 
@@ -192,7 +192,7 @@
                                 <td class="fw-bold">
                                     <form id="paymentForm" action="{{ route('collection.update_due') }}" method="POST">
                                         @csrf
-                                        <input type="number" name="addi_discount" step="0.01" class="form-control mt-3 no-spinner" placeholder="Adjustment Amount">
+                                        <input type="number" name="adjustment_amt" step="0.01" class="form-control mt-3 no-spinner" placeholder="Adjustment Amount">
 
                                         <input type="number" name="total_collect" step="0.01" class="form-control mt-3 no-spinner" placeholder="Collect Payment">
 
@@ -288,7 +288,7 @@
 
             $("#paymentForm").on("submit", function (e) {
                 let totalPayable = calculateTotal(); // recalc total
-                let addiDiscount = parseFloat($("input[name='addi_discount']").val()) || 0;
+                let addiDiscount = parseFloat($("input[name='adjustment_amt']").val()) || 0;
                 let totalCollect = parseFloat($("input[name='total_collect']").val()) || 0;
 
                 // Check if total payable is less than sum of discount + payment

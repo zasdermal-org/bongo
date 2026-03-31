@@ -25,7 +25,7 @@ class OrderInvoice extends Model
         'invoice_number',
         'total_amount',
         'discount',
-        'addi_discount',
+        'adjustment_amt',
         'paid',
         'due',
         'type',
