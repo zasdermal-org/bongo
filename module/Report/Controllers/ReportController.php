@@ -133,6 +133,8 @@ class ReportController extends Controller
             ['title' => 'Invoice Summary', 'url' => null]
         ];
 
+        $data['regions'] = Region::all();
+
         // Parse date filters
         $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
             ? Carbon::parse($request->from_date)->startOfDay()
@@ -153,8 +155,18 @@ class ReportController extends Controller
             ->join('products', 'stocks.product_id', '=', 'products.id')
             ->join('order_order_invoice', 'orders.id', '=', 'order_order_invoice.order_id')
             ->join('order_invoices', 'order_order_invoice.order_invoice_id', '=', 'order_invoices.id')
+
+            ->join('territories', 'order_invoices.territory_id', '=', 'territories.id')
+            ->join('areas', 'territories.area_id', '=', 'areas.id')
+            ->join('regions', 'areas.region_id', '=', 'regions.id')
+
             ->where('order_invoices.status', 'Accepted')
             ->whereBetween('orders.created_at', [$fromDate, $toDate]);
+
+        // ✅ REGION FILTER
+        if ($request->filled('region_id')) {
+            $ordersQuery->where('regions.id', $request->region_id);
+        }
             
         $userDepot = auth()->user()->employee->depot->name ?? null;
 
