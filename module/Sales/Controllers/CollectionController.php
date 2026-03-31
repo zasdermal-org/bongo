@@ -95,6 +95,101 @@ class CollectionController extends Controller
         return view('Sales::collection.dues', $data);
     }
 
+    // public function updateDue(Request $request)
+    // {
+    //     $request->validate([
+    //         'selected_invoices'   => 'required|array',
+    //         'selected_invoices.*' => 'exists:order_invoices,id',
+    //         'addi_discount'       => 'nullable|numeric|min:0|required_without:total_collect',
+    //         'total_collect'       => 'nullable|numeric|min:0|required_without:addi_discount',
+    //         'payment_type'        => 'required',
+    //         'receipt_number'      => 'nullable',
+    //     ]);
+
+    //     // 🚫 STOP execution if both are empty/null/zero
+    //     // if (empty($request->addi_discount) && empty($request->total_collect)) {
+    //     //     return redirect()
+    //     //         ->back()
+    //     //         ->with('error', 'Nothing to process. Please enter collection or discount.');
+    //     // }
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         $totalCollect  = $request->total_collect;
+    //         $extraDiscount = $request->addi_discount ?? 0;
+
+    //         // Get invoices in the same order as selected
+    //         $invoices = OrderInvoice::whereIn('id', $request->selected_invoices)
+    //             ->orderBy('id') // or invoice_date if that's your order
+    //             ->get();
+
+    //         // --- STEP 1: apply payments FIFO (front to back)
+    //         foreach ($invoices as $invoice) {
+    //             if ($totalCollect > 0) {
+    //                 $dueBefore = $invoice->due;
+    //                 $payNow    = min($totalCollect, $dueBefore);
+
+    //                 $invoice->paid = ($invoice->paid ?? 0) + $payNow;
+    //                 $invoice->due  = $dueBefore - $payNow;
+
+    //                 $totalCollect -= $payNow;
+    //             }
+    //         }
+
+    //         // --- STEP 2: apply extra discount LIFO (back to front)
+    //         if ($extraDiscount > 0) {
+    //             foreach ($invoices->reverse() as $invoice) {
+    //                 if ($extraDiscount <= 0) break;
+
+    //                 $dueBefore = $invoice->due;
+    //                 $discountNow = min($extraDiscount, $dueBefore);
+
+    //                 $invoice->addi_discount = ($invoice->addi_discount ?? 0) + $discountNow;
+    //                 $invoice->due = $dueBefore - $discountNow;
+
+    //                 $extraDiscount -= $discountNow;
+    //             }
+    //         }
+
+    //         // --- STEP 3: update statuses
+    //         foreach ($invoices as $invoice) {
+    //             if ($invoice->due <= 0) {
+    //                 $invoice->payment_status = 'Paid';
+    //             } elseif ($invoice->paid > 0 && $invoice->due > 0) {
+    //                 $invoice->payment_status = 'Partial Paid';
+    //             } else {
+    //                 $invoice->payment_status = 'Due';
+    //             }
+
+    //             $invoice->save();
+    //         }
+
+    //         $invoiceNumbers = $invoices->pluck('invoice_number')->implode(', ');
+
+    //         Collection::create([
+    //             'user_id'        => auth()->user()->id,
+    //             'sale_point_id'  => $invoices->first()->sale_point_id ?? null, // taking from first invoice
+    //             'invoice_numbers'=> $invoiceNumbers,
+    //             'total_collect'  => $request->total_collect,
+    //             'adjustment_amt'  => $request->addi_discount,
+    //             'payment_type'   => $request->payment_type,
+    //             'receipt_number'=> $request->receipt_number,
+    //         ]);
+
+    //         DB::commit();
+
+    //         return redirect()
+    //             ->back()
+    //             ->with('success', 'Payment has been updated successfully.');
+    //     } catch (\Throwable $e) {
+    //         DB::rollBack();
+    //         return redirect()
+    //             ->back()
+    //             ->with('error', 'Failed to update payment: ' . $e->getMessage());
+    //     }
+    // }
+
     public function updateDue(Request $request)
     {
         $request->validate([
@@ -106,27 +201,30 @@ class CollectionController extends Controller
             'receipt_number'      => 'nullable',
         ]);
 
-        // 🚫 STOP execution if both are empty/null/zero
-        // if (empty($request->addi_discount) && empty($request->total_collect)) {
-        //     return redirect()
-        //         ->back()
-        //         ->with('error', 'Nothing to process. Please enter collection or discount.');
-        // }
-
         DB::beginTransaction();
 
         try {
-            $totalCollect  = $request->total_collect;
+            $totalCollect  = $request->total_collect ?? 0;
             $extraDiscount = $request->addi_discount ?? 0;
 
             // Get invoices in the same order as selected
             $invoices = OrderInvoice::whereIn('id', $request->selected_invoices)
-                ->orderBy('id') // or invoice_date if that's your order
-                ->get();
+                ->get()
+                ->sortBy(fn ($inv) => array_search($inv->id, $request->selected_invoices))
+                ->values();
+
+            $processedInvoices = collect();
 
             // --- STEP 1: apply payments FIFO (front to back)
             foreach ($invoices as $invoice) {
-                if ($totalCollect > 0) {
+
+                if ($totalCollect <= 0 && $extraDiscount <= 0) {
+                    break;
+                }
+
+                $changed = false;
+
+                if ($totalCollect > 0 && $invoice->due > 0) {
                     $dueBefore = $invoice->due;
                     $payNow    = min($totalCollect, $dueBefore);
 
@@ -134,14 +232,11 @@ class CollectionController extends Controller
                     $invoice->due  = $dueBefore - $payNow;
 
                     $totalCollect -= $payNow;
+
+                    $changed = true;
                 }
-            }
 
-            // --- STEP 2: apply extra discount LIFO (back to front)
-            if ($extraDiscount > 0) {
-                foreach ($invoices->reverse() as $invoice) {
-                    if ($extraDiscount <= 0) break;
-
+                if ($extraDiscount > 0 && $invoice->due > 0) {
                     $dueBefore = $invoice->due;
                     $discountNow = min($extraDiscount, $dueBefore);
 
@@ -149,23 +244,29 @@ class CollectionController extends Controller
                     $invoice->due = $dueBefore - $discountNow;
 
                     $extraDiscount -= $discountNow;
+                    $changed = true;
+                }
+
+                if ($changed) {
+                    if ($invoice->due <= 0) {
+                        $invoice->payment_status = 'Paid';
+                    } elseif (($invoice->paid ?? 0) > 0 && $invoice->due > 0) {
+                        $invoice->payment_status = 'Partial Paid';
+                    } else {
+                        $invoice->payment_status = 'Due';
+                    }
+
+                    $invoice->save();
+                    $processedInvoices->push($invoice);
                 }
             }
 
-            // --- STEP 3: update statuses
-            foreach ($invoices as $invoice) {
-                if ($invoice->due <= 0) {
-                    $invoice->payment_status = 'Paid';
-                } elseif ($invoice->paid > 0 && $invoice->due > 0) {
-                    $invoice->payment_status = 'Partial Paid';
-                } else {
-                    $invoice->payment_status = 'Due';
-                }
-
-                $invoice->save();
+            if ($processedInvoices->isEmpty()) {
+                DB::rollBack();
+                return back()->with('error', 'No invoice was updated.');
             }
 
-            $invoiceNumbers = $invoices->pluck('invoice_number')->implode(', ');
+            $invoiceNumbers = $processedInvoices->pluck('id')->implode(', ');
 
             Collection::create([
                 'user_id'        => auth()->user()->id,
