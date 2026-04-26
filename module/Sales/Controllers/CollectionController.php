@@ -195,7 +195,7 @@ class CollectionController extends Controller
         $request->validate([
             'selected_invoices'   => 'required|array',
             'selected_invoices.*' => 'exists:order_invoices,id',
-            'adjustment_amt'       => 'nullable|numeric|min:0|required_without:total_collect',
+            'adjustment_amt'      => 'nullable|numeric|min:0|required_without:total_collect',
             'total_collect'       => 'nullable|numeric|min:0|required_without:adjustment_amt',
             'payment_type'        => 'required',
             'receipt_number'      => 'nullable',

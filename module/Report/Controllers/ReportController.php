@@ -492,6 +492,227 @@ class ReportController extends Controller
         return view('Report::customer_sale_details_copy', $data);
     }
 
+    // public function accepted_invoices(Request $request)
+    // {
+    //     $data['breadcrumbs'] = [
+    //         ['title' => 'Dashboard', 'url' => route('dashboard')],
+    //         ['title' => 'Orders & Invoices', 'url' => null],
+    //         ['title' => 'Invoices', 'url' => null]
+    //     ];
+
+    //     $data['sale_points'] = SalePoint::where('is_active', 'Active')->orderBy('id', 'desc')->get();
+
+    //     $salePointId = $request->code_number;
+
+    //     if (!$salePointId) {
+    //         return back()->with('error', 'Please select a Sales Point');
+    //     }
+
+    //     $ledger = collect();
+
+    //     // Parse date filters
+    //     $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+    //         ? Carbon::parse($request->from_date)->startOfDay()
+    //         : null;
+
+    //     $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+    //         ? Carbon::parse($request->to_date)->endOfDay()
+    //         : null;
+
+
+    //     $sales = OrderInvoice::where('sale_point_id', $salePointId)
+    //         ->whereBetween('invoice_date', [$fromDate, $toDate])
+    //         ->whereNotIn('status', ['Requested', 'Cancel'])
+    //         ->get();
+        
+    //     foreach ($sales as $item) {
+    //         $ledger->push([
+    //             'date'        => $item->invoice_date->format('d M, Y'),
+    //             'type'        => 'To',
+    //             'particular'  => 'Sales',
+    //             'vch_type'    => ucfirst($item->type),
+    //             'vch_no'      => $item->invoice_number,
+    //             'debit'       => $item->total_amount,
+    //             'credit'      => 0,
+    //             'sort_date'   => $item->invoice_date,
+    //         ]);
+    //     }
+
+    //     $collections = Collection::where('sale_point_id', $salePointId)
+    //         ->whereBetween('created_at', [$fromDate, $toDate])
+    //         ->get();
+
+    //     foreach ($collections as $item) {
+    //         $ledger->push([
+    //             'date'        => $item->created_at->format('d M, Y'),
+    //             'type'        => 'By',
+    //             'particular'  => 'Cash',
+    //             'vch_type'    => 'Receipt',
+    //             'vch_no'      => $item->receipt_number,
+    //             'debit'       => 0,
+    //             'credit'      => $item->amount,
+    //             'sort_date'   => $item->created_at,
+    //         ]);
+    //     }
+
+    //     $data['ledger'] = $ledger->sortBy('sort_date')->values();
+
+    //     $data['totalDebit'] = 0;
+    //     $data['totalCredit'] = 0;
+
+    //     foreach ($data['ledger'] as $row) {
+    //         $data['totalDebit'] += $row['debit'];
+    //         $data['totalCredit'] += $row['credit'];
+    //     }
+
+    //     return view('Sales::order.accepted_invoices', $data);
+    // }
+
+    public function customer_ledger(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Report', 'url' => null],
+            ['title' => 'Customer Ledger', 'url' => null]
+        ];
+
+        $today = Carbon::today();
+        $data['sale_points'] = SalePoint::where('is_active', 'Active')->orderBy('id', 'desc')->get();
+
+        $salePointId = $request->sale_point_id;
+
+        // if (!$salePointId) {
+        //     return back()->with('error', 'Please select a Sales Point');
+        // }
+
+        $ledger = collect();
+
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : $today;
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : $today;
+
+        // Opening Balance Calculation
+
+        $openingDebit = 0;
+        $openingCredit = 0;
+
+        // 1. Previous Sales (Debit)
+        $openingDebit = OrderInvoice::where('sale_point_id', $salePointId)
+            ->whereNotIn('status', ['Requested', 'Cancel'])
+            ->where('invoice_date', '<', $fromDate)
+            ->selectRaw("
+                SUM(
+                    total_amount - (total_amount * COALESCE(discount, 0) / 100)
+                ) as net_total
+            ")
+            ->value('net_total') ?? 0;
+
+        // 2. Previous Collections (Credit)
+        $openingCredit = Collection::where('sale_point_id', $salePointId)
+            ->where('created_at', '<', $fromDate)
+            ->selectRaw("
+                COALESCE(SUM(total_collect),0) +
+                COALESCE(SUM(adjustment_amt),0)
+                as total
+            ")
+            ->value('total');
+
+        // Final Opening Balance
+        $data['openingBalance'] = $openingDebit - $openingCredit;
+
+
+        $sales = OrderInvoice::where('sale_point_id', $salePointId)
+            ->whereBetween('invoice_date', [$fromDate, $toDate])
+            ->whereNotIn('status', ['Requested', 'Cancel'])
+            ->get();
+        
+        foreach ($sales as $item) {
+
+            $discountPercent = $item->discount ?? 0;
+
+            $discountAmount = ($item->total_amount * $discountPercent) / 100;
+
+            $netAmount = $item->total_amount - $discountAmount;
+
+            $ledger->push([
+                'date'        => $item->invoice_date->format('d M, Y'),
+                'type'        => 'To',
+                'particular'  => 'Sales',
+                'vch_type'    => ucfirst($item->type),
+                'vch_no'      => $item->invoice_number,
+                'debit'       => $netAmount,
+                'credit'      => 0,
+                'sort_date'   => $item->invoice_date,
+            ]);
+        }
+
+        $collections = Collection::where('sale_point_id', $salePointId)
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->get();
+
+        foreach ($collections as $item) {
+
+            if (!is_null($item->total_collect) && $item->total_collect > 0) {
+
+                $ledger->push([
+                    'date'        => $item->created_at->format('d M, Y'),
+                    'type'        => 'By',
+                    'particular'  => 'Cash',
+                    'vch_type'    => 'Receipt',
+                    'vch_no'      => $item->receipt_number,
+                    'debit'       => 0,
+                    'credit'      => $item->total_collect,
+                    'sort_date'   => $item->created_at,
+                ]);
+            }
+
+            if (!is_null($item->adjustment_amt) && $item->adjustment_amt != 0) {
+
+                $ledger->push([
+                    'date'        => $item->created_at->format('d M, Y'),
+                    'type'        => 'By',
+                    'particular'  => 'Commission',
+                    'vch_type'    => 'Commission',
+                    'vch_no'      => $item->receipt_number,
+                    'debit'       => 0,
+                    'credit'      => $item->adjustment_amt,
+                    'sort_date'   => $item->created_at,
+                ]);
+            }
+
+            // if (!is_null($item->return_amt) && $item->return_amt > 0) {
+
+            //     $ledger->push([
+            //         'date'        => $item->created_at->format('d M, Y'),
+            //         'type'        => 'By',
+            //         'particular'  => 'Return',
+            //         'vch_type'    => 'Return',
+            //         'vch_no'      => $item->receipt_number,
+            //         'debit'       => $item->return_amt,
+            //         'credit'      => 0,
+            //         'sort_date'   => $item->created_at,
+            //     ]);
+            // }
+        }
+
+        $data['ledger'] = $ledger->sortBy('sort_date')->values();
+
+        // $data['totalDebit'] = 0;
+        // $data['totalCredit'] = 0;
+
+        // foreach ($data['ledger'] as $row) {
+        //     $data['totalDebit'] += $row['debit'];
+        //     $data['totalCredit'] += $row['credit'];
+        // }
+
+        return view('Report::customer_ledger', $data);
+    }
+
 
 
 

@@ -201,7 +201,10 @@
                                             <option value="Cash">Cash</option>
                                             <option value="Cheque">Cheque</option>
                                             <option value="AC Transfer">AC Transfer</option>
+                                            {{-- <option value="Discount">Discount</option> --}}
                                         </select>
+
+                                        {{-- <input type="number" name="addi_discount" class="form-control mt-3 no-spinner" placeholder="Addi Discount %"> --}}
 
                                         <input type="text" name="receipt_number" class="form-control mt-3" placeholder="Payment Receipt Number">
 
@@ -288,11 +291,11 @@
 
             $("#paymentForm").on("submit", function (e) {
                 let totalPayable = calculateTotal(); // recalc total
-                let addiDiscount = parseFloat($("input[name='adjustment_amt']").val()) || 0;
+                let adjustmentAmt = parseFloat($("input[name='adjustment_amt']").val()) || 0;
                 let totalCollect = parseFloat($("input[name='total_collect']").val()) || 0;
 
                 // Check if total payable is less than sum of discount + payment
-                if ((addiDiscount + totalCollect) > totalPayable) {
+                if ((adjustmentAmt + totalCollect) > totalPayable) {
                     e.preventDefault(); // prevent submission
                     toastr.error("Total payable is less than Addi Discount + Collect Payment!");
                     return false;
