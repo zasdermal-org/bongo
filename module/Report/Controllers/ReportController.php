@@ -30,6 +30,8 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use Illuminate\Support\Str;
+
 
 class ReportController extends Controller
 {
@@ -570,16 +572,48 @@ class ReportController extends Controller
 
     public function customer_ledger(Request $request)
     {
+        $data = $this->getLedgerData($request);
+
         $data['breadcrumbs'] = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
             ['title' => 'Report', 'url' => null],
             ['title' => 'Customer Ledger', 'url' => null]
         ];
 
+        return view('Report::customer_ledger', $data);
+    }
+
+    public function customer_ledger_pdf_export(Request $request)
+    {
+        $data = $this->getLedgerData($request);
+
+        $customerName = Str::slug($data['customerName']);
+        $customerCode = Str::slug($data['customerCode']);
+
+        $fileName = "ledger_{$customerName}_{$customerCode}_" 
+                    . now()->format('Ymd') . ".pdf";
+
+        $pdf = Pdf::loadView('Report::customer_ledger_pdf', $data);
+
+        return $pdf->download($fileName);
+    }
+
+    private function getLedgerData(Request $request)
+    {
         $today = Carbon::today();
+        $salePointId = $request->sale_point_id;
         $data['sale_points'] = SalePoint::where('is_active', 'Active')->orderBy('id', 'desc')->get();
 
-        $salePointId = $request->sale_point_id;
+        $salePoint = SalePoint::find($salePointId);
+
+        $data['customerName'] = $salePoint->name;
+        $data['customerCode'] = $salePoint->code_number;
+        $data['customerAddress'] = $salePoint->address;
+        $data['companyName'] = 'Bongo Agritech Limited';
+        $data['companyAddress'] = 'Nurjahan Tower, Banglamotor, Dhaka-1205';
+
+        $data['fromDate'] = $request->from_date;
+        $data['toDate'] = $request->to_date;
 
         // if (!$salePointId) {
         //     return back()->with('error', 'Please select a Sales Point');
@@ -710,7 +744,9 @@ class ReportController extends Controller
         //     $data['totalCredit'] += $row['credit'];
         // }
 
-        return view('Report::customer_ledger', $data);
+        // return view('Report::customer_ledger', $data);
+
+        return $data;
     }
 
 
