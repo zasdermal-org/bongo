@@ -606,9 +606,9 @@ class ReportController extends Controller
 
         $salePoint = SalePoint::find($salePointId);
 
-        $data['customerName'] = $salePoint->name;
-        $data['customerCode'] = $salePoint->code_number;
-        $data['customerAddress'] = $salePoint->address;
+        $data['customerName'] = $salePoint->name ?? '';
+        $data['customerCode'] = $salePoint->code_number ?? '';
+        $data['customerAddress'] = $salePoint->address ?? '';
         $data['companyName'] = 'Bongo Agritech Limited';
         $data['companyAddress'] = 'Nurjahan Tower, Banglamotor, Dhaka-1205';
 
