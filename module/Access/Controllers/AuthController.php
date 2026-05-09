@@ -220,24 +220,7 @@ class AuthController extends Controller
 
         $plainTextToken = $tokenResult->plainTextToken;
 
-        /*
-        |--------------------------------------------------------------------------
-        | Extract token values
-        |--------------------------------------------------------------------------
-        */
-        // $tokenParts = explode('|', $plainTextToken);
-
-        // $tokenId = $tokenParts[0];
-        // $plainToken = $tokenParts[1];
-
-        $tokenId = explode('|', $plainTextToken)[0];
-
-        /*
-        |--------------------------------------------------------------------------
-        | Find created token from main DB
-        |--------------------------------------------------------------------------
-        */
-        $mainToken = PersonalAccessToken::find($tokenId);
+        $mainToken = $tokenResult->accessToken;
 
         /*
         |--------------------------------------------------------------------------
