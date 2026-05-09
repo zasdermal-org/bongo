@@ -220,7 +220,11 @@ class AuthController extends Controller
 
         $plainTextToken = $tokenResult->plainTextToken;
 
-        $mainToken = $tokenResult->accessToken;
+        $tokenId = explode('|', $plainTextToken)[0];
+
+        $tokenData = DB::table('personal_access_tokens')
+            ->where('id', $tokenId)
+            ->first();
 
         /*
         |--------------------------------------------------------------------------
@@ -230,16 +234,16 @@ class AuthController extends Controller
         DB::connection('mysql_test')
             ->table('personal_access_tokens')
             ->insert([
-                'id' => $mainToken->id,
-                'tokenable_type' => $mainToken->tokenable_type,
-                'tokenable_id' => $mainToken->tokenable_id,
-                'name' => $mainToken->name,
-                'token' => $mainToken->token,
-                'abilities' => $mainToken->abilities,
-                'last_used_at' => $mainToken->last_used_at,
-                'expires_at' => $mainToken->expires_at,
-                'created_at' => $mainToken->created_at,
-                'updated_at' => $mainToken->updated_at,
+                'id' => $tokenData->id,
+                'tokenable_type' => $tokenData->tokenable_type,
+                'tokenable_id' => $tokenData->tokenable_id,
+                'name' => $tokenData->name,
+                'token' => $tokenData->token,
+                'abilities' => $tokenData->abilities,
+                'last_used_at' => $tokenData->last_used_at,
+                'expires_at' => $tokenData->expires_at,
+                'created_at' => $tokenData->created_at,
+                'updated_at' => $tokenData->updated_at,
             ]);
 
         return response()->json([
