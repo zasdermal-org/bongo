@@ -225,10 +225,12 @@ class AuthController extends Controller
         | Extract token values
         |--------------------------------------------------------------------------
         */
-        $tokenParts = explode('|', $plainTextToken);
+        // $tokenParts = explode('|', $plainTextToken);
 
-        $tokenId = $tokenParts[0];
-        $plainToken = $tokenParts[1];
+        // $tokenId = $tokenParts[0];
+        // $plainToken = $tokenParts[1];
+
+        $tokenId = explode('|', $plainTextToken)[0];
 
         /*
         |--------------------------------------------------------------------------
