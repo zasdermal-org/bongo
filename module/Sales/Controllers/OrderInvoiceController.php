@@ -653,6 +653,7 @@ class OrderInvoiceController extends Controller
     {
         $data = $request->validate([
             'user_id' => 'required|exists:users,id',
+            'submittedBy' => 'required|exists:users,id',
             'sale_point_id' => 'required|exists:sale_points,id',
             'territory_id' => 'required|exists:territories,id',
             'depot_id' => 'required|exists:depots,id',
@@ -686,7 +687,8 @@ class OrderInvoiceController extends Controller
 
         $orderInvoice = OrderInvoice::on('mysql_test')->create([
             'user_id' => $data['user_id'],
-            'submitted_by_user_id' => $auth_user->id,
+            // 'submitted_by_user_id' => $auth_user->id,
+            'submitted_by_user_id' => $data['submittedBy'],
             'sale_point_id' => $data['sale_point_id'],
             'territory_id' => $data['territory_id'],
             'depot_id' => $data['depot_id'],

@@ -125,61 +125,6 @@ class AuthController extends Controller
     //     ], 200);
     // }
 
-    // public function signin(Request $request)
-    // {
-    //     $credentials = $request->only('username', 'password');
-
-    //     // Validation rules
-    //     $rules = [
-    //         'username' => 'required',
-    //         'password' => 'required|min:6',
-    //     ];
-
-    //     // Validate the input data
-    //     $validator = Validator::make($credentials, $rules);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => 'ERROR',
-    //             'message' => $validator->errors()
-    //         ], 422);
-    //     }
-
-    //     // Use mysql_test connection
-    //     $user = User::on('mysql_test')
-    //         ->where('username', $credentials['username'])
-    //         ->first();
-
-    //     if (!$user || !Hash::check($credentials['password'], $user->password)) {
-    //         return response()->json([
-    //             'status' => 'ERROR',
-    //             'message' => 'Invalid username or password'
-    //         ], 401);
-    //     }
-
-    //     // Create token from mysql_test connection user
-    //     $token = $user->createToken('api-token')->plainTextToken;
-
-    //     return response()->json([
-    //         'status' => 'SUCCESS',
-    //         'data' => [
-    //             'user_id' => $user->id,
-    //             'role_id' => $user->role?->id,
-    //             'region_id' => $user->employee?->region?->id,
-    //             'area_id' => $user->employee?->area?->id,
-    //             'territory_id' => $user->employee?->territory?->id,
-    //             'username' => $user->username,
-    //             'name' => $user->name,
-    //             'designation_name' => $user->employee?->designation?->name,
-    //             'contact' => $user->employee?->contact,
-    //             'address' => $user->employee?->address,
-    //             'joining_date' => $user->employee?->joining_date,
-    //             'token' => $token
-    //         ],
-    //         'message' => 'User successfully login.'
-    //     ], 200);
-    // }
-
     public function signin(Request $request)
     {
         $credentials = $request->only('username', 'password');
