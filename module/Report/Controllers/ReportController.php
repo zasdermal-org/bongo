@@ -615,10 +615,6 @@ class ReportController extends Controller
         $data['fromDate'] = $request->from_date;
         $data['toDate'] = $request->to_date;
 
-        // if (!$salePointId) {
-        //     return back()->with('error', 'Please select a Sales Point');
-        // }
-
         $ledger = collect();
 
         // Parse date filters
@@ -631,7 +627,6 @@ class ReportController extends Controller
             : $today;
 
         // Opening Balance Calculation
-
         $openingDebit = 0;
         $openingCredit = 0;
 
@@ -658,7 +653,6 @@ class ReportController extends Controller
 
         // Final Opening Balance
         $data['openingBalance'] = $openingDebit - $openingCredit;
-
 
         $sales = OrderInvoice::where('sale_point_id', $salePointId)
             ->whereBetween('invoice_date', [$fromDate, $toDate])
