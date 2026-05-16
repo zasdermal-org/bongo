@@ -106,7 +106,7 @@ class RegionController extends Controller
                 
                 $serializeRegions[] = [
                     'region_id' => $region->id,
-                    'name' => $region->name,
+                    'region_name' => $region->name,
                     'division_id' => $region->division->id,
                     'associated_emp' => $associated_emp,
                 ];

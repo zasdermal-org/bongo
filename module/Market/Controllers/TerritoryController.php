@@ -168,7 +168,7 @@ class TerritoryController extends Controller
                 
                 $serializeTerritories[] = [
                     'territory_id' => $territory->id,
-                    'name' => $territory->name,
+                    'territory_name' => $territory->name,
                     'area_id' => $territory->area->id,
                     'associated_emp' => $associated_emp,
                 ];

@@ -117,7 +117,7 @@ class AreaController extends Controller
                 
                 $serializeAreas[] = [
                     'area_id' => $area->id,
-                    'name' => $area->name,
+                    'area_name' => $area->name,
                     'region_id' => $area->region->id,
                     'associated_emp' => $associated_emp,
                 ];
