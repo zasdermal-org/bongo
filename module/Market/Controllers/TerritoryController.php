@@ -143,11 +143,11 @@ class TerritoryController extends Controller
     }
 
     // for api response
-    public function territory_list(Request $request)
+    public function territory_list(Request $request, $id)
     {
         try {
             // Retrieve territories
-            $territories = Territory::where('is_active', 'active')->orderBy('id', 'desc')->get();
+            $territories = Territory::where('area_id', $id)->where('is_active', 'active')->orderBy('id', 'desc')->get();
 
             // Check if any territories are found
             if ($territories->isEmpty()) {
@@ -168,9 +168,9 @@ class TerritoryController extends Controller
                 
                 $serializeTerritories[] = [
                     'territory_id' => $territory->id,
-                    'sub_area_id' => $territory->sub_area->id,
+                    'name' => $territory->name,
+                    'area_id' => $territory->area->id,
                     'associated_emp' => $associated_emp,
-                    'name' => $territory->name
                 ];
             }
 

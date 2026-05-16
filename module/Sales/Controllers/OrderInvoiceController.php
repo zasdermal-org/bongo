@@ -857,4 +857,143 @@ class OrderInvoiceController extends Controller
             'message' => 'Data retrieved successfully.'
         ], 200);
     }
+
+
+    // public function customer_sales(Request $request)
+    // {
+    //     // Parse date filters
+    //     $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+    //         ? Carbon::parse($request->fromDate)->startOfDay()
+    //         : null;
+
+    //     $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+    //         ? Carbon::parse($request->toDate)->endOfDay()
+    //         : null;
+
+    //     $query = OrderInvoice::query();
+
+    //     if ($request->filled('region_id') && $request->region_id != 0) {
+    //         $region_id = $request->region_id;
+    //         $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+    //             $query->where('id', $region_id);
+    //         })->pluck('id');
+
+    //         $query->whereIn('territory_id', $territoryIds);
+    //     }
+
+    //     if ($request->filled('area_id') && $request->area_id != 0) {
+    //         $area_id = $request->area_id;
+    //         $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+    //             $query->where('id', $area_id);
+    //         })->pluck('id');
+
+    //         $query->whereIn('territory_id', $territoryIds);
+    //     }
+
+    //     if ($request->filled('territory_id') && $request->territory_id != 0) {
+    //         $territory_id = $request->territory_id;
+    //         $query->where('territory_id', $territory_id);
+    //     }
+
+    //     $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+    // }
+
+    public function customer_sales(Request $request)
+    {
+        try {
+
+            // Parse date filters
+            $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+                ? Carbon::parse($request->fromDate)->startOfDay()
+                : Carbon::now()->startOfMonth();
+
+            $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+                ? Carbon::parse($request->toDate)->endOfDay()
+                : Carbon::now()->endOfMonth();
+
+            $query = OrderInvoice::query();
+
+            // Region Filter
+            if ($request->filled('region_id') && $request->region_id != 0) {
+
+                $region_id = $request->region_id;
+
+                $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+                    $query->where('id', $region_id);
+                })->pluck('id');
+
+                $query->whereIn('territory_id', $territoryIds);
+            }
+
+            // Area Filter
+            if ($request->filled('area_id') && $request->area_id != 0) {
+
+                $area_id = $request->area_id;
+
+                $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+                    $query->where('id', $area_id);
+                })->pluck('id');
+
+                $query->whereIn('territory_id', $territoryIds);
+            }
+
+            // Territory Filter
+            if ($request->filled('territory_id') && $request->territory_id != 0) {
+
+                $query->where('territory_id', $request->territory_id);
+            }
+
+            // Sale Point Filter
+            if ($request->filled('sale_point_id') && $request->sale_point_id != 0) {
+
+                $query->where('sale_point_id', $request->sale_point_id);
+            }
+
+            // Date Filter
+            $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+
+            // Get Invoices
+            $invoices = $query
+                ->with([
+                    'salePoint:id,name'
+                ])
+                ->orderBy('sale_point_id')
+                ->orderByDesc('invoice_date')
+                ->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Prepare Final Data
+            |--------------------------------------------------------------------------
+            */
+            $sales = [];
+
+            foreach ($invoices->groupBy('sale_point_id') as $salePointId => $items) {
+
+                $sales[] = [
+                    'sale_point_id'        => $salePointId,
+                    'sale_point_name'      => optional($items->first()->salePoint)->name,
+
+                    'total_invoice_amount' => $items->sum('total_amount'),
+                    'total_collection'     => $items->sum('paid'),
+                    'total_due'            => $items->sum('due'),
+                    'total_invoices'       => $items->count()
+                ];
+            }
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'message' => 'Customer sales summary fetched successfully',
+                'data'    => $sales
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => 'Something went wrong',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
 }

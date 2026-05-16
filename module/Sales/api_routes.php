@@ -11,4 +11,6 @@ Route::prefix('/order')->group(function () {
 Route::prefix('/sales-report')->group(function () {
     Route::post('/sales', [OrderInvoiceController::class, 'sale_invoices']);
     Route::get('/sale/{id}', [OrderInvoiceController::class, 'sale_invoice_orders']);
+
+    Route::post('/customer-sales', [OrderInvoiceController::class, 'customer_sales']);
 });

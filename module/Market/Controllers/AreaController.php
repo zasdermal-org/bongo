@@ -91,11 +91,12 @@ class AreaController extends Controller
     }
 
     // for api response
-    public function area_list(Request $request)
+    public function area_list(Request $request, $id)
     {
         try {
+            // $region_id = $request->region_id;
             // Retrieve areas
-            $areas = Area::where('is_active', 'active')->orderBy('id', 'desc')->get();
+            $areas = Area::where('region_id', $id)->where('is_active', 'active')->orderBy('id', 'desc')->get();
 
             // Check if any areas are found
             if ($areas->isEmpty()) {
@@ -116,9 +117,9 @@ class AreaController extends Controller
                 
                 $serializeAreas[] = [
                     'area_id' => $area->id,
+                    'name' => $area->name,
                     'region_id' => $area->region->id,
                     'associated_emp' => $associated_emp,
-                    'name' => $area->name
                 ];
             }
 

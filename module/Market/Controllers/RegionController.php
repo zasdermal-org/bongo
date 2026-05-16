@@ -106,15 +106,15 @@ class RegionController extends Controller
                 
                 $serializeRegions[] = [
                     'region_id' => $region->id,
-                    'zone_id' => $region->zone->id,
+                    'name' => $region->name,
+                    'division_id' => $region->division->id,
                     'associated_emp' => $associated_emp,
-                    'name' => $region->name
                 ];
             }
 
             // Return successful response
             return response()->json([
-                'status' => 'Success',
+                'status' => 'SUCCESS',
                 'data' => $serializeRegions,
                 'message' => 'Regions retrieved successfully.'
             ], 200);
@@ -125,7 +125,7 @@ class RegionController extends Controller
 
             // Return error response
             return response()->json([
-                'status' => 'Error',
+                'status' => 'ERROR',
                 'message' => 'Failed to retrieve regions.',
                 'error' => $e->getMessage() // Optionally include the error message in development
             ], 500);
