@@ -539,11 +539,11 @@
 
                             {{-- @if(auth()->user()->hasPermission('report', 'order-summary', 'read')) --}}
                                 <div class="menu-item">
-                                    <a class="menu-link @if(Route::is('report.invoice_summary')) active @endif" href="{{ route('report.invoice_summary') }}">
+                                    <a class="menu-link @if(Route::is('report.product_summary')) active @endif" href="{{ route('report.product_summary') }}">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Invoice Summary</span>
+                                        <span class="menu-title">Product Summary</span>
                                     </a>
                                 </div>
                             {{-- @endif --}}

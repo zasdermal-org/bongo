@@ -3,6 +3,7 @@
 namespace Module\Report\Controllers;
 
 use App\Exports\OrderSummaryExport;
+use App\Exports\ProductSummaryExport;
 use App\Http\Controllers\Controller;
 
 
@@ -127,7 +128,7 @@ class ReportController extends Controller
         return view('Report::order_summary', $data);
     }
 
-    public function invoice_summary(Request $request)
+    public function product_summary(Request $request)
     {
         $data['breadcrumbs'] = [
             ['title' => 'Dashboard', 'url' => route('dashboard')],
@@ -135,7 +136,9 @@ class ReportController extends Controller
             ['title' => 'Invoice Summary', 'url' => null]
         ];
 
+        $data['areas'] = Area::all();
         $data['regions'] = Region::all();
+        $data['territories'] = Territory::all();
 
         // Parse date filters
         $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
@@ -150,6 +153,7 @@ class ReportController extends Controller
             ->select(
                 DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
                 'orders.sku',
+                'orders.unit_price',
                 DB::raw('SUM(orders.quantity) as total_quantity'),
                 'products.title as product_name'
             )
@@ -169,13 +173,21 @@ class ReportController extends Controller
         if ($request->filled('region_id')) {
             $ordersQuery->where('regions.id', $request->region_id);
         }
+
+        if ($request->filled('area_id')) {
+            $ordersQuery->where('areas.id', $request->area_id);
+        }
+
+        if ($request->filled('territory_id')) {
+            $ordersQuery->where('territories.id', $request->territory_id);
+        }
             
         $userDepot = auth()->user()->employee->depot->name ?? null;
 
         // Always join once
         $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
             
-        if ($request->filled('type') && $request->type !== 'all') {
+        if ($request->filled('type')) {
             // $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
 
             if ($request->type === 'seed') {
@@ -192,7 +204,7 @@ class ReportController extends Controller
         }
 
         $orders = $ordersQuery
-            ->groupBy('orders.sku', 'products.title')
+            ->groupBy('orders.sku', 'orders.unit_price', 'products.title')
             ->orderBy('stock_id', 'asc')
             ->get();
 
@@ -207,9 +219,25 @@ class ReportController extends Controller
             return $item;
         });
 
+        // ================= Export Logic =================
+        if ($request->has('export')) {
+            switch ($request->export) {
+                case 'excel':
+                    return Excel::download(new ProductSummaryExport($orders), 'product_summary.xlsx');
+                // case 'pdf':
+                //     $pdf = Pdf::loadView('Report::order_summary_pdf', [
+                //         'orders' => $orders,
+                //         'fromDate' => $fromDate,
+                //         'toDate' => $toDate,
+                //     ]);
+                //     return $pdf->download('order_summary.pdf');
+            }
+        }
+        // ===============================================
+
         $data['orders'] = $orders;
 
-        return view('Report::invoice_summary', $data);
+        return view('Report::product_summary', $data);
     }
 
     public function sales(Request $request)
