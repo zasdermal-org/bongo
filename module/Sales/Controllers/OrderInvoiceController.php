@@ -971,12 +971,25 @@ class OrderInvoiceController extends Controller
 
             foreach ($invoices->groupBy('sale_point_id') as $salePointId => $items) {
 
+                $totalInvoiceAmount = $items->sum('total_amount');
+
+                // Calculate total discount amount from percentage
+                $totalDiscountAmount = $items->sum(function ($item) {
+
+                    $discountPercent = $item->discount ?? 0;
+
+                    return ($item->total_amount * $discountPercent) / 100;
+                });
+
+                // Final amount after discount
+                $finalInvoiceAmount = $totalInvoiceAmount - $totalDiscountAmount;
+
                 $sales[] = [
                     'sale_point_id'        => $salePointId,
                     'sale_point_name'      => optional($items->first()->salePoint)->name,
                     'address'              => optional($items->first()->salePoint)->address,
 
-                    'total_invoice_amount' => $items->sum('total_amount'),
+                    'total_invoice_amount' => round($finalInvoiceAmount, 2),
                     'total_collection'     => $items->sum('paid'),
                     'total_due'            => $items->sum('due'),
                     'total_invoices'       => $items->count()
@@ -1066,14 +1079,15 @@ class OrderInvoiceController extends Controller
                 $netAmount = $item->total_amount - $discountAmount;
 
                 $ledger->push([
-                    'date'        => $item->invoice_date->format('d M, Y'),
-                    'type'        => 'To',
-                    'particular'  => 'Sales',
-                    'vch_type'    => ucfirst($item->type),
-                    'vch_no'      => $item->invoice_number,
-                    'debit'       => $netAmount,
-                    'credit'      => 0,
-                    'sort_date'   => $item->invoice_date,
+                    'date'         => $item->invoice_date->format('d M, Y'),
+                    'type'         => 'To',
+                    'particular'   => 'Sales',
+                    'vch_type'     => ucfirst($item->type),
+                    'vch_no'       => $item->invoice_number,
+                    'debit'        => $netAmount,
+                    'credit'       => 0,
+                    'payment_type' => $item->payment_type,
+                    'sort_date'    => $item->invoice_date,
                 ]);
             }
 
@@ -1099,6 +1113,7 @@ class OrderInvoiceController extends Controller
                         'vch_no'      => $item->receipt_number,
                         'debit'       => 0,
                         'credit'      => $item->total_collect,
+                        'payment_type' => '',
                         'sort_date'   => $item->created_at,
                     ]);
                 }
@@ -1113,6 +1128,7 @@ class OrderInvoiceController extends Controller
                         'vch_no'      => $item->receipt_number,
                         'debit'       => 0,
                         'credit'      => $item->adjustment_amt,
+                        'payment_type' => '',
                         'sort_date'   => $item->created_at,
                     ]);
                 }
