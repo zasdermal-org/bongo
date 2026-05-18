@@ -22,6 +22,7 @@ use Module\Market\Models\Zone;
 use Module\Market\Models\Region;
 use Module\Market\Models\Division;
 use Module\Market\Models\Territory;
+use Module\Sales\Models\OrderInvoice;
 
 
 class UserController extends Controller
@@ -190,5 +191,109 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User deleted successfully',
         ]);
+    }
+
+    // api
+    public function dashboard_summary(Request $request)
+    {
+        try {
+            $user_id = $request->user_id;
+            $employee = Employee::with('designation')->where('user_id', $user_id)->first();
+
+            $slugs = ['chief-executive-officer', 'regional-sales-manager', 'software-engineer'];
+            $isAdmin = in_array(optional($employee->designation)->slug, $slugs);
+
+            $date = now();
+            // $year = $date->year;
+            // $month_name = $date->format('F');
+
+
+
+
+            $query = OrderInvoice::query();
+
+            // if ($request->filled('region_id') && $request->region_id != 0) {
+
+            //     $region_id = $request->region_id;
+
+            //     $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+            //         $query->where('id', $region_id);
+            //     })->pluck('id');
+
+            //     $query->whereIn('territory_id', $territoryIds);
+            // }
+
+            if (!$isAdmin) {
+
+                if ($request->filled('region_id') && $request->region_id != 0) {
+
+                    $region_id = $request->region_id;
+
+                    $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+                        $query->where('id', $region_id);
+                    })->pluck('id');
+
+                    $query->whereIn('territory_id', $territoryIds);
+                }
+            }
+
+            // Area Filter
+            if ($request->filled('area_id') && $request->area_id != 0) {
+
+                $area_id = $request->area_id;
+
+                $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+                    $query->where('id', $area_id);
+                })->pluck('id');
+
+                $query->whereIn('territory_id', $territoryIds);
+            }
+
+            // Territory Filter
+            if ($request->filled('territory_id') && $request->territory_id != 0) {
+
+                $query->where('territory_id', $request->territory_id);
+            }
+
+
+            $invoices = $query->whereNotIn('status', ['Requested', 'Cancel'])
+                ->whereMonth('invoice_date', $date->month)
+                ->whereYear('invoice_date', $date->year)
+                ->get();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Summary Calculation
+            |--------------------------------------------------------------------------
+            */
+            $creditInvoices = $invoices->where('payment_type', 'Credit');
+            $cashInvoices   = $invoices->where('payment_type', 'Cash');
+
+            $sales = [
+                'credit_invoice_count'   => $creditInvoices->count(),
+                'cash_invoice_count'     => $cashInvoices->count(),
+                'credit_invoice_value'   => round($creditInvoices->sum('total_amount'), 2),
+                'cash_invoice_value'     => round($cashInvoices->sum('total_amount'), 2),
+                'total_collection'       => round($invoices->sum('paid'), 2),
+                'total_due'              => round($invoices->sum('due'), 2),
+            ];
+
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'data' => $sales,
+                'message' => 'Summary retrieved successfully.'
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Error retrieving summary: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Failed to retrieve summary.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

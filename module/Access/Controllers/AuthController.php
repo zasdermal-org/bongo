@@ -165,31 +165,31 @@ class AuthController extends Controller
 
         $plainTextToken = $tokenResult->plainTextToken;
 
-        $tokenId = explode('|', $plainTextToken)[0];
+        // $tokenId = explode('|', $plainTextToken)[0];
 
-        $tokenData = DB::table('personal_access_tokens')
-            ->where('id', $tokenId)
-            ->first();
+        // $tokenData = DB::table('personal_access_tokens')
+        //     ->where('id', $tokenId)
+        //     ->first();
 
         /*
         |--------------------------------------------------------------------------
         | Insert same token into mysql_test DB
         |--------------------------------------------------------------------------
         */
-        DB::connection('mysql_test')
-            ->table('personal_access_tokens')
-            ->insert([
-                'id' => $tokenData->id,
-                'tokenable_type' => $tokenData->tokenable_type,
-                'tokenable_id' => $tokenData->tokenable_id,
-                'name' => $tokenData->name,
-                'token' => $tokenData->token,
-                'abilities' => $tokenData->abilities,
-                'last_used_at' => $tokenData->last_used_at,
-                'expires_at' => $tokenData->expires_at,
-                'created_at' => $tokenData->created_at,
-                'updated_at' => $tokenData->updated_at,
-            ]);
+        // DB::connection('mysql_test')
+        //     ->table('personal_access_tokens')
+        //     ->insert([
+        //         'id' => $tokenData->id,
+        //         'tokenable_type' => $tokenData->tokenable_type,
+        //         'tokenable_id' => $tokenData->tokenable_id,
+        //         'name' => $tokenData->name,
+        //         'token' => $tokenData->token,
+        //         'abilities' => $tokenData->abilities,
+        //         'last_used_at' => $tokenData->last_used_at,
+        //         'expires_at' => $tokenData->expires_at,
+        //         'created_at' => $tokenData->created_at,
+        //         'updated_at' => $tokenData->updated_at,
+        //     ]);
 
         return response()->json([
             'status' => 'SUCCESS',
