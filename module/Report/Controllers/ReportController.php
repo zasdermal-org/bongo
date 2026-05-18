@@ -348,33 +348,33 @@ class ReportController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : null;
 
-        // if ($request->filled('code_number')) {
-        //     $code_number = $request->code_number;
-        //     $query->whereHas('salePoint', function ($subQ) use ($code_number) {
-        //         $subQ->where('code_number', $code_number);
-        //     });
-        // }
+        if ($request->filled('sale_point_id')) {
+            $query->whereHas('salePoint', function ($subQ) use ($request) {
+                $subQ->where('id', $request->sale_point_id);
+            });
+        }
 
         // if ($request->type && $request->type !== 'all') {
         //     $query->where('type', $request->type);
         // }
 
-        // if ($request->filled('region_id')) {
-        //     $query->whereHas('territory.area.region', function ($q) use ($request) {
-        //         $q->where('id', $request->region_id);
-        //     });
-        // }
+        if ($request->filled('region_id')) {
+            $query->whereHas('salePoint.territory.area.region', function ($q) use ($request) {
+                $q->where('id', $request->region_id);
+            });
+        }
 
-        // if ($request->filled('area_id')) {
-        //     $query->whereHas('territory.area', function ($q) use ($request) {
-        //         $q->where('id', $request->area_id);
-        //     });
-        // }
+        if ($request->filled('area_id')) {
+            $query->whereHas('salePoint.territory.area', function ($q) use ($request) {
+                $q->where('id', $request->area_id);
+            });
+        }
 
-        // if ($request->filled('territory_id')) {
-        //     $territory_id = $request->territory_id;
-        //     $query->where('territory_id', $territory_id);
-        // }
+        if ($request->filled('territory_id')) {
+            $query->whereHas('salePoint.territory', function ($q) use ($request) {
+                $q->where('id', $request->territory_id);
+            });
+        }
 
         if ($fromDate && $toDate) {
                 $query->whereBetween('created_at', [$fromDate, $toDate]);

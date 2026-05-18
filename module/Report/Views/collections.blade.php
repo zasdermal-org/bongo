@@ -18,24 +18,24 @@
                     <div class="card-title">
                         <form class="d-flex align-items-center position-relative my-1" action="{{ route('report.collections') }}" method="GET">
                             <div class="w-110 mw-120px me-2">
-                                <select name="code_number" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Sales Point">
+                                <select name="sale_point_id" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Sales Point">
                                     <option></option>
                                     @foreach ($sale_points as $sale_point)
-                                        <option value="{{ $sale_point->code_number }}" {{ request('code_number') == $sale_point->code_number ? 'selected' : '' }}>
+                                        <option value="{{ $sale_point->id }}" {{ request('sale_point_id') == $sale_point->id ? 'selected' : '' }}>
                                             {{ $sale_point->name }} — ({{ $sale_point->code_number }})
                                         </option>
                                     @endforeach
                                 </select>                                
                             </div>
 
-                            <div class="w-110 mw-120px me-2">
+                            {{-- <div class="w-110 mw-120px me-2">
                                 <select name="type" class="form-select form-select-solid" data-control="select2" data-placeholder="Select Type">
-                                    <option></option> {{-- placeholder --}}
+                                    <option></option>
                                     <option value="all" {{ request('type') == 'all' ? 'selected' : '' }}>All</option>
                                     <option value="seed" {{ request('type') == 'seed' ? 'selected' : '' }}>Seed</option>
                                     <option value="agrochemicals" {{ request('type') == 'agrochemicals' ? 'selected' : '' }}>Agrochemicals</option>
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <!-- Region -->
                             <div class="w-110 mw-120px me-2">
