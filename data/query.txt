@@ -119,3 +119,37 @@ ay invoice nia function ta abar check korte hobe
 
 
 SELECT * FROM `order_invoices` WHERE `status` = 'Accepted' AND `created_at` BETWEEN '2025-06-01' AND '2025-06-30' 
+
+
+due amount is not match so find not mathc due amount
+SELECT
+    id,
+    invoice_number,
+    total_amount,
+    discount,
+    paid,
+    due,
+    (
+        total_amount -(
+            (
+                total_amount * COALESCE(discount, 0)
+            ) / 100
+        )
+    ) AS net_amount,
+    (
+        COALESCE(paid, 0) + COALESCE(due, 0)
+    ) AS paid_due_total
+FROM
+    order_invoices
+WHERE
+    MONTH(invoice_date) = MONTH(CURRENT_DATE()) AND YEAR(invoice_date) = YEAR(CURRENT_DATE()) AND
+STATUS
+    NOT IN('Requested', 'Cancel') AND(
+        COALESCE(paid, 0) + COALESCE(due, 0)
+    ) !=(
+        total_amount -(
+            (
+                total_amount * COALESCE(discount, 0)
+            ) / 100
+        )
+    );
