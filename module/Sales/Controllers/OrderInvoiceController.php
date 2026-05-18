@@ -802,6 +802,7 @@ class OrderInvoiceController extends Controller
                 'invoice_id' => $invoice->id,
                 'invoice_number' => $invoice->invoice_number,
                 'status' => $invoice->status,
+                'type' => $invoice->type,
                 'invoice_value' => $invoice->total_amount,
                 // 'discount_value' => $invoice->sell_discount_amount ?? 0,
                 'return_amount' => $invoice->return_amount ?? 0,
@@ -955,7 +956,7 @@ class OrderInvoiceController extends Controller
             // Get Invoices
             $invoices = $query
                 ->with([
-                    'salePoint:id,name'
+                    'salePoint:id,name,address'
                 ])
                 ->orderBy('sale_point_id')
                 ->orderByDesc('invoice_date')
@@ -973,6 +974,7 @@ class OrderInvoiceController extends Controller
                 $sales[] = [
                     'sale_point_id'        => $salePointId,
                     'sale_point_name'      => optional($items->first()->salePoint)->name,
+                    'address'              => optional($items->first()->salePoint)->address,
 
                     'total_invoice_amount' => $items->sum('total_amount'),
                     'total_collection'     => $items->sum('paid'),
@@ -993,6 +995,157 @@ class OrderInvoiceController extends Controller
                 'status' => 'ERROR',
                 'message' => 'Something went wrong',
                 'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function customer_ledger(Request $request)
+    {
+        try {
+        
+            $today = Carbon::today();
+            $salePointId = $request->sale_point_id;
+
+            // Parse date filters
+            $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+                ? Carbon::parse($request->fromDate)->startOfDay()
+                : $today;
+
+            $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+                ? Carbon::parse($request->toDate)->endOfDay()
+                : $today;
+
+            $ledger = collect();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Opening Balance
+            |--------------------------------------------------------------------------
+            */
+
+            // Previous Sales (Debit)
+            $openingDebit = OrderInvoice::where('sale_point_id', $salePointId)
+                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->where('invoice_date', '<', $fromDate)
+                ->selectRaw("
+                    SUM(
+                        total_amount - (total_amount * COALESCE(discount, 0) / 100)
+                    ) as net_total
+                ")
+                ->value('net_total') ?? 0;
+
+            // Previous Collections (Credit)
+            $openingCredit = Collection::where('sale_point_id', $salePointId)
+                ->where('created_at', '<', $fromDate)
+                ->selectRaw("
+                    COALESCE(SUM(total_collect),0) +
+                    COALESCE(SUM(adjustment_amt),0)
+                    as total
+                ")
+                ->value('total') ?? 0;
+
+            $openingBalance = $openingDebit - $openingCredit;
+
+             /*
+            |--------------------------------------------------------------------------
+            | Sales Ledger
+            |--------------------------------------------------------------------------
+            */
+
+            $sales = OrderInvoice::where('sale_point_id', $salePointId)
+                ->whereBetween('invoice_date', [$fromDate, $toDate])
+                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->get();
+            
+            foreach ($sales as $item) {
+
+                $discountPercent = $item->discount ?? 0;
+
+                $discountAmount = ($item->total_amount * $discountPercent) / 100;
+
+                $netAmount = $item->total_amount - $discountAmount;
+
+                $ledger->push([
+                    'date'        => $item->invoice_date->format('d M, Y'),
+                    'type'        => 'To',
+                    'particular'  => 'Sales',
+                    'vch_type'    => ucfirst($item->type),
+                    'vch_no'      => $item->invoice_number,
+                    'debit'       => $netAmount,
+                    'credit'      => 0,
+                    'sort_date'   => $item->invoice_date,
+                ]);
+            }
+
+             /*
+            |--------------------------------------------------------------------------
+            | Collection Ledger
+            |--------------------------------------------------------------------------
+            */
+
+            $collections = Collection::where('sale_point_id', $salePointId)
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->get();
+
+            foreach ($collections as $item) {
+
+                if (!is_null($item->total_collect) && $item->total_collect > 0) {
+
+                    $ledger->push([
+                        'date'        => $item->created_at->format('d M, Y'),
+                        'type'        => 'By',
+                        'particular'  => 'Cash',
+                        'vch_type'    => 'Receipt',
+                        'vch_no'      => $item->receipt_number,
+                        'debit'       => 0,
+                        'credit'      => $item->total_collect,
+                        'sort_date'   => $item->created_at,
+                    ]);
+                }
+
+                if (!is_null($item->adjustment_amt) && $item->adjustment_amt != 0) {
+
+                    $ledger->push([
+                        'date'        => $item->created_at->format('d M, Y'),
+                        'type'        => 'By',
+                        'particular'  => 'Commission',
+                        'vch_type'    => 'Commission',
+                        'vch_no'      => $item->receipt_number,
+                        'debit'       => 0,
+                        'credit'      => $item->adjustment_amt,
+                        'sort_date'   => $item->created_at,
+                    ]);
+                }
+
+                // if (!is_null($item->return_amt) && $item->return_amt > 0) {
+
+                //     $ledger->push([
+                //         'date'        => $item->created_at->format('d M, Y'),
+                //         'type'        => 'By',
+                //         'particular'  => 'Return',
+                //         'vch_type'    => 'Return',
+                //         'vch_no'      => $item->receipt_number,
+                //         'debit'       => $item->return_amt,
+                //         'credit'      => 0,
+                //         'sort_date'   => $item->created_at,
+                //     ]);
+                // }
+            }
+
+            $ledger = $ledger->sortBy('sort_date')->values();
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'message' => 'Customer ledger retrieved successfully',
+                'data'    => $ledger
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => 'Something went wrong',
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

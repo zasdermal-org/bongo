@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Module\Access\Models\User;
+use Module\Market\Models\SalePoint;
 
 class Collection extends Model
 {
@@ -29,5 +30,10 @@ class Collection extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function salePoint()
+    {
+        return $this->belongsTo(SalePoint::class);
     }
 }

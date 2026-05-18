@@ -323,6 +323,87 @@ class ReportController extends Controller
         return view('Report::sales', $data);
     }
 
+    public function collections(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Report', 'url' => null],
+            ['title' => 'Collections', 'url' => null]
+        ];
+
+        $data['areas'] = Area::all();
+        $data['regions'] = Region::all();
+        $data['territories'] = Territory::all();
+        $data['sale_points'] = SalePoint::where('is_active', 'Active')->orderBy('id', 'desc')->get();
+
+        $today = Carbon::today();
+        $query = Collection::query();
+
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : null;
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : null;
+
+        // if ($request->filled('code_number')) {
+        //     $code_number = $request->code_number;
+        //     $query->whereHas('salePoint', function ($subQ) use ($code_number) {
+        //         $subQ->where('code_number', $code_number);
+        //     });
+        // }
+
+        // if ($request->type && $request->type !== 'all') {
+        //     $query->where('type', $request->type);
+        // }
+
+        // if ($request->filled('region_id')) {
+        //     $query->whereHas('territory.area.region', function ($q) use ($request) {
+        //         $q->where('id', $request->region_id);
+        //     });
+        // }
+
+        // if ($request->filled('area_id')) {
+        //     $query->whereHas('territory.area', function ($q) use ($request) {
+        //         $q->where('id', $request->area_id);
+        //     });
+        // }
+
+        // if ($request->filled('territory_id')) {
+        //     $territory_id = $request->territory_id;
+        //     $query->where('territory_id', $territory_id);
+        // }
+
+        if ($fromDate && $toDate) {
+                $query->whereBetween('created_at', [$fromDate, $toDate]);
+        } else {
+            $query->whereDate('created_at', $today);
+        }
+
+        $total_query = $query->get();
+        $collections = $query->orderBy('id', 'desc')->paginate(30);
+
+        // foreach ($order_invoices as $invoice) {
+        //     $invoice->discount_value = ($invoice->total_amount * $invoice->discount) / 100;
+        // }
+
+        $data['collections'] = $collections;
+        
+        $data['collcetion_count'] = $total_query->count();
+        $data['total_value'] = $total_query->sum('total_collect');
+
+        // $data['discount_value'] = $total_query->sum(function ($invoice) {
+        //     return ($invoice->total_amount * $invoice->discount) / 100;
+        // });
+
+        // $data['return_value'] = $total_query->sum('return_amount');
+        // $data['payable_value'] = $data['invoice_value'] - $data['discount_value'];
+
+        return view('Report::collections', $data);
+    }
+
     public function customer_sales(Request $request)
     {
         $data['breadcrumbs'] = [
@@ -1182,152 +1263,6 @@ class ReportController extends Controller
         $data['due'] = $data['collections']->sum('due');
 
         return view('report.sales.dues', $data);
-    }
-
-    public function collections(Request $request)
-    {
-        $data['breadcrumbs'] = [
-            ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Report', 'url' => null],
-            ['title' => 'Sales', 'url' => null],
-            ['title' => 'Collections', 'url' => null]
-        ];
-
-        $data['depots'] = Depot::whereNotIn('slug', ['ware-house'])->get();
-
-        $today = Carbon::today();
-        $query = OrderInvoice::query();
-
-        // Parse date filters
-        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
-            ? Carbon::parse($request->from_date)->startOfDay()
-            : null;
-
-        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
-            ? Carbon::parse($request->to_date)->endOfDay()
-            : null;
-
-        if ($request->filled('invoice_number')) {
-            $invoice_number = $request->invoice_number;
-            $query->where('invoice_number', $invoice_number);
-        }
-
-        if ($request->filled('username')) {
-            $user_id = User::where('username', $request->username)->value('id');
-            $query->where('user_id', $user_id);
-        }
-
-        if ($request->filled('code_number')) {
-            $code_number = $request->code_number;
-            $query->whereHas('sales_point', function ($subQ) use ($code_number) {
-                $subQ->where('code_number', $code_number);
-            });
-        }
-
-        if ($request->filled('depot_id')) {
-            $depot_id = $request->depot_id;
-            $query->where('depot_id', $depot_id);
-        }
-
-        if ($request->filled('payment_type')) {
-            $payment_type = $request->payment_type;
-            $query->whereHas('sales_point', function ($subQ) use ($payment_type) {
-                $subQ->where('payment_type', $payment_type);
-            });
-        }
-
-        $query->whereNotIn('status', ['Requested']);
-
-        // $query->whereHas('collections', function ($subQuery) use ($fromDate, $toDate, $today) {
-        //     if ($fromDate && $toDate) {
-        //         $subQuery->whereBetween('collections.updated_at', [$fromDate, $toDate])
-        //             ->whereIn('collections.status', ['Paid', 'Partial | Paid']);
-        //     } else {
-        //         $subQuery->whereDate('collections.updated_at', $today)
-        //             ->whereIn('collections.status', ['Paid', 'Partial | Paid']);
-        //     }
-        // });
-
-        $query->whereHas('collections', function ($subQuery) use ($fromDate, $toDate, $today) {
-            if ($fromDate && $toDate) {
-                $subQuery->whereBetween('collections.updated_at', [$fromDate, $toDate])
-                    ->where(function ($q) {
-                        $q->where('collections.status', 'Paid') // Fully paid invoices
-                          ->orWhere(function ($q) {
-                              $q->where('collections.status', 'Partial | Paid')
-                                ->whereDoesntHave('order_invoice.collections', function ($innerQuery) {
-                                    $innerQuery->where('collections.status', 'Paid'); // Exclude if fully paid exists
-                                });
-                          });
-                    });
-            } else {
-                $subQuery->whereDate('collections.updated_at', $today)
-                    ->where(function ($q) {
-                        $q->where('collections.status', 'Paid') // Fully paid invoices
-                          ->orWhere(function ($q) {
-                              $q->where('collections.status', 'Partial | Paid')
-                                ->whereDoesntHave('order_invoice.collections', function ($innerQuery) {
-                                    $innerQuery->where('collections.status', 'Paid'); // Exclude if fully paid exists
-                                });
-                          });
-                    });
-            }
-        });
-        
-        $total_query = $query->get();
-        $order_invoices = $query->with(['collections' => function ($query) {
-                $query->orderBy('updated_at', 'desc');
-        }])->paginate(30);
-
-        foreach ($order_invoices as $order_invoice) {
-            $total_addi_dis_amount = Collection::where('order_invoice_id', $order_invoice->id)
-                ->whereIn('status', ['Paid', 'Partial | Paid'])
-                ->sum('addi_dis_amount');
-
-            $total_partial_paid = Collection::where('order_invoice_id', $order_invoice->id)
-                ->where('status', 'Partial | Paid')
-                ->sum('partial_paid');
-
-            $full_paid = Collection::where('order_invoice_id', $order_invoice->id)
-                ->where('status', 'Paid')
-                ->sum('full_paid');
-            
-            $collection = Collection::where('order_invoice_id', $order_invoice->id)->get()->last();
-
-            $order_invoice->payment = $total_partial_paid + $full_paid;
-            $order_invoice->previous_addi_dis_amount = $total_addi_dis_amount;
-            $order_invoice->due = $collection->due;
-        }
-
-        $data['order_invoices'] = $order_invoices;
-
-        $data['invoice'] = $total_query->count();
-        $data['order_value'] = $total_query->sum('total_amount');
-        $data['discount_value'] = $total_query->sum('sell_discount_amount');
-        $data['return_value'] = $total_query->sum('return_amount');
-        // $data['payable_value'] = $data['order_value'] - $data['discount_value'] - $data['return_value'];
-
-        $partial_paid = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->where('status', 'Partial | Paid')
-            ->sum('partial_paid');
-
-        $full_paid = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->where('status', 'Paid')
-            ->sum('full_paid');
-
-        $data['total_payment'] = $partial_paid + $full_paid;
-
-        $data['addi_dis_value'] = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->whereIn('status', ['Paid', 'Partial | Paid'])
-            ->sum('addi_dis_amount');
-
-        $collection = Collection::whereIn('order_invoice_id', $total_query->pluck('id'))
-            ->whereIn('status', ['Due', 'Partial Payment'])
-            ->get();
-            
-        $data['due'] = $collection->sum('due');
-
-        return view('report.sales.collections', $data);
     }
 
     public function returns(Request $request)

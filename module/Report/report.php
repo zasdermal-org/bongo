@@ -9,6 +9,7 @@ Route::prefix('/report')->name('report.')->group(function () {
     Route::get('/order-summary', [ReportController::class, 'order_summary'])->name('order_summary');
     Route::get('/product-summary', [ReportController::class, 'product_summary'])->name('product_summary');
     Route::get('/sales', [ReportController::class, 'sales'])->name('sales');
+    Route::get('/collections', [ReportController::class, 'collections'])->name('collections');
     Route::get('/customer-sales', [ReportController::class, 'customer_sales'])->name('customer_sales');
     Route::get('/customer-sale-details/{id}', [ReportController::class, 'customer_sale_details'])->name('customer_sale_details');
     
