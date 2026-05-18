@@ -1134,6 +1134,15 @@ class OrderInvoiceController extends Controller
 
             $ledger = $ledger->sortBy('sort_date')->values();
 
+            if ($ledger->isNotEmpty()) {
+
+                $firstItem = $ledger->first();
+
+                $firstItem['openingBalance'] = $openingBalance;
+
+                $ledger->put(0, $firstItem);
+            }
+
             return response()->json([
                 'status' => 'SUCCESS',
                 'message' => 'Customer ledger retrieved successfully',
