@@ -255,10 +255,18 @@ class UserController extends Controller
                 $query->where('territory_id', $request->territory_id);
             }
 
+            $invoiceQuery = clone $query;
 
-            $invoices = $query->whereNotIn('status', ['Requested', 'Cancel'])
+
+            $invoices = $invoiceQuery->whereNotIn('status', ['Requested', 'Cancel'])
                 ->whereMonth('invoice_date', $date->month)
                 ->whereYear('invoice_date', $date->year)
+                ->get();
+
+            $total_due = (clone $query)
+                ->whereNotIn('status', ['Requested', 'Cancel'])
+                // ->whereMonth('invoice_date', $date->month)
+                // ->whereYear('invoice_date', $date->year)
                 ->get();
 
 
@@ -277,6 +285,7 @@ class UserController extends Controller
                 'cash_invoice_value'     => round($cashInvoices->sum('total_amount'), 2),
                 'total_collection'       => round($invoices->sum('paid'), 2),
                 'total_due'              => round($invoices->sum('due'), 2),
+                'all_due'                => round($total_due->sum('due'), 2),
             ];
 
 
