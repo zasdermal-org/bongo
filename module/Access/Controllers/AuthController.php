@@ -165,31 +165,31 @@ class AuthController extends Controller
 
         $plainTextToken = $tokenResult->plainTextToken;
 
-        // $tokenId = explode('|', $plainTextToken)[0];
+        $tokenId = explode('|', $plainTextToken)[0];
 
-        // $tokenData = DB::table('personal_access_tokens')
-        //     ->where('id', $tokenId)
-        //     ->first();
+        $tokenData = DB::table('personal_access_tokens')
+            ->where('id', $tokenId)
+            ->first();
 
         /*
         |--------------------------------------------------------------------------
         | Insert same token into mysql_test DB
         |--------------------------------------------------------------------------
         */
-        // DB::connection('mysql_test')
-        //     ->table('personal_access_tokens')
-        //     ->insert([
-        //         'id' => $tokenData->id,
-        //         'tokenable_type' => $tokenData->tokenable_type,
-        //         'tokenable_id' => $tokenData->tokenable_id,
-        //         'name' => $tokenData->name,
-        //         'token' => $tokenData->token,
-        //         'abilities' => $tokenData->abilities,
-        //         'last_used_at' => $tokenData->last_used_at,
-        //         'expires_at' => $tokenData->expires_at,
-        //         'created_at' => $tokenData->created_at,
-        //         'updated_at' => $tokenData->updated_at,
-        //     ]);
+        DB::connection('mysql_test')
+            ->table('personal_access_tokens')
+            ->insert([
+                'id' => $tokenData->id,
+                'tokenable_type' => $tokenData->tokenable_type,
+                'tokenable_id' => $tokenData->tokenable_id,
+                'name' => $tokenData->name,
+                'token' => $tokenData->token,
+                'abilities' => $tokenData->abilities,
+                'last_used_at' => $tokenData->last_used_at,
+                'expires_at' => $tokenData->expires_at,
+                'created_at' => $tokenData->created_at,
+                'updated_at' => $tokenData->updated_at,
+            ]);
 
         return response()->json([
             'status' => 'SUCCESS',
@@ -197,8 +197,11 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'role_id' => $user->role->id,
                 'region_id' => $user->employee->region?->id,
+                'region_name' => $user->employee->region?->name,
                 'area_id' => $user->employee->area?->id,
+                'area_name' => $user->employee->area?->name,
                 'territory_id' => $user->employee->territory?->id,
+                'territory_name' => $user->employee->territory?->name,
                 'username' => $user->username,
                 'name' => $user->name,
                 'designation_name' => $user->employee->designation?->name,
