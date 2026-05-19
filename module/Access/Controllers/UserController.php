@@ -200,7 +200,7 @@ class UserController extends Controller
             $user_id = $request->user_id;
             $employee = Employee::with('designation')->where('user_id', $user_id)->first();
 
-            $slugs = ['chief-executive-officer', 'software-engineer'];
+            $slugs = ['chief-executive-officer', 'divisional-sales-manager', 'software-engineer'];
             $isAdmin = in_array(optional($employee->designation)->slug, $slugs);
 
             $date = now();
