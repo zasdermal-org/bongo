@@ -991,6 +991,7 @@ class OrderInvoiceController extends Controller
 
                     'total_invoice_amount' => round($finalInvoiceAmount, 2),
                     'total_collection'     => $items->sum('paid'),
+                    'commission'           => $items->sum('adjustment_amt'),
                     'total_due'            => $items->sum('due'),
                     'total_invoices'       => $items->count()
                 ];
