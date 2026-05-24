@@ -78,7 +78,8 @@
 
                         .ledger-header, .ledger-row {
                             display: grid;
-                            grid-template-columns: 110px 1.5fr 140px 120px 120px 120px;
+                            /* grid-template-columns: 110px 1.5fr 140px 120px 120px 120px; */
+                            grid-template-columns: 150px 1.4fr 150px 150px 150px 150px 150px 150px;
                             padding: 3px 0;
                             align-items: center;
                         }
@@ -93,6 +94,18 @@
                         /* NO row borders */
                         .ledger-row {
                             border: none;
+                            /* border-bottom: 1px solid #d9d9d9;
+                            padding: 6px 0; */
+                        }
+
+                        .ledger-body-row {
+                            /* border: none; */
+                            border-bottom: 1px solid #d9d9d9;
+                            padding: 6px 0;
+                        }
+
+                        .ledger-body-row:last-child {
+                            border-bottom: none;
                         }
 
                         .text-end {
@@ -117,7 +130,7 @@
                         }
 
                         .half-line div {
-                            width: 240px; /* matches Debit + Credit width */
+                            width: 340px; /* matches Debit + Credit width */
                             border-top: 1px solid #000;
                         }
 
@@ -128,7 +141,7 @@
                         }
 
                         .double-line div {
-                            width: 240px;
+                            width: 340px;
                             border-top: 2px solid #000;
                         }
                     </style>
@@ -137,6 +150,7 @@
                         $totalDebit = $openingBalance > 0 ? $openingBalance : 0;
                         $totalCredit = $openingBalance < 0 ? abs($openingBalance) : 0;
                         $closingBlance = 0;
+                        $runningBalance = $openingBalance;
                     @endphp
 
                     <div class="ledger-container">
@@ -145,18 +159,33 @@
                         <div class="ledger-header">
                             <div>Date</div>
                             <div>Particulars</div>
+                            <div>Invoice Type</div>
                             <div>Vch Type</div>
-                            <div>Vch No.</div>
+                            <div>INV / Vch No.</div>
                             <div class="text-end">Debit</div>
                             <div class="text-end">Credit</div>
+                            <div class="text-end">Balance</div>
                         </div>
 
                         <div class="ledger-row bold">
                             <div></div>
                             <div></div>
+                            <div></div>
                             <div>Opening Balance</div>
                             <div></div>
-                            <div class="text-end">{{ number_format($openingBalance, 2) }}</div>
+                            {{-- <div class="text-end">{{ number_format($openingBalance, 2) }}</div> --}}
+
+                            <div class="text-end">
+                                {{ $openingBalance > 0 ? number_format($openingBalance, 2) : '' }}
+                            </div>
+
+                            <div class="text-end">
+                                {{ $openingBalance < 0 ? number_format(abs($openingBalance), 2) : '' }}
+                            </div>
+
+                            <div class="text-end">
+                                {{ number_format($openingBalance, 2) }}
+                            </div>
                         </div>
 
                         <!-- Rows -->
@@ -164,10 +193,16 @@
                             @php
                                 $totalDebit += $row['debit'];
                                 $totalCredit += $row['credit'];
-                                $closingBlance = $totalDebit - $totalCredit;
+
+                                $runningBalance += $row['debit'];
+                                $runningBalance -= $row['credit'];
+
+                                // $closingBlance = $totalDebit - $totalCredit;
+                                $closingBlance = $runningBalance;
+                                
                             @endphp
 
-                            <div class="ledger-row">
+                            <div class="ledger-row ledger-body-row hover-row">
                                 <div>{{ $row['date'] }}</div>
 
                                 <div class="particulars">
@@ -175,6 +210,7 @@
                                     {{ $row['particular'] }}
                                 </div>
 
+                                <div>{{ $row['payment_type'] }}</div>
                                 <div>{{ $row['vch_type'] }}</div>
                                 <div>{{ $row['vch_no'] }}</div>
 
@@ -185,13 +221,17 @@
                                 <div class="text-end">
                                     {{ $row['credit'] ? number_format($row['credit'], 2) : '' }}
                                 </div>
+
+                                <div class="text-end">
+                                    {{ number_format($runningBalance, 2) }}
+                                </div>
                             </div>
                         @endforeach
 
                         <!-- HALF LINE (like your image) -->
-                        <div class="half-line">
+                        {{-- <div class="half-line">
                             <div></div>
-                        </div>
+                        </div> --}}
 
                         <!-- Totals -->
                         <div class="ledger-row bold">
@@ -206,6 +246,10 @@
 
                             <div class="text-end">
                                 {{ number_format($totalCredit, 2) }}
+                            </div>
+
+                            <div class="text-end">
+                                {{ number_format($closingBlance, 2) }}
                             </div>
                         </div>
 
@@ -231,6 +275,9 @@
                             <div></div>
                             <div class="text-end">{{ number_format($totalDebit, 2) }}</div>
                             <div class="text-end">{{ number_format($totalCredit + $closingBlance, 2) }}</div>
+                            {{-- <div class="text-end">
+                                {{ number_format($closingBlance, 2) }}
+                            </div> --}}
                         </div>
 
                         <!-- DOUBLE LINE -->

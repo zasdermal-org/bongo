@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Module\Sales\Controllers\CollectionController;
 use Module\Sales\Controllers\OrderInvoiceController;
 
 Route::prefix('/order')->group(function () {
@@ -15,3 +16,5 @@ Route::prefix('/sales-report')->group(function () {
     Route::post('/customer-sales', [OrderInvoiceController::class, 'customer_sales']);
     Route::post('/customer-ledger', [OrderInvoiceController::class, 'customer_ledger']);
 });
+
+// Route::get('/collections', [CollectionController::class, 'collections']);

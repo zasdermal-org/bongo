@@ -393,6 +393,7 @@ class ReportController extends Controller
         
         $data['collcetion_count'] = $total_query->count();
         $data['total_value'] = $total_query->sum('total_collect');
+        $data['total_adjustment_value'] = $total_query->sum('adjustment_amt');
 
         // $data['discount_value'] = $total_query->sum(function ($invoice) {
         //     return ($invoice->total_amount * $invoice->discount) / 100;
@@ -400,6 +401,22 @@ class ReportController extends Controller
 
         // $data['return_value'] = $total_query->sum('return_amount');
         // $data['payable_value'] = $data['invoice_value'] - $data['discount_value'];
+
+        // ================= Export Logic =================
+        // if ($request->has('export')) {
+        //     switch ($request->export) {
+        //         case 'excel':
+        //             return Excel::download(new ProductSummaryExport($total_query), 'product_summary.xlsx');
+        //         case 'pdf':
+        //             $pdf = Pdf::loadView('Report::order_summary_pdf', [
+        //                 'collections' => $total_query,
+        //                 'fromDate' => $fromDate,
+        //                 'toDate' => $toDate,
+        //             ]);
+        //             return $pdf->download('order_summary.pdf');
+        //     }
+        // }
+        // ===============================================
 
         return view('Report::collections', $data);
     }
@@ -777,14 +794,15 @@ class ReportController extends Controller
             $netAmount = $item->total_amount - $discountAmount;
 
             $ledger->push([
-                'date'        => $item->invoice_date->format('d M, Y'),
-                'type'        => 'To',
-                'particular'  => 'Sales',
-                'vch_type'    => ucfirst($item->type),
-                'vch_no'      => $item->invoice_number,
-                'debit'       => $netAmount,
-                'credit'      => 0,
-                'sort_date'   => $item->invoice_date,
+                'date'         => $item->invoice_date->format('d M, Y'),
+                'type'         => 'To',
+                'particular'   => 'Sales',
+                'payment_type' => $item->payment_type,
+                'vch_type'     => ucfirst($item->type),
+                'vch_no'       => $item->invoice_number,
+                'debit'        => $netAmount,
+                'credit'       => 0,
+                'sort_date'    => $item->invoice_date,
             ]);
         }
 
@@ -797,28 +815,30 @@ class ReportController extends Controller
             if (!is_null($item->total_collect) && $item->total_collect > 0) {
 
                 $ledger->push([
-                    'date'        => $item->created_at->format('d M, Y'),
-                    'type'        => 'By',
-                    'particular'  => 'Cash',
-                    'vch_type'    => 'Receipt',
-                    'vch_no'      => $item->receipt_number,
-                    'debit'       => 0,
-                    'credit'      => $item->total_collect,
-                    'sort_date'   => $item->created_at,
+                    'date'         => $item->created_at->format('d M, Y'),
+                    'type'         => 'By',
+                    'particular'   => 'Cash',
+                    'payment_type' => $item->payment_type,
+                    'vch_type'     => 'Receipt',
+                    'vch_no'       => $item->receipt_number,
+                    'debit'        => 0,
+                    'credit'       => $item->total_collect,
+                    'sort_date'    => $item->created_at,
                 ]);
             }
 
             if (!is_null($item->adjustment_amt) && $item->adjustment_amt != 0) {
 
                 $ledger->push([
-                    'date'        => $item->created_at->format('d M, Y'),
-                    'type'        => 'By',
-                    'particular'  => 'Commission',
-                    'vch_type'    => 'Commission',
-                    'vch_no'      => $item->receipt_number,
-                    'debit'       => 0,
-                    'credit'      => $item->adjustment_amt,
-                    'sort_date'   => $item->created_at,
+                    'date'         => $item->created_at->format('d M, Y'),
+                    'type'         => 'By',
+                    'particular'   => 'Commission',
+                    'payment_type' => $item->payment_type,
+                    'vch_type'     => 'Commission',
+                    'vch_no'       => $item->receipt_number,
+                    'debit'        => 0,
+                    'credit'       => $item->adjustment_amt,
+                    'sort_date'    => $item->created_at,
                 ]);
             }
 

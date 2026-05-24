@@ -26,6 +26,7 @@ use Illuminate\Support\Carbon;
 
 
 use Module\Market\Models\SalePoint;
+use Module\Market\Models\Territory;
 use Module\Sales\Models\Collection;
 use Module\Sales\Models\OrderInvoice;
 
@@ -892,4 +893,113 @@ class CollectionController extends Controller
             return back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
+
+
+    // api
+    // public function collections(Request $request)
+    // {
+    //     try {
+
+    //         // Parse date filters
+    //         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+    //             ? Carbon::parse($request->fromDate)->startOfDay()
+    //             : Carbon::now()->startOfMonth();
+
+    //         $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+    //             ? Carbon::parse($request->toDate)->endOfDay()
+    //             : Carbon::now()->endOfMonth();
+
+    //         $query = Collection::query();
+
+    //         // Region Filter
+    //         if ($request->filled('region_id') && $request->region_id != 0) {
+
+    //             $region_id = $request->region_id;
+
+    //             $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+    //                 $query->where('id', $region_id);
+    //             })->pluck('id');
+
+    //             // $query->whereIn('territory_id', $territoryIds);
+
+    //             $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
+    //                 $q->whereIn('territory_id', $territoryIds);
+    //             });
+    //         }
+
+    //         // Area Filter
+    //         if ($request->filled('area_id') && $request->area_id != 0) {
+
+    //             $area_id = $request->area_id;
+
+    //             $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+    //                 $query->where('id', $area_id);
+    //             })->pluck('id');
+
+    //             // $query->whereIn('territory_id', $territoryIds);
+
+    //             $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
+    //                 $q->whereIn('territory_id', $territoryIds);
+    //             });
+    //         }
+
+    //         // Territory Filter
+    //         if ($request->filled('territory_id') && $request->territory_id != 0) {
+
+    //             // $query->where('territory_id', $request->territory_id);
+
+    //             $query->whereHas('salePoint.territory', function ($q) use ($request) {
+    //                 $q->where('territory_id', $request->territory_id);
+    //             });
+    //         }
+
+    //         // Sale Point Filter
+    //         if ($request->filled('sale_point_id') && $request->sale_point_id != 0) {
+
+    //             $query->where('sale_point_id', $request->sale_point_id);
+    //         }
+
+    //         // Date Filter
+    //         $query->whereBetween('created_at', [$fromDate, $toDate]);
+
+    //         // Get Invoices
+    //         $collections = $query->orderBy('id', 'desc')->get();
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Prepare Final Data
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         $serializeCollections = [];
+
+    //         foreach ($collections as $collection) {
+
+    //             $serializeCollections[] = [
+    //                 'sale_point_id'        => $collection->sale_point_id,
+    //                 'sale_point_name'      => $collection->salePoint->name,
+    //                 'address'              => $collection->salePoint->address,
+    //                 'total_invoice_amount' => round($finalInvoiceAmount, 2),
+    //                 'total_collection'     => $items->sum('paid'),
+    //                 'commission'           => $items->sum('adjustment_amt'),
+    //                 'total_due'            => $items->sum('due'),
+    //                 'total_invoices'       => $items->count()
+    //             ];
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'SUCCESS',
+    //             'message' => 'Customer collections fetched successfully',
+    //             'data'    => $serializeCollections
+    //         ]);
+
+    //     } catch (\Exception $e) {
+
+    //         return response()->json([
+    //             'status' => 'ERROR',
+    //             'message' => 'Something went wrong',
+    //             'error'   => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 }
