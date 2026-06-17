@@ -109,6 +109,7 @@
                                 <th class="min-w-60px text-end">Payable</th>
                                 <th class="min-w-60px text-end">Paid</th>
                                 <th class="min-w-60px text-end">Adjustment</th>
+                                <th class="min-w-60px text-end">Return</th>
                                 <th class="min-w-60px text-end">Due</th>
 
                                 <th class="w-10px text-end">
@@ -165,6 +166,12 @@
                                         @endif
                                     </td>
 
+                                    <td class="text-end">
+                                        @if ($orderInvoice->return_amount)
+                                            {{ number_format($orderInvoice->return_amount, 2) }} Tk
+                                        @endif
+                                    </td>
+
                                     <td class="text-end">{{ number_format($orderInvoice->due, 2) }} Tk</td>
 
                                     <td class="text-end">
@@ -179,7 +186,7 @@
 
                         <tfoot>
                             <tr class="text-end">
-                                <td colspan="11" class="fw-bold">Total Payable:</td>
+                                <td colspan="12" class="fw-bold">Total Payable:</td>
 
                                 <td class="fw-bold">
                                     <div id="totalPayable" class="badge badge-light-info" style="font-size: 14px;">0.00 Tk</div>
@@ -187,7 +194,7 @@
                             </tr>
 
                             <tr class="text-end">
-                                <td colspan="11" class="fw-bold"></td>
+                                <td colspan="12" class="fw-bold"></td>
 
                                 <td class="fw-bold">
                                     <form id="paymentForm" action="{{ route('collection.update_due') }}" method="POST">

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('stock_id')->nullable()->constrained('stocks')->nullOnDelete();
             $table->foreignId('order_invoice_id')->nullable()->constrained('order_invoices')->nullOnDelete();
+            $table->string('invoice_number');
             // $table->string('product_name');
             $table->string('sku');
             $table->integer('pre_stock');
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->integer('curr_stock');
             $table->decimal('sales_value', 10, 2)->nullable();
             $table->enum('tran_type', ['Warehouse Stock In',  'Warehouse to Sale Point', 'Sale Point to Warehouse']);
-            $table->enum('status', ['Stock In', 'Stock Out', 'Return']);
+            $table->enum('status', ['Stock In', 'Stock Out', 'Return', 'OReturn']);
             // $table->enum('is_active', ['Active', 'Inactive'])->default('Active'); new field needed
             $table->timestamps();
         });

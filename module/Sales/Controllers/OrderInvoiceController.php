@@ -28,6 +28,8 @@ use Module\Report\Models\Transection;
 use Module\Sales\Models\Order;
 use Module\Sales\Models\Collection;
 use Module\Sales\Models\OrderInvoice;
+use Module\Sales\Models\OReturn;
+use Module\Sales\Models\OReturnInvoice;
 
 class OrderInvoiceController extends Controller
 {
@@ -164,7 +166,7 @@ class OrderInvoiceController extends Controller
             'sale_point_id' => $data['sale_point_id'],
             'territory_id' => $data['territory_id'],
             'depot_id' => $data['depot_id'],
-            'invoice_number' => $this->generate_unique_invoice_number(),
+            'invoice_number' => $this->generate_unique_invoice_number('INV', OrderInvoice::class),
             'payment_type' => $data['payment_type'],
             'total_amount' => $totalAmount,
             'discount' => $data['discount'] ?? null,
@@ -229,7 +231,7 @@ class OrderInvoiceController extends Controller
                 'sale_point_id' => $salePoint->id,
                 'territory_id' => $salePoint->territory_id,
                 'depot_id' => 3, // depot create korte hobe
-                'invoice_number' => $this->generate_unique_invoice_number(),
+                'invoice_number' => $this->generate_unique_invoice_number('INV', OrderInvoice::class),
                 'payment_type' => 'Credit',
                 'total_amount' => $grandTotal,
                 'due' => $grandTotal,
@@ -273,6 +275,153 @@ class OrderInvoiceController extends Controller
                 ->withInput();
         }
     }
+
+
+    public function store_return_invoice(Request $request)
+    {
+        // ✅ VALIDATION
+        $request->validate([
+            'sale_point_id' => 'required|exists:sale_points,id',
+            'stock_id'      => 'required|array|min:1',
+            'stock_id.*'    => 'required|exists:stocks,id',
+            'quantity'      => 'required|array',
+            'quantity.*'    => 'required|integer|min:1',
+            'price'         => 'required|array',
+            'price.*'       => 'required|numeric|min:0',
+        ]);
+
+        $auth_user = Auth::user();
+        $salePoint = SalePoint::findOrFail($request->sale_point_id);
+
+        DB::beginTransaction();
+
+        try {
+            // ✅ CALCULATE GRAND TOTAL
+            $grandTotal = 0;
+
+            foreach ($request->quantity as $index => $qty) {
+                $grandTotal += $qty * $request->price[$index];
+            }
+
+            // ✅ CREATE INVOICE
+            $oReturnInvoice = OReturnInvoice::create([
+                'user_id' => $auth_user->id,
+                'sale_point_id' => $salePoint->id,
+                'invoice_number' => $this->generate_unique_invoice_number('RET', OReturnInvoice::class),
+                'return_amount' => $grandTotal
+            ]);
+
+            // ✅ CREATE ITEMS
+            foreach ($request->stock_id as $index => $stockId) {
+                $stock = Stock::findOrFail($stockId);
+
+                $qty   = $request->quantity[$index];
+                $price = $request->price[$index];
+
+                $oReturn = OReturn::create([
+                    'stock_id' => $stock->id,
+                    'sku' => $stock->sku,
+                    'quantity' => $qty,
+                    'unit_price' => $price,
+                    'total_amount' => $qty * $price
+                ]);
+
+                $oReturnInvoice->o_returns()->attach($oReturn);
+
+                $previous_stock = $stock->quantity;
+                $stock->update([
+                    'quantity' => $previous_stock + $qty
+                ]);
+
+                Transection::create([
+                    'user_id' => $auth_user->id,
+                    'stock_id' => $stock->id,
+                    'invoice_number' => $oReturnInvoice->invoice_number,
+                    'sku' => $stock->sku,
+                    'pre_stock' => $previous_stock,
+                    'tran_quant' => $qty,
+                    'curr_stock' => $stock->quantity,
+                    'tran_type' => 'Sale Point to Warehouse',
+                    'status' => 'OReturn'
+                ]);
+            }
+
+
+            Collection::create([
+                'user_id'        => $auth_user->id,
+                'sale_point_id'  => $salePoint->id,
+                'invoice_numbers'=> $oReturnInvoice->invoice_number,
+                'return_amt'     => $grandTotal,
+                'payment_type'   => 'Return',
+                // 'receipt_number' => $request->receipt_number,
+            ]);
+
+
+
+            //////
+
+            $invoices = OrderInvoice::where('sale_point_id', $salePoint->id)
+                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->whereNotIn('payment_status', ['Paid'])
+                ->orderBy('invoice_date', 'asc')
+                ->get();
+
+
+            // --- STEP 1: apply payments FIFO (front to back)
+            foreach ($invoices as $invoice) {
+
+                $changed = false;
+
+                if ($grandTotal > 0 && $invoice->due > 0) {
+                    $dueBefore = $invoice->due;
+                    $returnNow    = min($grandTotal, $dueBefore);
+
+                    $invoice->return_amount = ($invoice->return_amount ?? 0) + $returnNow;
+                    $invoice->due  = $dueBefore - $returnNow;
+
+                    $grandTotal -= $returnNow;
+
+                    $changed = true;
+                }
+
+                if ($changed) {
+                    if ($invoice->due <= 0) {
+                        $invoice->payment_status = 'Paid';
+                    } elseif (($invoice->return_amount ?? 0) > 0 && $invoice->due > 0) {
+                        $invoice->payment_status = 'Partial Paid';
+                    } else {
+                        $invoice->payment_status = 'Due';
+                    }
+
+                    $invoice->return_note = $oReturnInvoice->invoice_number;
+
+                    $invoice->save();
+                }
+            }
+
+            ///////
+
+
+            DB::commit();
+
+            return redirect()
+                ->route('collection.return')
+                ->with('success', 'Invoice returned successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()
+                ->with('error', 'Something went wrong')
+                ->withInput();
+        }
+    }
+
+
+
+
+
+
 
     public function edit(Request $request, $id)
     {
@@ -602,27 +751,25 @@ class OrderInvoiceController extends Controller
 
 
     // helper
-    private function generate_unique_invoice_number()
+    private function generate_unique_invoice_number(string $prefix, string $model)
     {
-        $invoice_number = $this->invoice_number();
+        $invoice_number = $this->invoice_number($prefix);
 
-        $existing_check = OrderInvoice::where('invoice_number', $invoice_number)->first();
-
-        if ($existing_check) {
-            return $this->generate_unique_invoice_number();
+        if ($model::where('invoice_number', $invoice_number)->exists()) {
+            return $this->generate_unique_invoice_number($prefix, $model);
         }
 
         return $invoice_number;
     }
 
-    private function invoice_number()
+    private function invoice_number($prefix)
     {
         $date = now();
         $year = substr($date->year, -2);
         $month = str_pad($date->month, 2, '0', STR_PAD_LEFT);
         $day = str_pad($date->day, 2, '0', STR_PAD_LEFT);
 
-        return 'INV' . $year . $month . $day . mt_rand(1000, 9999);
+        return $prefix . $year . $month . $day . mt_rand(1000, 9999);
     }
 
     private function generate_unique_order_number()

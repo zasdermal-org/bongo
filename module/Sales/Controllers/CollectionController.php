@@ -25,6 +25,7 @@ use App\Services\DailyStockService;
 use Illuminate\Support\Carbon;
 
 
+use Module\Inventory\Models\Stock;
 use Module\Market\Models\SalePoint;
 use Module\Market\Models\Territory;
 use Module\Sales\Models\Collection;
@@ -270,13 +271,13 @@ class CollectionController extends Controller
             $invoiceNumbers = $processedInvoices->pluck('id')->implode(', ');
 
             Collection::create([
-                'user_id'        => auth()->user()->id,
-                'sale_point_id'  => $invoices->first()->sale_point_id ?? null, // taking from first invoice
-                'invoice_numbers'=> $invoiceNumbers,
-                'total_collect'  => $request->total_collect,
+                'user_id'         => auth()->user()->id,
+                'sale_point_id'   => $invoices->first()->sale_point_id ?? null, // taking from first invoice
+                'invoice_numbers' => $invoiceNumbers,
+                'total_collect'   => $request->total_collect,
                 'adjustment_amt'  => $request->adjustment_amt,
-                'payment_type'   => $request->payment_type,
-                'receipt_number'=> $request->receipt_number,
+                'payment_type'    => $request->payment_type,
+                'receipt_number'  => $request->receipt_number,
             ]);
 
             DB::commit();
@@ -291,6 +292,29 @@ class CollectionController extends Controller
                 ->with('error', 'Failed to update payment: ' . $e->getMessage());
         }
     }
+
+    public function return(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Collection', 'url' => null],
+            ['title' => 'Return', 'url' => null]
+        ];
+
+        $data['salePoints'] = SalePoint::where('is_active', 'Active')->whereHas('orderInvoices')->orderBy('id', 'desc')->get();
+        $data['stocks'] = Stock::orderBy('id', 'desc')->get();
+
+        return view('Sales::collection.return', $data);
+    }
+
+
+
+
+
+
+
+
+
 
 
     public function due($id)

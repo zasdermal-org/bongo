@@ -18,6 +18,7 @@ class Collection extends Model
         'invoice_numbers',
         'total_collect',
         'adjustment_amt',
+        'return_amt',
         'payment_type',
         'receipt_number'
     ];

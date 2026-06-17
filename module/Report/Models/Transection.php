@@ -16,6 +16,7 @@ class Transection extends Model
         'user_id',
         'stock_id',
         'order_invoice_id',
+        'invoice_number',
         // 'product_name',
         'sku',
         'pre_stock',

@@ -133,6 +133,10 @@
                                             @if ($transection->orderInvoice)
                                                 {{ $transection->orderInvoice->invoice_number }}
                                             @endif
+
+                                            @if ($transection->status === 'OReturn')
+                                                {{ $transection->invoice_number }}
+                                            @endif
                                         </td>
                                         <!--end::Invoice Number=-->
 
