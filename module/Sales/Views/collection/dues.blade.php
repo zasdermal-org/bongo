@@ -256,7 +256,7 @@
 
                 $(".row-checkbox:checked").each(function () {
                     // Find payable amount from the same row
-                    let payableText = $(this).closest("tr").find("td:nth-child(12)").text().trim();
+                    let payableText = $(this).closest("tr").find("td:nth-child(13)").text().trim();
 
                     if (!payableText || payableText === "NULL") payableText = "0";
 
