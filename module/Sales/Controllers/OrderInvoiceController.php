@@ -508,7 +508,7 @@ class OrderInvoiceController extends Controller
             foreach ($orders as $order) {
                 $serializedOrders[] = [
                     'stock_id'        => $order->stock_id,
-                    'category_slug'   => $order->category_slug,
+                    'type'            => $order->category_slug,
                     'sku'             => $order->sku,
                     'product_name'    => $order->product_name,
                     'unit_price'      => $order->unit_price,
