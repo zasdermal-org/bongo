@@ -443,7 +443,8 @@ class OrderInvoiceController extends Controller
                     'orders.sku',
                     'orders.unit_price',
                     DB::raw('SUM(orders.quantity) as total_quantity'),
-                    'products.title as product_name'
+                    'products.title as product_name',
+                    'categories.slug as category_slug'
                 )
                 ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
                 ->join('products', 'stocks.product_id', '=', 'products.id')
@@ -492,11 +493,11 @@ class OrderInvoiceController extends Controller
             }
 
             $orders = $ordersQuery
-                ->groupBy('orders.sku', 'orders.unit_price', 'products.title')
+                ->groupBy('orders.sku', 'orders.unit_price', 'products.title', 'categories.slug')
                 ->orderBy('stock_id', 'asc')
                 ->get();
 
-            $skuList = $orders->pluck('sku');
+            // $skuList = $orders->pluck('sku');
 
             // $stocks = DB::table('stocks')
             //     ->whereIn('sku', $skuList)
@@ -507,6 +508,7 @@ class OrderInvoiceController extends Controller
             foreach ($orders as $order) {
                 $serializedOrders[] = [
                     'stock_id'        => $order->stock_id,
+                    'category_slug'   => $order->category_slug,
                     'sku'             => $order->sku,
                     'product_name'    => $order->product_name,
                     'unit_price'      => $order->unit_price,
