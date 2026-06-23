@@ -429,11 +429,11 @@ class OrderInvoiceController extends Controller
         try {
 
             // Parse date filters
-            $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->from_date, 'Y-m-d')
                 ? Carbon::parse($request->from_date)->startOfDay()
                 : Carbon::today()->startOfDay();
 
-            $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            $toDate = $request->filled('toDate') && Carbon::hasFormat($request->to_date, 'Y-m-d')
                 ? Carbon::parse($request->to_date)->endOfDay()
                 : Carbon::today()->endOfDay();
 
