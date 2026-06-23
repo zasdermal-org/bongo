@@ -149,10 +149,14 @@ class OrderInvoiceController extends Controller
         // Log::info('OrderInvoice request received', ['data' => $data]);
 
         $auth_user = Auth::user();
-        $totalAmount = $data['total_amount'];
+        // $totalAmount = $data['total_amount'];
+
+        $totalAmount = collect($data['orders'])->sum(function ($order) {
+            return $order['quantity'] * $order['unit_price'];
+        });
 
         if ($data['payment_type'] === 'Cash') {
-            $discount = $data['discount'];
+            $discount = $data['discount'] ?? 0;
             $discount_value = ($totalAmount * $discount) / 100;
 
             $due = $totalAmount - $discount_value;
@@ -414,6 +418,115 @@ class OrderInvoiceController extends Controller
             return back()
                 ->with('error', 'Something went wrong')
                 ->withInput();
+        }
+    }
+
+
+
+
+    public function product_summary(Request $request)
+    {
+        try {
+
+            // Parse date filters
+            $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+                ? Carbon::parse($request->from_date)->startOfDay()
+                : Carbon::today()->startOfDay();
+
+            $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+                ? Carbon::parse($request->to_date)->endOfDay()
+                : Carbon::today()->endOfDay();
+
+            $ordersQuery = DB::table('orders')
+                ->select(
+                    DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
+                    'orders.sku',
+                    'orders.unit_price',
+                    DB::raw('SUM(orders.quantity) as total_quantity'),
+                    'products.title as product_name'
+                )
+                ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
+                ->join('products', 'stocks.product_id', '=', 'products.id')
+                ->join('order_order_invoice', 'orders.id', '=', 'order_order_invoice.order_id')
+                ->join('order_invoices', 'order_order_invoice.order_invoice_id', '=', 'order_invoices.id')
+
+                ->join('territories', 'order_invoices.territory_id', '=', 'territories.id')
+                ->join('areas', 'territories.area_id', '=', 'areas.id')
+                ->join('regions', 'areas.region_id', '=', 'regions.id')
+
+                ->where('order_invoices.status', 'Accepted')
+                ->whereBetween('orders.created_at', [$fromDate, $toDate]);
+
+            // ✅ REGION FILTER
+            if ($request->filled('region_id')) {
+                $ordersQuery->where('regions.id', $request->region_id);
+            }
+
+            if ($request->filled('area_id')) {
+                $ordersQuery->where('areas.id', $request->area_id);
+            }
+
+            if ($request->filled('territory_id')) {
+                $ordersQuery->where('territories.id', $request->territory_id);
+            }
+                
+            $userDepot = auth()->user()->employee->depot->name ?? null;
+
+            // Always join once
+            $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+                
+            if ($request->filled('type')) {
+                // $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+
+                if ($request->type === 'seed') {
+                    $ordersQuery->where('categories.slug', 'seed');
+                } elseif ($request->type === 'agrochemicals') {
+                    $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+                }
+            } else {
+                if ($userDepot && strtolower($userDepot) === 'mirpur') {
+                    $ordersQuery->where('categories.slug', 'seed');
+                } elseif ($userDepot && strtolower($userDepot) === 'bogura') {
+                    $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+                }
+            }
+
+            $orders = $ordersQuery
+                ->groupBy('orders.sku', 'orders.unit_price', 'products.title')
+                ->orderBy('stock_id', 'asc')
+                ->get();
+
+            $skuList = $orders->pluck('sku');
+
+            // $stocks = DB::table('stocks')
+            //     ->whereIn('sku', $skuList)
+            //     ->pluck('quantity', 'sku');
+
+            $serializedOrders = [];
+
+            foreach ($orders as $order) {
+                $serializedOrders[] = [
+                    'stock_id'        => $order->stock_id,
+                    'sku'             => $order->sku,
+                    'product_name'    => $order->product_name,
+                    'unit_price'      => $order->unit_price,
+                    'total_quantity'  => $order->total_quantity
+                ];
+            }
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'data' => $serializedOrders,
+                'message' => 'Product summary retrieved successfully.'
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => 'Failed to retrieve product summary.',
+                'error' => $e->getMessage()
+            ], 200);
         }
     }
 
@@ -839,7 +952,7 @@ class OrderInvoiceController extends Controller
             'sale_point_id' => $data['sale_point_id'],
             'territory_id' => $data['territory_id'],
             'depot_id' => $data['depot_id'],
-            'invoice_number' => $this->generate_unique_invoice_number(),
+            'invoice_number' => $this->generate_unique_invoice_number('INV', OrderInvoice::class),
             'payment_type' => $data['payment_type'],
             'total_amount' => $totalAmount,
             'discount' => $data['discount'] ?? null,
@@ -1135,7 +1248,6 @@ class OrderInvoiceController extends Controller
                     'sale_point_id'        => $salePointId,
                     'sale_point_name'      => optional($items->first()->salePoint)->name,
                     'address'              => optional($items->first()->salePoint)->address,
-
                     'total_invoice_amount' => round($finalInvoiceAmount, 2),
                     'total_collection'     => $items->sum('paid'),
                     'commission'           => $items->sum('adjustment_amt'),

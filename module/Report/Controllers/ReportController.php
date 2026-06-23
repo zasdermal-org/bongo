@@ -209,6 +209,7 @@ class ReportController extends Controller
             ->get();
 
         $skuList = $orders->pluck('sku');
+        
         $stocks = DB::table('stocks')
             ->whereIn('sku', $skuList)
             ->pluck('quantity', 'sku');
