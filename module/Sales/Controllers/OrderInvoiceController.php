@@ -459,15 +459,15 @@ class OrderInvoiceController extends Controller
                 ->whereBetween('orders.created_at', [$fromDate, $toDate]);
 
             // ✅ REGION FILTER
-            if ($request->filled('region_id')) {
+            if ($request->filled('region_id') && $request->region_id != 0) {
                 $ordersQuery->where('regions.id', $request->region_id);
             }
 
-            if ($request->filled('area_id')) {
+            if ($request->filled('area_id') && $request->area_id != 0) {
                 $ordersQuery->where('areas.id', $request->area_id);
             }
 
-            if ($request->filled('territory_id')) {
+            if ($request->filled('territory_id') && $request->territory_id != 0) {
                 $ordersQuery->where('territories.id', $request->territory_id);
             }
                 
