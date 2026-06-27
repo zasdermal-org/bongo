@@ -987,6 +987,73 @@ class OrderInvoiceController extends Controller
     }
 
 
+
+    public function updateInvoice(Request $request)
+    {
+        try {
+            $id = $request->invoice_id;
+
+            DB::beginTransaction();
+
+            $orderInvoice = OrderInvoice::findOrFail($id);
+            
+            if ($orderInvoice->status === 'Accepted') {
+                return response()->json(['error' => 'Invoice already approved'], 409);
+            }
+
+            $userId = auth()->user()->id;
+
+            foreach ($orderInvoice->orders as $order) {
+                // $stock = $order->stock;
+                $stock = $order->stock()->lockForUpdate()->first();
+
+                if (!$stock) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Stock not found.'], 404);
+                }
+
+                if ($stock->quantity < $order->quantity) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
+                }
+    
+                $previous_quantity = $stock->quantity;
+                $stock->decrement('quantity', $order->quantity);
+                $new_quantity = $previous_quantity - $order->quantity;
+    
+                Transection::create([
+                    'user_id' => $userId,
+                    'stock_id' => $stock->id,
+                    'order_invoice_id' => $orderInvoice->id,
+                    'sku' => $order->sku,
+                    'pre_stock' => $previous_quantity,
+                    'tran_quant' => $order->quantity,
+                    'curr_stock' => $new_quantity,
+                    'tran_type' => 'Warehouse to Sale Point',
+                    'status' => 'Stock Out'
+                ]);
+            }
+
+            $orderInvoice->update([
+                'updated_by_user_id' => $userId,
+                'status' => 'Accepted',
+                'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Order Invoice approved Successfully'
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+        }
+    }
+
+
     public function sale_invoices(Request $request)
     {
         $query = OrderInvoice::query();
@@ -1065,6 +1132,7 @@ class OrderInvoiceController extends Controller
                 'invoice_number' => $invoice->invoice_number,
                 'status' => $invoice->status,
                 'type' => $invoice->type,
+                'payment_type' => $invoice->payment_type,
                 'invoice_value' => $invoice->total_amount,
                 // 'discount_value' => $invoice->sell_discount_amount ?? 0,
                 'return_amount' => $invoice->return_amount ?? 0,

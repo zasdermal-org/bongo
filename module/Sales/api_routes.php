@@ -7,6 +7,7 @@ use Module\Sales\Controllers\OrderInvoiceController;
 
 Route::prefix('/order')->group(function () {
     Route::post('/store-invoice', [OrderInvoiceController::class, 'api_store']);
+    Route::post('/update-invoice', [OrderInvoiceController::class, 'updateInvoice']);
 });
 
 Route::prefix('/sales-report')->group(function () {
