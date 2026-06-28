@@ -993,11 +993,13 @@ class OrderInvoiceController extends Controller
         try {
             $id = $request->invoice_id;
 
-            DB::beginTransaction();
+            // DB::beginTransaction();
+            DB::connection('mysql_test')->beginTransaction();
 
-            $orderInvoice = OrderInvoice::findOrFail($id);
+            $orderInvoice = OrderInvoice::on('mysql_test')->findOrFail($id);
             
             if ($orderInvoice->status === 'Accepted') {
+                DB::connection('mysql_test')->rollBack();
                 return response()->json(['error' => 'Invoice already approved'], 409);
             }
 
@@ -1005,15 +1007,21 @@ class OrderInvoiceController extends Controller
 
             foreach ($orderInvoice->orders as $order) {
                 // $stock = $order->stock;
-                $stock = $order->stock()->lockForUpdate()->first();
+                // $stock = $order->stock()->lockForUpdate()->first();
+                $stock = Stock::on('mysql_test')
+                    ->where('id', $order->stock_id)
+                    ->lockForUpdate()
+                    ->first();
 
                 if (!$stock) {
-                    DB::rollBack();
+                    // DB::rollBack();
+                    DB::connection('mysql_test')->rollBack();
                     return response()->json(['error' => 'Stock not found.'], 404);
                 }
 
                 if ($stock->quantity < $order->quantity) {
-                    DB::rollBack();
+                    // DB::rollBack();
+                    DB::connection('mysql_test')->rollBack();
                     return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
                 }
     
@@ -1021,7 +1029,7 @@ class OrderInvoiceController extends Controller
                 $stock->decrement('quantity', $order->quantity);
                 $new_quantity = $previous_quantity - $order->quantity;
     
-                Transection::create([
+                Transection::on('mysql_test')->create([
                     'user_id' => $userId,
                     'stock_id' => $stock->id,
                     'order_invoice_id' => $orderInvoice->id,
@@ -1040,7 +1048,8 @@ class OrderInvoiceController extends Controller
                 'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
             ]);
 
-            DB::commit();
+            // DB::commit();
+            DB::connection('mysql_test')->commit();
 
             return response()->json([
                 'status' => true,
