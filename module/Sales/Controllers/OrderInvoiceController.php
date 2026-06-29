@@ -1192,7 +1192,7 @@ class OrderInvoiceController extends Controller
 
     public function sale_invoice_orders(Request $request, $id)
     {
-        $order_invoice = OrderInvoice::find($id);
+        $order_invoice = OrderInvoice::on('mysql_test')->find($id);
         // $payable_amount = $order_invoice->total_amount - $order_invoice->sell_discount_amount - $order_invoice->return_amount;
         $sales_point = $order_invoice->salePoint->name . ' (' . $order_invoice->salePoint->code_number . ')';
 
