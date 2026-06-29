@@ -1171,7 +1171,12 @@ class OrderInvoiceController extends Controller
                 'sale_point_name' => $sales_point,
                 'address' => $invoice->salePoint->address,
                 'order_date' => $invoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
-                'invoice_date' => $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+                // 'invoice_date' => $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+                'invoice_date' => $invoice->invoice_date
+                ? Carbon::parse($invoice->invoice_date)
+                    ->setTimezone('Asia/Dhaka')
+                    ->format('d M, Y / h:i A')
+                : null,
                 'username' => $invoice->user->username,
                 'employee_name' => $invoice->user->name
             ];
