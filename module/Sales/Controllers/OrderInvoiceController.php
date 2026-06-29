@@ -992,7 +992,7 @@ class OrderInvoiceController extends Controller
     {
         try {
             $id = $request->invoice_id;
-            // $discount = $request->discount;
+            $discount = $request->discount;
             $total_amount = $request->total_amount;
             $submittedBy = $request->submittedBy;
             $payable_amount = $request->payable_amount;
@@ -1021,7 +1021,7 @@ class OrderInvoiceController extends Controller
                 if ($order->quantity != $newOrder['quantity']) {
                     $order->update([
                         'quantity'      => $newOrder['quantity'],
-                        'discount'      => $newOrder['discount'] ?? null,
+                        'discount'      => $discount ?? null,
                         'total_amount'  => $newOrder['order_total_amount'],
                     ]);
                 }
@@ -1202,6 +1202,7 @@ class OrderInvoiceController extends Controller
         foreach ($order_invoice->orders as $order) {
             $serializeOrders[] = [
                 'product_name' => $order->stock->product->title,
+                'sku' => $order->sku,
                 'quantity' => $order->quantity,
                 'return_qty' => $order->return_qty,
                 'order_value' => $order->total_amount
