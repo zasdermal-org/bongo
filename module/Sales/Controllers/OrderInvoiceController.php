@@ -994,6 +994,7 @@ class OrderInvoiceController extends Controller
             $id = $request->invoice_id;
             // $discount = $request->discount;
             $total_amount = $request->total_amount;
+            $submittedBy = $request->submittedBy;
             $payable_amount = $request->payable_amount;
             $orderData = collect($request->orders)->keyBy('sku');
 
@@ -1007,7 +1008,7 @@ class OrderInvoiceController extends Controller
                 return response()->json(['error' => 'Invoice already approved'], 409);
             }
 
-            $userId = auth()->user()->id;
+            // $userId = auth()->user()->id;
 
             foreach ($orderInvoice->orders as $order) {
 
@@ -1049,7 +1050,7 @@ class OrderInvoiceController extends Controller
                 $new_quantity = $previous_quantity - $order->quantity;
     
                 Transection::on('mysql_test')->create([
-                    'user_id' => $userId,
+                    'user_id' => $submittedBy,
                     'stock_id' => $stock->id,
                     'order_invoice_id' => $orderInvoice->id,
                     'sku' => $order->sku,
@@ -1062,7 +1063,7 @@ class OrderInvoiceController extends Controller
             }
 
             $orderInvoice->update([
-                'updated_by_user_id' => $userId,
+                'updated_by_user_id' => $submittedBy,
                 'status' => 'Accepted',
                 'total_amount' => $total_amount ?? $orderInvoice->total_amount,
                 'due' => $payable_amount ?? $orderInvoice->due,
