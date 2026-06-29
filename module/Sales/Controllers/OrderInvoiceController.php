@@ -1100,7 +1100,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('zone_id') && $request->zone_id != 0) {
             $zone_id = $request->zone_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area.region.division.zone', function ($query) use ($zone_id) {
+            $territoryIds = Territory::whereHas('area.region.division.zone', function ($query) use ($zone_id) {
                 $query->where('id', $zone_id);
             })->pluck('id');
 
@@ -1109,7 +1109,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('division_id') && $request->division_id != 0) {
             $division_id = $request->division_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area.region.division', function ($query) use ($division_id) {
+            $territoryIds = Territory::whereHas('area.region.division', function ($query) use ($division_id) {
                 $query->where('id', $division_id);
             })->pluck('id');
 
@@ -1118,7 +1118,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('region_id') && $request->region_id != 0) {
             $region_id = $request->region_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area.region', function ($query) use ($region_id) {
+            $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
                 $query->where('id', $region_id);
             })->pluck('id');
 
@@ -1127,7 +1127,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('area_id') && $request->area_id != 0) {
             $area_id = $request->area_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area', function ($query) use ($area_id) {
+            $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
                 $query->where('id', $area_id);
             })->pluck('id');
 
