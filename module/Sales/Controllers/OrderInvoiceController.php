@@ -992,6 +992,9 @@ class OrderInvoiceController extends Controller
     {
         try {
             $id = $request->invoice_id;
+            // $discount = $request->discount;
+            $total_amount = $request->total_amount;
+            $payable_amount = $request->payable_amount;
             $orderData = collect($request->orders)->keyBy('sku');
 
             // DB::beginTransaction();
@@ -1061,6 +1064,8 @@ class OrderInvoiceController extends Controller
             $orderInvoice->update([
                 'updated_by_user_id' => $userId,
                 'status' => 'Accepted',
+                'total_amount' => $total_amount ?? $orderInvoice->total_amount,
+                'due' => $payable_amount ?? $orderInvoice->due,
                 'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
             ]);
 
