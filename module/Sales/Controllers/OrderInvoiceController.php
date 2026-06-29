@@ -992,6 +992,7 @@ class OrderInvoiceController extends Controller
     {
         try {
             $id = $request->invoice_id;
+            $orderData = collect($request->orders)->keyBy('sku');
 
             // DB::beginTransaction();
             DB::connection('mysql_test')->beginTransaction();
@@ -1006,6 +1007,21 @@ class OrderInvoiceController extends Controller
             $userId = auth()->user()->id;
 
             foreach ($orderInvoice->orders as $order) {
+
+                if (!$orderData->has($order->sku)) {
+                    continue;
+                }
+
+                $newOrder = $orderData[$order->sku];
+
+                if ($order->quantity != $newOrder['quantity']) {
+                    $order->update([
+                        'quantity'      => $newOrder['quantity'],
+                        'discount'      => $newOrder['discount'] ?? null,
+                        'total_amount'  => $newOrder['order_total_amount'],
+                    ]);
+                }
+                    
                 // $stock = $order->stock;
                 // $stock = $order->stock()->lockForUpdate()->first();
                 $stock = Stock::on('mysql_test')
@@ -1065,7 +1081,8 @@ class OrderInvoiceController extends Controller
 
     public function sale_invoices(Request $request)
     {
-        $query = OrderInvoice::query();
+        // $query = OrderInvoice::query();
+        $query = OrderInvoice::on('mysql_test')->query();
 
         // Parse date filters
         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
@@ -1083,7 +1100,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('zone_id') && $request->zone_id != 0) {
             $zone_id = $request->zone_id;
-            $territoryIds = Territory::whereHas('area.region.division.zone', function ($query) use ($zone_id) {
+            $territoryIds = Territory::on('mysql_test')->whereHas('area.region.division.zone', function ($query) use ($zone_id) {
                 $query->where('id', $zone_id);
             })->pluck('id');
 
@@ -1092,7 +1109,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('division_id') && $request->division_id != 0) {
             $division_id = $request->division_id;
-            $territoryIds = Territory::whereHas('area.region.division', function ($query) use ($division_id) {
+            $territoryIds = Territory::on('mysql_test')->whereHas('area.region.division', function ($query) use ($division_id) {
                 $query->where('id', $division_id);
             })->pluck('id');
 
@@ -1101,7 +1118,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('region_id') && $request->region_id != 0) {
             $region_id = $request->region_id;
-            $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+            $territoryIds = Territory::on('mysql_test')->whereHas('area.region', function ($query) use ($region_id) {
                 $query->where('id', $region_id);
             })->pluck('id');
 
@@ -1110,7 +1127,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('area_id') && $request->area_id != 0) {
             $area_id = $request->area_id;
-            $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+            $territoryIds = Territory::on('mysql_test')->whereHas('area', function ($query) use ($area_id) {
                 $query->where('id', $area_id);
             })->pluck('id');
 
