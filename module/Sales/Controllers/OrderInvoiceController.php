@@ -1075,7 +1075,7 @@ class OrderInvoiceController extends Controller
             DB::connection('mysql_test')->commit();
 
             return response()->json([
-                'status' => true,
+                'status' => 'SUCCESS',
                 'message' => 'Order Invoice approved Successfully'
             ], 200);
 
