@@ -1066,6 +1066,7 @@ class OrderInvoiceController extends Controller
                 'updated_by_user_id' => $submittedBy,
                 'status' => 'Accepted',
                 'total_amount' => $total_amount ?? $orderInvoice->total_amount,
+                'discount' => $discount ?? null,
                 'due' => $payable_amount ?? $orderInvoice->due,
                 'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
             ]);
