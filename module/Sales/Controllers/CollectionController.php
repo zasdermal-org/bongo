@@ -1007,12 +1007,12 @@ class CollectionController extends Controller
                 // ];
 
                 $serializeCollections[] = [
-                    'sale_point_id'   => $collection->sale_point_id,
-                    'sale_point_name' => optional($collection->salePoint)->name,
-                    'address'         => optional($collection->salePoint)->address,
-                    'total_collect'   => (float) $collection->total_collect,
-                    'commission'      => (float) $collection->commission,
-                    'return_amt'      => (float) $collection->return_amt,
+                    'sale_point_id'    => $collection->sale_point_id,
+                    'sale_point_name'  => optional($collection->salePoint)->name,
+                    'address'          => optional($collection->salePoint)->address,
+                    'total_collection' => (float) $collection->total_collect,
+                    'commission'       => (float) $collection->commission,
+                    'return_amt'       => (float) $collection->return_amt,
                 ];
             }
 
