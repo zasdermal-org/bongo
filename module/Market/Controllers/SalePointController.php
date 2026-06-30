@@ -213,8 +213,6 @@ class SalePointController extends Controller
                 $territoryIds = collect([$territory_id]);
             }
 
-            $serializeData = [];
-
             // Fetch and format sales points data
             // $salePoints = SalePoint::where('is_active', 'Active')
             //     ->whereIn('territory_id', $territoryIds)
@@ -226,10 +224,28 @@ class SalePointController extends Controller
             //     ->orderBy('id', 'desc')
             //     ->get();
 
-            $salePoints = SalePoint::on('mysql_test')->where('is_active', 'Active')
-                ->whereIn('territory_id', $territoryIds)
+            $designationSlug = auth()->user()->employee->designation->slug ?? null;
+
+            $salePointQuery = SalePoint::on('mysql_test')
+                ->where('is_active', 'Active');
+
+            if ($designationSlug !== 'divisional-sales-manager') {
+                if ($territoryIds->isNotEmpty()) {
+                    $salePointQuery->whereIn('territory_id', $territoryIds);
+                }
+            }
+
+            $salePoints = $salePointQuery
                 ->orderBy('id', 'desc')
                 ->get();
+
+            // $salePoints = SalePoint::on('mysql_test')->where('is_active', 'Active')
+            //     ->whereIn('territory_id', $territoryIds)
+            //     ->orderBy('id', 'desc')
+            //     ->get();
+
+
+            $serializeData = [];
 
             foreach ($salePoints as $salePoint) {
                 $serializeData[] = [

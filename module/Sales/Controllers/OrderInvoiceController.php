@@ -1320,11 +1320,9 @@ class OrderInvoiceController extends Controller
                 $query->where('sale_point_id', $request->sale_point_id);
             }
 
-            if ($collection) {
-                $query->whereBetween('updated_at', [$fromDate, $toDate]);
-            } else {
-                $query->whereBetween('invoice_date', [$fromDate, $toDate]);
-            }
+            $dateColumn = $collection ? 'updated_at' : 'invoice_date';
+
+            $query->whereBetween($dateColumn, [$fromDate, $toDate]);
 
             // Date Filter
             // $query->whereBetween('invoice_date', [$fromDate, $toDate]);
