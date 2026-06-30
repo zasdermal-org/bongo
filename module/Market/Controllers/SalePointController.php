@@ -224,12 +224,12 @@ class SalePointController extends Controller
             //     ->orderBy('id', 'desc')
             //     ->get();
 
-            $designationSlug = auth()->user()->employee->designation->slug ?? null;
+            $designationSlug = $request->designation ?? null;
 
             $salePointQuery = SalePoint::on('mysql_test')
                 ->where('is_active', 'Active');
 
-            if ($designationSlug !== 'divisional-sales-manager') {
+            if ($designationSlug !== 'Divisional Sales Manager') {
                 if ($territoryIds->isNotEmpty()) {
                     $salePointQuery->whereIn('territory_id', $territoryIds);
                 }
