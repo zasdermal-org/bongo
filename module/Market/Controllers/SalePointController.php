@@ -250,9 +250,9 @@ class SalePointController extends Controller
             foreach ($salePoints as $salePoint) {
                 $serializeData[] = [
                     'sale_point_id' => $salePoint->id,
-                    'territory_id' => $salePoint->territory->id,
-                    'area_id' => $salePoint->territory->area->id,
-                    'region_id' => $salePoint->territory->area->region->id,
+                    'territory_id' => $salePoint->territory?->id,
+                    'area_id' => $salePoint->territory?->area?->id,
+                    'region_id' => $salePoint->territory?->area?->region?->id,
                     'sale_point_name' => $salePoint->name,
                     'code_number' => $salePoint->code_number,
                     'address' => $salePoint->address,
