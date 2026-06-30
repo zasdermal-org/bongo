@@ -1271,7 +1271,7 @@ class OrderInvoiceController extends Controller
     public function customer_sales(Request $request)
     {
         try {
-            $collection = 'collection';
+            $collection = $request->collection;
 
             // Parse date filters
             $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
