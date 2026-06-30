@@ -20,4 +20,4 @@ Route::prefix('/sales-report')->group(function () {
     Route::post('/customer-ledger', [OrderInvoiceController::class, 'customer_ledger']);
 });
 
-Route::get('/collections', [CollectionController::class, 'collections']);
+Route::post('/collections', [CollectionController::class, 'collections']);

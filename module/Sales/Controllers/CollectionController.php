@@ -928,53 +928,36 @@ class CollectionController extends Controller
             // Parse date filters
             $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
                 ? Carbon::parse($request->fromDate)->startOfDay()
-                : Carbon::now()->startOfMonth();
+                : null;
 
             $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
                 ? Carbon::parse($request->toDate)->endOfDay()
-                : Carbon::now()->endOfMonth();
+                : null;
 
+            $today = Carbon::today();
             $query = Collection::query();
 
             // Region Filter
             if ($request->filled('region_id') && $request->region_id != 0) {
 
-                $region_id = $request->region_id;
-
-                $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
-                    $query->where('id', $region_id);
-                })->pluck('id');
-
-                // $query->whereIn('territory_id', $territoryIds);
-
-                $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
-                    $q->whereIn('territory_id', $territoryIds);
+                $query->whereHas('salePoint.territory.area.region', function ($q) use ($request) {
+                    $q->where('id', $request->region_id);
                 });
             }
 
             // Area Filter
             if ($request->filled('area_id') && $request->area_id != 0) {
 
-                $area_id = $request->area_id;
-
-                $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
-                    $query->where('id', $area_id);
-                })->pluck('id');
-
-                // $query->whereIn('territory_id', $territoryIds);
-
-                $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
-                    $q->whereIn('territory_id', $territoryIds);
+                $query->whereHas('salePoint.territory.area', function ($q) use ($request) {
+                    $q->where('id', $request->area_id);
                 });
             }
 
             // Territory Filter
             if ($request->filled('territory_id') && $request->territory_id != 0) {
 
-                // $query->where('territory_id', $request->territory_id);
-
                 $query->whereHas('salePoint.territory', function ($q) use ($request) {
-                    $q->where('territory_id', $request->territory_id);
+                    $q->where('id', $request->territory_id);
                 });
             }
 
@@ -984,8 +967,11 @@ class CollectionController extends Controller
                 $query->where('sale_point_id', $request->sale_point_id);
             }
 
-            // Date Filter
-            $query->whereBetween('created_at', [$fromDate, $toDate]);
+            if ($fromDate && $toDate) {
+                    $query->whereBetween('created_at', [$fromDate, $toDate]);
+            } else {
+                $query->whereDate('created_at', $today);
+            }
 
             // Get Invoices
             $collections = $query->orderBy('id', 'desc')->get();
@@ -1003,11 +989,9 @@ class CollectionController extends Controller
                     'sale_point_id'        => $collection->sale_point_id,
                     'sale_point_name'      => $collection->salePoint->name,
                     'address'              => $collection->salePoint->address,
-                    'total_invoice_amount' => round($finalInvoiceAmount, 2),
-                    'total_collection'     => $items->sum('paid'),
-                    'commission'           => $items->sum('adjustment_amt'),
-                    'total_due'            => $items->sum('due'),
-                    'total_invoices'       => $items->count()
+                    'total_collect'        => $collection->total_collect,
+                    'commission'           => $collection->adjustment_amt,
+                    'return_amt'           => $collection->return_amt
                 ];
             }
 
