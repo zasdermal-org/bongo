@@ -1271,8 +1271,6 @@ class OrderInvoiceController extends Controller
     public function customer_sales(Request $request)
     {
         try {
-            $collection = $request->collection;
-
             // Parse date filters
             $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
                 ? Carbon::parse($request->fromDate)->startOfDay()
@@ -1320,12 +1318,8 @@ class OrderInvoiceController extends Controller
                 $query->where('sale_point_id', $request->sale_point_id);
             }
 
-            $dateColumn = $collection ? 'updated_at' : 'invoice_date';
-
-            $query->whereBetween($dateColumn, [$fromDate, $toDate]);
-
             // Date Filter
-            // $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+            $query->whereBetween('invoice_date', [$fromDate, $toDate]);
 
             // Get Invoices
             $invoices = $query

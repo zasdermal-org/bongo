@@ -974,7 +974,19 @@ class CollectionController extends Controller
             }
 
             // Get Invoices
-            $collections = $query->orderBy('id', 'desc')->get();
+            // $collections = $query->orderBy('id', 'desc')->get();
+
+            $collections = $query
+                ->selectRaw("
+                    sale_point_id,
+                    SUM(total_collect) as total_collect,
+                    SUM(adjustment_amt) as commission,
+                    SUM(return_amt) as return_amt
+                ")
+                ->with('salePoint:id,name,address')
+                ->groupBy('sale_point_id')
+                ->orderByDesc('sale_point_id')
+                ->get();
 
             /*
             |--------------------------------------------------------------------------
@@ -985,13 +997,22 @@ class CollectionController extends Controller
 
             foreach ($collections as $collection) {
 
+                // $serializeCollections[] = [
+                //     'sale_point_id'        => $collection->sale_point_id,
+                //     'sale_point_name'      => $collection->salePoint->name,
+                //     'address'              => $collection->salePoint->address,
+                //     'total_collect'        => $collection->total_collect,
+                //     'commission'           => $collection->adjustment_amt,
+                //     'return_amt'           => $collection->return_amt
+                // ];
+
                 $serializeCollections[] = [
-                    'sale_point_id'        => $collection->sale_point_id,
-                    'sale_point_name'      => $collection->salePoint->name,
-                    'address'              => $collection->salePoint->address,
-                    'total_collect'        => $collection->total_collect,
-                    'commission'           => $collection->adjustment_amt,
-                    'return_amt'           => $collection->return_amt
+                    'sale_point_id'   => $collection->sale_point_id,
+                    'sale_point_name' => optional($collection->salePoint)->name,
+                    'address'         => optional($collection->salePoint)->address,
+                    'total_collect'   => (float) $collection->total_collect,
+                    'commission'      => (float) $collection->commission,
+                    'return_amt'      => (float) $collection->return_amt,
                 ];
             }
 
