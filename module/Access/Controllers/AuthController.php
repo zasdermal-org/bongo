@@ -74,57 +74,6 @@ class AuthController extends Controller
     }
 
     // api
-    // public function signin(Request $request)
-    // {
-    //     $credentials = $request->only('username', 'password');
-
-    //     // Validation rules
-    //     $rules = [
-    //         'username' => 'required',
-    //         'password' => 'required|min:6',
-    //     ];
-
-    //     // Validate the input data
-    //     $validator = Validator::make($credentials, $rules);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => 'ERROR',
-    //             'message' => $validator->errors()
-    //         ], 422);
-    //     }
-
-    //     $user = User::where('username', $credentials['username'])->first();
-
-    //     if (!$user || !Hash::check($credentials['password'], $user->password)) {
-    //         return response()->json([
-    //             'status' => 'ERROR',
-    //             'message' => 'Invalid username or password'
-    //         ], 401);
-    //     }
-
-    //     $token = $user->createToken('api-token')->plainTextToken;
-
-    //     return response()->json([
-    //         'status' => 'SUCCESS',
-    //         'data' => [
-    //             'user_id' => $user->id,
-    //             'role_id' => $user->role->id,
-    //             'region_id' => $user->employee->region?->id,
-    //             'area_id' => $user->employee->area?->id,
-    //             'territory_id' => $user->employee->territory?->id,
-    //             'username' => $user->username,
-    //             'name' => $user->name,
-    //             'designation_name' => $user->employee->designation?->name,
-    //             'contact' => $user->employee->contact,
-    //             'address' => $user->employee->address,
-    //             'joining_date' => $user->employee->joining_date,
-    //             'token' => $token
-    //         ],
-    //         'message' => 'User successfully login.'
-    //     ], 200);
-    // }
-
     public function signin(Request $request)
     {
         $credentials = $request->only('username', 'password');
@@ -154,42 +103,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // $token = $user->createToken('api-token')->plainTextToken;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Create token in main DB
-        |--------------------------------------------------------------------------
-        */
-        $tokenResult = $user->createToken('api-token');
-
-        $plainTextToken = $tokenResult->plainTextToken;
-
-        $tokenId = explode('|', $plainTextToken)[0];
-
-        $tokenData = DB::table('personal_access_tokens')
-            ->where('id', $tokenId)
-            ->first();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Insert same token into mysql_test DB
-        |--------------------------------------------------------------------------
-        */
-        DB::connection('mysql_test')
-            ->table('personal_access_tokens')
-            ->insert([
-                'id' => $tokenData->id,
-                'tokenable_type' => $tokenData->tokenable_type,
-                'tokenable_id' => $tokenData->tokenable_id,
-                'name' => $tokenData->name,
-                'token' => $tokenData->token,
-                'abilities' => $tokenData->abilities,
-                'last_used_at' => $tokenData->last_used_at,
-                'expires_at' => $tokenData->expires_at,
-                'created_at' => $tokenData->created_at,
-                'updated_at' => $tokenData->updated_at,
-            ]);
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
             'status' => 'SUCCESS',
@@ -197,20 +111,106 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'role_id' => $user->role->id,
                 'region_id' => $user->employee->region?->id,
-                'region_name' => $user->employee->region?->name,
                 'area_id' => $user->employee->area?->id,
-                'area_name' => $user->employee->area?->name,
                 'territory_id' => $user->employee->territory?->id,
-                'territory_name' => $user->employee->territory?->name,
                 'username' => $user->username,
-                'employee_name' => $user->name,
+                'name' => $user->name,
                 'designation_name' => $user->employee->designation?->name,
                 'contact' => $user->employee->contact,
                 'address' => $user->employee->address,
                 'joining_date' => $user->employee->joining_date,
-                'token' => $plainTextToken
+                'token' => $token
             ],
             'message' => 'User successfully login.'
         ], 200);
     }
+
+    // public function signin(Request $request)
+    // {
+    //     $credentials = $request->only('username', 'password');
+
+    //     // Validation rules
+    //     $rules = [
+    //         'username' => 'required',
+    //         'password' => 'required|min:6',
+    //     ];
+
+    //     // Validate the input data
+    //     $validator = Validator::make($credentials, $rules);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => 'ERROR',
+    //             'message' => $validator->errors()
+    //         ], 422);
+    //     }
+
+    //     $user = User::where('username', $credentials['username'])->first();
+
+    //     if (!$user || !Hash::check($credentials['password'], $user->password)) {
+    //         return response()->json([
+    //             'status' => 'ERROR',
+    //             'message' => 'Invalid username or password'
+    //         ], 401);
+    //     }
+
+    //     // $token = $user->createToken('api-token')->plainTextToken;
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Create token in main DB
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     $tokenResult = $user->createToken('api-token');
+
+    //     $plainTextToken = $tokenResult->plainTextToken;
+
+    //     $tokenId = explode('|', $plainTextToken)[0];
+
+    //     $tokenData = DB::table('personal_access_tokens')
+    //         ->where('id', $tokenId)
+    //         ->first();
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Insert same token into mysql_test DB
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     DB::connection('mysql_test')
+    //         ->table('personal_access_tokens')
+    //         ->insert([
+    //             'id' => $tokenData->id,
+    //             'tokenable_type' => $tokenData->tokenable_type,
+    //             'tokenable_id' => $tokenData->tokenable_id,
+    //             'name' => $tokenData->name,
+    //             'token' => $tokenData->token,
+    //             'abilities' => $tokenData->abilities,
+    //             'last_used_at' => $tokenData->last_used_at,
+    //             'expires_at' => $tokenData->expires_at,
+    //             'created_at' => $tokenData->created_at,
+    //             'updated_at' => $tokenData->updated_at,
+    //         ]);
+
+    //     return response()->json([
+    //         'status' => 'SUCCESS',
+    //         'data' => [
+    //             'user_id' => $user->id,
+    //             'role_id' => $user->role->id,
+    //             'region_id' => $user->employee->region?->id,
+    //             'region_name' => $user->employee->region?->name,
+    //             'area_id' => $user->employee->area?->id,
+    //             'area_name' => $user->employee->area?->name,
+    //             'territory_id' => $user->employee->territory?->id,
+    //             'territory_name' => $user->employee->territory?->name,
+    //             'username' => $user->username,
+    //             'employee_name' => $user->name,
+    //             'designation_name' => $user->employee->designation?->name,
+    //             'contact' => $user->employee->contact,
+    //             'address' => $user->employee->address,
+    //             'joining_date' => $user->employee->joining_date,
+    //             'token' => $plainTextToken
+    //         ],
+    //         'message' => 'User successfully login.'
+    //     ], 200);
+    // }
 }

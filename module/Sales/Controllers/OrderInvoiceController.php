@@ -947,7 +947,7 @@ class OrderInvoiceController extends Controller
             $due = $totalAmount;
         }
 
-        $orderInvoice = OrderInvoice::on('mysql_test')->create([
+        $orderInvoice = OrderInvoice::create([
             'user_id' => $data['user_id'],
             // 'submitted_by_user_id' => $auth_user->id,
             'submitted_by_user_id' => $data['submittedBy'],
@@ -965,7 +965,7 @@ class OrderInvoiceController extends Controller
         ]);
 
         foreach ($data['orders'] as $order) {
-            $order = Order::on('mysql_test')->create([
+            $order = Order::create([
                 'stock_id' => $order['stock_id'],
                 'order_number' => $this->generate_unique_order_number(),
                 'sku' => $order['sku'],
@@ -998,13 +998,14 @@ class OrderInvoiceController extends Controller
             $payable_amount = $request->payable_amount;
             $orderData = collect($request->orders)->keyBy('sku');
 
-            // DB::beginTransaction();
-            DB::connection('mysql_test')->beginTransaction();
+            DB::beginTransaction();
+            // DB::connection('mysql_test')->beginTransaction();
 
-            $orderInvoice = OrderInvoice::on('mysql_test')->findOrFail($id);
+            $orderInvoice = OrderInvoice::findOrFail($id);
             
             if ($orderInvoice->status === 'Accepted') {
-                DB::connection('mysql_test')->rollBack();
+                DB::rollBack();
+                // DB::connection('mysql_test')->rollBack();
                 return response()->json(['error' => 'Invoice already approved'], 409);
             }
 
@@ -1028,20 +1029,19 @@ class OrderInvoiceController extends Controller
                     
                 // $stock = $order->stock;
                 // $stock = $order->stock()->lockForUpdate()->first();
-                $stock = Stock::on('mysql_test')
-                    ->where('id', $order->stock_id)
+                $stock = Stock::where('id', $order->stock_id)
                     ->lockForUpdate()
                     ->first();
 
                 if (!$stock) {
-                    // DB::rollBack();
-                    DB::connection('mysql_test')->rollBack();
+                    DB::rollBack();
+                    // DB::connection('mysql_test')->rollBack();
                     return response()->json(['error' => 'Stock not found.'], 404);
                 }
 
                 if ($stock->quantity < $order->quantity) {
-                    // DB::rollBack();
-                    DB::connection('mysql_test')->rollBack();
+                    DB::rollBack();
+                    // DB::connection('mysql_test')->rollBack();
                     return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
                 }
     
@@ -1049,7 +1049,7 @@ class OrderInvoiceController extends Controller
                 $stock->decrement('quantity', $order->quantity);
                 $new_quantity = $previous_quantity - $order->quantity;
     
-                Transection::on('mysql_test')->create([
+                Transection::create([
                     'user_id' => $submittedBy,
                     'stock_id' => $stock->id,
                     'order_invoice_id' => $orderInvoice->id,
@@ -1071,8 +1071,8 @@ class OrderInvoiceController extends Controller
                 'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
             ]);
 
-            // DB::commit();
-            DB::connection('mysql_test')->commit();
+            DB::commit();
+            // DB::connection('mysql_test')->commit();
 
             return response()->json([
                 'status' => 'SUCCESS',
@@ -1088,8 +1088,8 @@ class OrderInvoiceController extends Controller
 
     public function sale_invoices(Request $request)
     {
-        // $query = OrderInvoice::query();
-        $query = OrderInvoice::on('mysql_test');
+        $query = OrderInvoice::query();
+        // $query = OrderInvoice::on('mysql_test');
 
         // Parse date filters
         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
@@ -1107,7 +1107,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('zone_id') && $request->zone_id != 0) {
             $zone_id = $request->zone_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area.region.division.zone', function ($query) use ($zone_id) {
+            $territoryIds = Territory::whereHas('area.region.division.zone', function ($query) use ($zone_id) {
                 $query->where('id', $zone_id);
             })->pluck('id');
 
@@ -1116,7 +1116,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('division_id') && $request->division_id != 0) {
             $division_id = $request->division_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area.region.division', function ($query) use ($division_id) {
+            $territoryIds = Territory::whereHas('area.region.division', function ($query) use ($division_id) {
                 $query->where('id', $division_id);
             })->pluck('id');
 
@@ -1125,7 +1125,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('region_id') && $request->region_id != 0) {
             $region_id = $request->region_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area.region', function ($query) use ($region_id) {
+            $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
                 $query->where('id', $region_id);
             })->pluck('id');
 
@@ -1134,7 +1134,7 @@ class OrderInvoiceController extends Controller
 
         if ($request->filled('area_id') && $request->area_id != 0) {
             $area_id = $request->area_id;
-            $territoryIds = Territory::on('mysql_test')->whereHas('area', function ($query) use ($area_id) {
+            $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
                 $query->where('id', $area_id);
             })->pluck('id');
 
@@ -1194,7 +1194,7 @@ class OrderInvoiceController extends Controller
 
     public function sale_invoice_orders(Request $request, $id)
     {
-        $order_invoice = OrderInvoice::on('mysql_test')->find($id);
+        $order_invoice = OrderInvoice::find($id);
         // $payable_amount = $order_invoice->total_amount - $order_invoice->sell_discount_amount - $order_invoice->return_amount;
         $sales_point = $order_invoice->salePoint->name . ' (' . $order_invoice->salePoint->code_number . ')';
 

@@ -190,22 +190,24 @@ class SalePointController extends Controller
 
             if ($request->filled('region_id') && $request->region_id != 0) {
                 $region_id = $request->region_id;
-                // $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
-                //     $query->where('id', $region_id);
-                // })->pluck('id');
-                $territoryIds = Territory::on('mysql_test')->whereHas('area.region', function ($query) use ($region_id) {
+                $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
                     $query->where('id', $region_id);
                 })->pluck('id');
+
+                // $territoryIds = Territory::on('mysql_test')->whereHas('area.region', function ($query) use ($region_id) {
+                //     $query->where('id', $region_id);
+                // })->pluck('id');
             }
 
             if ($request->filled('area_id') && $request->area_id != 0) {
                 $area_id = $request->area_id;
-                // $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
-                //     $query->where('id', $area_id);
-                // })->pluck('id');
-                $territoryIds = Territory::on('mysql_test')->whereHas('area', function ($query) use ($area_id) {
+                $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
                     $query->where('id', $area_id);
                 })->pluck('id');
+
+                // $territoryIds = Territory::on('mysql_test')->whereHas('area', function ($query) use ($area_id) {
+                //     $query->where('id', $area_id);
+                // })->pluck('id');
             }
 
             if ($request->filled('territory_id') && $request->territory_id != 0) {
@@ -226,8 +228,7 @@ class SalePointController extends Controller
 
             $designation = $request->designation_name ?? null;
 
-            $salePointQuery = SalePoint::on('mysql_test')
-                ->where('is_active', 'Active');
+            $salePointQuery = SalePoint::where('is_active', 'Active');
 
             if ($designation !== 'Divisional Sales Manager') {
                 if ($territoryIds->isNotEmpty()) {
