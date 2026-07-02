@@ -130,7 +130,7 @@
                         }
 
                         .half-line div {
-                            width: 340px; /* matches Debit + Credit width */
+                            width: 370px; /* matches Debit + Credit width */
                             border-top: 1px solid #000;
                         }
 
@@ -141,7 +141,7 @@
                         }
 
                         .double-line div {
-                            width: 340px;
+                            width: 370px;
                             border-top: 2px solid #000;
                         }
                     </style>
@@ -237,8 +237,9 @@
                         <div class="ledger-row bold">
                             <div></div>
                             <div></div>
-                            <div>Total</div>
                             <div></div>
+                            <div></div>
+                            <div>Total</div>
 
                             <div class="text-end">
                                 {{ number_format($totalDebit, 2) }}
@@ -257,8 +258,9 @@
                         <div class="ledger-row bold">
                             <div></div>
                             <div></div>
-                            <div>Closing Balance</div>
                             <div></div>
+                            <div></div>
+                            <div>Closing Balance</div>
                             <div></div>
                             {{-- <div class="text-end">{{ number_format($totalDebit, 2) }}</div> --}}
                             <div class="text-end">{{ number_format($closingBlance, 2) }}</div>
@@ -269,6 +271,7 @@
                         </div>
 
                         <div class="ledger-row bold">
+                            <div></div>
                             <div></div>
                             <div></div>
                             <div></div>
