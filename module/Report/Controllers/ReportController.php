@@ -843,19 +843,20 @@ class ReportController extends Controller
                 ]);
             }
 
-            // if (!is_null($item->return_amt) && $item->return_amt > 0) {
+            if (!is_null($item->return_amt) && $item->return_amt > 0) {
 
-            //     $ledger->push([
-            //         'date'        => $item->created_at->format('d M, Y'),
-            //         'type'        => 'By',
-            //         'particular'  => 'Return',
-            //         'vch_type'    => 'Return',
-            //         'vch_no'      => $item->receipt_number,
-            //         'debit'       => $item->return_amt,
-            //         'credit'      => 0,
-            //         'sort_date'   => $item->created_at,
-            //     ]);
-            // }
+                $ledger->push([
+                    'date'        => $item->created_at->format('d M, Y'),
+                    'type'        => 'By',
+                    'particular'  => 'Return',
+                    'payment_type' => $item->payment_type,
+                    'vch_type'    => 'Return',
+                    'vch_no'      => $item->receipt_number,
+                    'debit'       => 0,
+                    'credit'      => $item->return_amt,
+                    'sort_date'   => $item->created_at,
+                ]);
+            }
         }
 
         $data['ledger'] = $ledger->sortBy('sort_date')->values();
