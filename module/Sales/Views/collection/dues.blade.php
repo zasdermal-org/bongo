@@ -37,13 +37,13 @@
                                 </select>
                             </div>
 
-                            <div class="w-110 mw-120px me-2">
+                            {{-- <div class="w-110 mw-120px me-2">
                                 <input name="from_date" type="date" value="{{ request('from_date') }}" class="form-control form-control-solid" />
-                            </div>
+                            </div> --}}
 
-                            <div class="w-110 mw-120px me-2">
+                            {{-- <div class="w-110 mw-120px me-2">
                                 <input name="to_date" type="date" value="{{ request('to_date') }}" class="form-control form-control-solid" />
-                            </div>
+                            </div> --}}
 
                             <button type="submit" class="btn btn-light-primary">Search</button>
                         </form>
@@ -214,6 +214,8 @@
                                         {{-- <input type="number" name="addi_discount" class="form-control mt-3 no-spinner" placeholder="Addi Discount %"> --}}
 
                                         <input type="text" name="receipt_number" class="form-control mt-3" placeholder="Payment Receipt Number">
+
+                                        <input name="date" type="date" value="{{ \Carbon\Carbon::now()->toDateString() }}" class="form-control mt-3" />
 
                                         <div id="selectedInvoicesContainer"></div>
 

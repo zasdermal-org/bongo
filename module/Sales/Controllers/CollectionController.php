@@ -201,6 +201,7 @@ class CollectionController extends Controller
             'total_collect'       => 'nullable|numeric|min:0|required_without:adjustment_amt',
             'payment_type'        => 'required',
             'receipt_number'      => 'nullable',
+            'date'                => 'required'
         ]);
 
         DB::beginTransaction();
@@ -278,6 +279,8 @@ class CollectionController extends Controller
                 'adjustment_amt'  => $request->adjustment_amt,
                 'payment_type'    => $request->payment_type,
                 'receipt_number'  => $request->receipt_number,
+                'created_at'      => $request->date,
+                'updated_at'      => $request->date
             ]);
 
             DB::commit();

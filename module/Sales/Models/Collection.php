@@ -20,7 +20,9 @@ class Collection extends Model
         'adjustment_amt',
         'return_amt',
         'payment_type',
-        'receipt_number'
+        'receipt_number',
+        'created_at',
+        'updated_at',
     ];
 
     public function orderInvoice()
