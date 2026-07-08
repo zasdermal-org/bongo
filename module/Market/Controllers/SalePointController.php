@@ -175,7 +175,11 @@ class SalePointController extends Controller
 
     public function salePoint_by_territory_(Request $request, $id)
     {
-        $sale_points = SalePoint::where('territory_id', $id)->get();
+        // $sale_points = SalePoint::where('territory_id', $id)->get();
+
+        $sale_points = SalePoint::whereHas('territories', function ($query) use ($id) {
+            $query->where('territory_id', $id);
+        })->get();
 
         return response()->json([
             'sale_points' => $sale_points,

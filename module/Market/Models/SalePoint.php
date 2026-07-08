@@ -29,4 +29,9 @@ class SalePoint extends Model
     {
         return $this->hasMany(OrderInvoice::class);
     }
+
+    public function territories()
+    {
+        return $this->belongsToMany(Territory::class, 'sale_point_territories')->withTimestamps();
+    }
 }

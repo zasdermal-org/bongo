@@ -115,6 +115,7 @@ class AuthController extends Controller
                 'territory_id' => $user->employee->territory?->id,
                 'username' => $user->username,
                 'name' => $user->name,
+                'user_type' => $user->employee->user_type,
                 'designation_name' => $user->employee->designation?->name,
                 'contact' => $user->employee->contact,
                 'address' => $user->employee->address,
