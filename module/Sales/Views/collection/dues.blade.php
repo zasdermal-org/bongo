@@ -298,18 +298,18 @@
                 $(".row-checkbox").prop("checked", isChecked).trigger("change");
             });
 
-            $("#paymentForm").on("submit", function (e) {
-                let totalPayable = calculateTotal(); // recalc total
-                let adjustmentAmt = parseFloat($("input[name='adjustment_amt']").val()) || 0;
-                let totalCollect = parseFloat($("input[name='total_collect']").val()) || 0;
+            // $("#paymentForm").on("submit", function (e) {
+            //     let totalPayable = calculateTotal(); // recalc total
+            //     let adjustmentAmt = parseFloat($("input[name='adjustment_amt']").val()) || 0;
+            //     let totalCollect = parseFloat($("input[name='total_collect']").val()) || 0;
 
-                // Check if total payable is less than sum of discount + payment
-                if ((adjustmentAmt + totalCollect) > totalPayable) {
-                    e.preventDefault(); // prevent submission
-                    toastr.error("Total payable is less than Addi Discount + Collect Payment!");
-                    return false;
-                }
-            });
+            //     // Check if total payable is less than sum of discount + payment
+            //     if ((adjustmentAmt + totalCollect) > totalPayable) {
+            //         e.preventDefault(); // prevent submission
+            //         toastr.error("Total payable is less than Addi Discount + Collect Payment!");
+            //         return false;
+            //     }
+            // });
 
             // Initial total calculation
             calculateTotal();

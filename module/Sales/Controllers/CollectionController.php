@@ -269,6 +269,9 @@ class CollectionController extends Controller
                 return back()->with('error', 'No invoice was updated.');
             }
 
+            // Remaining amount after clearing all dues
+            $advanceAmount = $totalCollect + $extraDiscount;
+
             $invoiceNumbers = $processedInvoices->pluck('id')->implode(', ');
 
             Collection::create([
@@ -277,6 +280,7 @@ class CollectionController extends Controller
                 'invoice_numbers' => $invoiceNumbers,
                 'total_collect'   => $request->total_collect,
                 'adjustment_amt'  => $request->adjustment_amt,
+                'advance'         => $advanceAmount ?? null,
                 'payment_type'    => $request->payment_type,
                 'receipt_number'  => $request->receipt_number,
                 'created_at'      => $request->date,

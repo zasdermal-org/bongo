@@ -19,6 +19,7 @@ class Collection extends Model
         'total_collect',
         'adjustment_amt',
         'return_amt',
+        'advance',
         'payment_type',
         'receipt_number',
         'created_at',
