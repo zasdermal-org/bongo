@@ -18,6 +18,8 @@ Route::prefix('/report')->name('report.')->group(function () {
     Route::get('/customer-ledger', [ReportController::class, 'customer_ledger'])->name('customer_ledger');
     Route::get('/customer-ledger-pdf-export', [ReportController::class, 'customer_ledger_pdf_export'])->name('customer_ledger_pdf_export');
 
+    Route::get('/customer-summary', [ReportController::class, 'customer_summary'])->name('customer_summary');
+
     // Route::get('/delivery-top-sheet', [SalesReportController::class, 'delivery_top_sheet'])->name('delivery_top_sheet');
     // Route::get('/delivery-top-sheet-products/{id}', [SalesReportController::class, 'delivery_top_sheet_products'])->name('delivery_top_sheet_products');
     // Route::get('/delivery-top-sheet-pharmacy/{id}', [SalesReportController::class, 'delivery_top_sheet_pharmacy'])->name('delivery_top_sheet_pharmacy');

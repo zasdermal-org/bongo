@@ -603,6 +603,17 @@
                                 </div>
                             {{-- @endif --}}
 
+                            {{-- @if(auth()->user()->hasPermission('report', 'sales', 'read')) --}}
+                                <div class="menu-item">
+                                    <a class="menu-link @if(Route::is('report.customer_summary')) active @endif" href="{{ route('report.customer_summary') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Customer Summary</span>
+                                    </a>
+                                </div>
+                            {{-- @endif --}}
+
                             @if(auth()->user()->hasPermission('report', 'transections', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('report.transections')) active @endif" href="{{ route('report.transections') }}">

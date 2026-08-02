@@ -1,0 +1,6 @@
+curl https://get.acme.sh | sh
+.acme.sh/acme.sh --issue -d bongoagritech.com -w /home/bongeuje/public_html
+.acme.sh/acme.sh --issue --server letsencrypt -d bongoagritech.com -w /home/bongeuje/public_html
+.acme.sh/acme.sh --issue --server letsencrypt -d bongoagritech.com -w /home/bongeuje/public_html --debug
+https://www.youtube.com/watch?v=bVbGW037fYk
+https://chatgpt.com/c/6a61be81-e584-83e8-b745-b45fbb29d9b9

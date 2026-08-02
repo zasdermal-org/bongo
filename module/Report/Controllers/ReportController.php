@@ -875,6 +875,103 @@ class ReportController extends Controller
     }
 
 
+    public function customer_summary(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Report', 'url' => null],
+            ['title' => 'Customer Summary', 'url' => null]
+        ];
+
+        $data['areas'] = Area::all();
+        $data['regions'] = Region::all();
+        $data['territories'] = Territory::all();
+        $data['sale_points'] = SalePoint::where('is_active', 'Active')->orderBy('id', 'desc')->get();
+
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : Carbon::now()->startOfMonth();
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : Carbon::now()->endOfDay();
+
+        $query = SalePoint::query();
+
+        if ($request->filled('sale_point_id')) {
+            $query->where('id', $request->sale_point_id);
+        }
+
+
+        // if ($request->filled('region_id')) {
+        //     $query->whereHas('salePoint.territory.area.region', function ($q) use ($request) {
+        //         $q->where('id', $request->region_id);
+        //     });
+        // }
+
+        // if ($request->filled('area_id')) {
+        //     $query->whereHas('salePoint.territory.area', function ($q) use ($request) {
+        //         $q->where('id', $request->area_id);
+        //     });
+        // }
+
+        // if ($request->filled('territory_id')) {
+        //     $query->whereHas('salePoint.territory', function ($q) use ($request) {
+        //         $q->where('id', $request->territory_id);
+        //     });
+        // }
+
+        // if ($fromDate && $toDate) {
+        //         $query->whereBetween('created_at', [$fromDate, $toDate]);
+        // } else {
+        //     $query->whereDate('created_at', $today);
+        // }
+
+        $data['salesPoint'] = $query->orderBy('id', 'desc')->paginate(30);
+
+        foreach ($data['salesPoint'] as $salePoint) {
+            // Opening Balance
+            $salePoint->opening_balance = OrderInvoice::where('sale_point_id', $salePoint->id)
+                ->where('status', 'Accepted')
+                ->where('invoice_date', '<', $fromDate)
+                ->sum('due');
+
+            // Sales
+            $salePoint->sales = OrderInvoice::where('sale_point_id', $salePoint->id)
+                ->where('status', 'Accepted')
+                ->whereBetween('invoice_date', [$fromDate, $toDate])
+                ->sum('total_amount');
+
+            // Commission
+            $salePoint->commission = Collection::where('sale_point_id', $salePoint->id)
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->sum('adjustment_amt');
+
+            // Return
+            $salePoint->return = Collection::where('sale_point_id', $salePoint->id)
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->sum('return_amt');
+
+            // Collection
+            $salePoint->collection = Collection::where('sale_point_id', $salePoint->id)
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->sum('total_collect');
+
+            // Closing Due
+            $salePoint->closing_due =
+                $salePoint->opening_balance
+                + $salePoint->sales
+                - $salePoint->collection
+                - $salePoint->return
+                - $salePoint->commission;
+        }
+
+
+        return view('Report::customer_summary', $data);
+    }
+
+
 
 
     public function getAreas($region_id)
