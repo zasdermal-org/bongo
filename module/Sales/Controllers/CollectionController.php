@@ -1038,4 +1038,93 @@ class CollectionController extends Controller
             ], 500);
         }
     }
+
+    public function duesApi(Request $request)
+    {
+        try {
+
+            $sale_point_id = $request->sale_point_id;
+
+            $query = OrderInvoice::query();
+            // $queryTwo = OrderInvoice::query();
+
+            // Parse date filters
+            // $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+            //     ? Carbon::parse($request->fromDate)->startOfDay()
+            //     : null;
+
+            // $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+            //     ? Carbon::parse($request->toDate)->endOfDay()
+            //     : null;
+
+            // Payment type filter
+            if ($request->filled('payment_type') && $request->payment_type !== 'all') {
+                $query->where('payment_type', $request->payment_type);
+            }
+
+            // Due invoices
+            $orderInvoices = $query->where('sale_point_id', $sale_point_id)
+                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->whereIn('payment_status', ['Due', 'Partial Paid'])
+                ->orderBy('invoice_date', 'asc')
+                ->get();
+
+            // Calculate discount
+            $orderInvoices->transform(function ($invoice) {
+
+                $invoice->discount_value =
+                    ($invoice->total_amount * $invoice->discount) / 100;
+
+                return $invoice;
+            });
+
+            // Default summary
+            // $summary = [
+            //     'invoice_value'  => 0,
+            //     'discount_value' => 0,
+            //     'payable_value'  => 0,
+            //     'paid'           => 0,
+            //     'adjustment'     => 0,
+            //     'due'            => 0,
+            // ];
+
+            // Date range summary
+            // if ($fromDate && $toDate) {
+
+            //     $totalQuery = $queryTwo
+            //         ->where('sale_point_id', $sale_point_id)
+            //         ->whereBetween('invoice_date', [$fromDate, $toDate])
+            //         ->get();
+
+            //     $totalDiscount = $totalQuery->sum(function ($invoice) {
+            //         return ($invoice->total_amount * $invoice->discount) / 100;
+            //     });
+
+            //     $invoiceValue = $totalQuery->sum('total_amount');
+
+            //     $summary = [
+            //         'invoice_value'  => $invoiceValue,
+            //         'discount_value' => $totalDiscount,
+            //         'payable_value'  => $invoiceValue - $totalDiscount,
+            //         'paid'           => $totalQuery->sum('paid'),
+            //         'adjustment'     => $totalQuery->sum('adjustment_amt'),
+            //         'due'            => $totalQuery->sum('due'),
+            //     ];
+            // }
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'message' => 'Customer collections fetched successfully',
+                'data'    => $orderInvoices
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => 'Something went wrong',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -21,3 +21,14 @@ Route::prefix('/sales-report')->group(function () {
 });
 
 Route::post('/collections', [CollectionController::class, 'collections']);
+
+Route::prefix('/collection')->name('collection.')->group(function () {
+    Route::post('/dues', [CollectionController::class, 'duesApi']);
+
+
+    // not implemented
+    Route::post('/update-due', [CollectionController::class, 'updateDue'])->name('update_due');
+
+    Route::get('/return', [CollectionController::class, 'return'])->name('return');
+    Route::post('/store-return-invoice-', [OrderInvoiceController::class, 'store_return_invoice'])->name('store_return_invoice');
+});
