@@ -1188,9 +1188,9 @@ class OrderInvoiceController extends Controller
         ], 200);
     }
 
-    public function sale_invoice_orders(Request $request, $invoice_number)
+    public function sale_invoice_orders(Request $request, $id)
     {
-        $order_invoice = OrderInvoice::where('invoice_number', $invoice_number)->firstOrFail();
+        $order_invoice = OrderInvoice::find($id);
         // $payable_amount = $order_invoice->total_amount - $order_invoice->sell_discount_amount - $order_invoice->return_amount;
         $sales_point = $order_invoice->salePoint->name . ' (' . $order_invoice->salePoint->code_number . ')';
 
