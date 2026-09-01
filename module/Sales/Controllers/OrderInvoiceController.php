@@ -1149,6 +1149,8 @@ class OrderInvoiceController extends Controller
             $query->where('territory_id', $territory_id);
         }
 
+        $query->whereNotIn('status', ['Cancel']);
+
         $query->whereBetween('created_at', [$fromDate, $toDate]);
 
         $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
