@@ -743,7 +743,7 @@ class OrderInvoiceController extends Controller
             $query->whereDate('invoice_date', $today);
         }
 
-        $query->whereNotIn('status', ['Requested', 'Cancel']);
+        $query->whereNotIn('status', ['Requested', 'Cancel', 'Reviewed']);
 
         // $total_query = $query->get();
         $total_query = clone $query;
