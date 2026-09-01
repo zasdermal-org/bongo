@@ -77,7 +77,7 @@ class OrderInvoiceController extends Controller
             $query->whereDate('created_at', $today);
         }
 
-        $query->where('status', 'Reviewed');
+        $query->whereIn('status', ['Requested', 'Reviewed']);
 
         $total_query = $query->get();
         $data['orderInvoices'] = $query->paginate(300);
