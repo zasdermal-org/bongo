@@ -77,7 +77,7 @@ class OrderInvoiceController extends Controller
             $query->whereDate('created_at', $today);
         }
 
-        $query->where('status', 'Requested');
+        $query->where('status', 'Reviewed');
 
         $total_query = $query->get();
         $data['orderInvoices'] = $query->paginate(300);
@@ -1003,10 +1003,10 @@ class OrderInvoiceController extends Controller
 
             $orderInvoice = OrderInvoice::findOrFail($id);
             
-            if ($orderInvoice->status === 'Accepted') {
+            if ($orderInvoice->status === 'Reviewed') {
                 DB::rollBack();
                 // DB::connection('mysql_test')->rollBack();
-                return response()->json(['error' => 'Invoice already approved'], 409);
+                return response()->json(['error' => 'Invoice already reviewed'], 409);
             }
 
             // $userId = auth()->user()->id;
@@ -1026,45 +1026,41 @@ class OrderInvoiceController extends Controller
                         'total_amount'  => $newOrder['order_total_amount'],
                     ]);
                 }
-                    
-                // $stock = $order->stock;
-                // $stock = $order->stock()->lockForUpdate()->first();
-                $stock = Stock::where('id', $order->stock_id)
-                    ->lockForUpdate()
-                    ->first();
 
-                if (!$stock) {
-                    DB::rollBack();
-                    // DB::connection('mysql_test')->rollBack();
-                    return response()->json(['error' => 'Stock not found.'], 404);
-                }
+                // $stock = Stock::where('id', $order->stock_id)
+                //     ->lockForUpdate()
+                //     ->first();
 
-                if ($stock->quantity < $order->quantity) {
-                    DB::rollBack();
-                    // DB::connection('mysql_test')->rollBack();
-                    return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
-                }
+                // if (!$stock) {
+                //     DB::rollBack();
+                //     return response()->json(['error' => 'Stock not found.'], 404);
+                // }
+
+                // if ($stock->quantity < $order->quantity) {
+                //     DB::rollBack();
+                //     return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
+                // }
     
-                $previous_quantity = $stock->quantity;
-                $stock->decrement('quantity', $order->quantity);
-                $new_quantity = $previous_quantity - $order->quantity;
+                // $previous_quantity = $stock->quantity;
+                // $stock->decrement('quantity', $order->quantity);
+                // $new_quantity = $previous_quantity - $order->quantity;
     
-                Transection::create([
-                    'user_id' => $submittedBy,
-                    'stock_id' => $stock->id,
-                    'order_invoice_id' => $orderInvoice->id,
-                    'sku' => $order->sku,
-                    'pre_stock' => $previous_quantity,
-                    'tran_quant' => $order->quantity,
-                    'curr_stock' => $new_quantity,
-                    'tran_type' => 'Warehouse to Sale Point',
-                    'status' => 'Stock Out'
-                ]);
+                // Transection::create([
+                //     'user_id' => $submittedBy,
+                //     'stock_id' => $stock->id,
+                //     'order_invoice_id' => $orderInvoice->id,
+                //     'sku' => $order->sku,
+                //     'pre_stock' => $previous_quantity,
+                //     'tran_quant' => $order->quantity,
+                //     'curr_stock' => $new_quantity,
+                //     'tran_type' => 'Warehouse to Sale Point',
+                //     'status' => 'Stock Out'
+                // ]);
             }
 
             $orderInvoice->update([
                 'updated_by_user_id' => $submittedBy,
-                'status' => 'Accepted',
+                'status' => 'Reviewed',
                 'total_amount' => $total_amount ?? $orderInvoice->total_amount,
                 'discount' => $discount ?? null,
                 'due' => $payable_amount ?? $orderInvoice->due,
@@ -1076,7 +1072,7 @@ class OrderInvoiceController extends Controller
 
             return response()->json([
                 'status' => 'SUCCESS',
-                'message' => 'Order Invoice approved Successfully'
+                'message' => 'Order Invoice reviewed Successfully'
             ], 200);
 
         } catch (\Exception $e) {
