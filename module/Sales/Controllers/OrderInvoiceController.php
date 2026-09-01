@@ -783,19 +783,26 @@ class OrderInvoiceController extends Controller
         $data['orderInvoice'] = $orderInvoice;
 
         $paymentType = $orderInvoice->payment_type;
+
         $data['totalAfterDiscount'] = 0;
         $data['discountAmount'] = 0;
             
         if ($paymentType === 'Cash') {
             $totalAmount = $orderInvoice->total_amount;
             $discount = $orderInvoice->discount;
+
             $data['discountAmount'] = ($totalAmount * $discount) / 100;
             $data['totalAfterDiscount'] = $totalAmount - $data['discountAmount'];
         }
 
+        $amountForWords = $paymentType === 'Cash'
+            ? $data['totalAfterDiscount']
+            : $orderInvoice->total_amount;
+
         // Convert Grand Total to Words using NumberFormatter
         $formatter = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
-        $grandTotalInWords = ucwords($formatter->format($orderInvoice->total_amount)) . ' Taka Only';
+        
+        $grandTotalInWords = ucwords($formatter->format($amountForWords)) . ' Taka Only';
 
         $data['grand_total_in_words'] = $grandTotalInWords;
         $data['title'] = $orderInvoice->salePoint->name . ' - ' . $orderInvoice->salePoint->code_number . ' (' . $id . ')';
