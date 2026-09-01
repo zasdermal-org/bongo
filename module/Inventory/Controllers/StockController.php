@@ -158,7 +158,8 @@ class StockController extends Controller
     public function availabel_stocks(Request $request)
     {
         try {
-            $stocks = Stock::whereNot('quantity', 0)->get();
+            // $stocks = Stock::whereNot('quantity', 0)->get();
+            $stocks = Stock::all();
             // $stocks = Stock::on('mysql_test')->whereNot('quantity', 0)->get();
 
             // Check if any products are not found
