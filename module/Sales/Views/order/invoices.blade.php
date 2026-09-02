@@ -143,7 +143,11 @@
 
                                         <!--begin::Status=-->
                                         <td>
-                                            <div class="badge badge-light-warning">{{ $orderInvoice->status }}</div>
+                                            @if ($orderInvoice->status == 'Reviewed')
+                                                <div class="badge badge-light-success">{{ $orderInvoice->status }}</div>
+                                            @else
+                                                <div class="badge badge-light-warning">{{ $orderInvoice->status }}</div>
+                                            @endif
                                         </td>
                                         <!--end::Status=-->
 
