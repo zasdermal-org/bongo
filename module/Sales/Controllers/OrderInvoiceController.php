@@ -1154,7 +1154,7 @@ class OrderInvoiceController extends Controller
         $query->whereNotIn('status', ['Cancel']);
 
         if ($api_type === 'reviewed') { 
-            $query->where('status', '!=', 'Reviewed');
+            $query->where('status', 'Requested');
         }
 
         $query->whereBetween('created_at', [$fromDate, $toDate]);
