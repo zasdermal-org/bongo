@@ -1091,6 +1091,8 @@ class OrderInvoiceController extends Controller
 
     public function sale_invoices(Request $request)
     {
+        $api_type = $request->api_type;
+
         $query = OrderInvoice::query();
         // $query = OrderInvoice::on('mysql_test');
 
@@ -1151,6 +1153,10 @@ class OrderInvoiceController extends Controller
 
         $query->whereNotIn('status', ['Cancel']);
 
+        if ($api_type === 'reviewed') { 
+            $query->where('status', '!=', 'Reviewed');
+        }
+
         $query->whereBetween('created_at', [$fromDate, $toDate]);
 
         $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
@@ -1168,6 +1174,7 @@ class OrderInvoiceController extends Controller
             $serializeInvoices[] = [
                 'invoice_id' => $invoice->id,
                 'invoice_number' => $invoice->invoice_number,
+                'territory_name' => $invoice->territory->name,
                 'status' => $invoice->status,
                 'type' => $invoice->type,
                 'payment_type' => $invoice->payment_type,
