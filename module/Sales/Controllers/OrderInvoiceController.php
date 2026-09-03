@@ -936,7 +936,7 @@ class OrderInvoiceController extends Controller
             'orders.*.sku' => 'required',
             'orders.*.quantity' => 'required|numeric|min:1',
             'orders.*.unit_price' => 'required|numeric',
-            'orders.*.order_total_amount' => 'required|numeric'
+            'orders.*.total_amount' => 'required|numeric'
         ]);
 
         // dd($data);
@@ -979,7 +979,7 @@ class OrderInvoiceController extends Controller
                 'quantity' => $order['quantity'],
                 'unit_price' => $order['unit_price'],
                 'discount' => $data['discount'] ?? null,
-                'total_amount' => $order['order_total_amount'],
+                'total_amount' => $order['total_amount'],
                 'created_at' => $data['date'], // temporary
                 'updated_at' => $data['date'], // temporary
             ]);
