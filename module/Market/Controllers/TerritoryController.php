@@ -193,4 +193,61 @@ class TerritoryController extends Controller
             ], 500);
         }
     }
+
+    public function territory_list_by_region(Request $request, $id)
+    {
+        try {
+            // First get all area IDs under this region
+            $areaIds = Area::where('region_id', $id)->pluck('id');
+
+            // Then get all active territories under those areas
+            $territories = Territory::whereIn('area_id', $areaIds)
+                ->where('is_active', 'active')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            // Check if any territories are found
+            if ($territories->isEmpty()) {
+                return response()->json([
+                    'status' => 'Error',
+                    'message' => 'No active territories found.'
+                ], 404);
+            }
+
+            // Serialize territories
+            $serializeTerritories = [];
+
+            foreach ($territories as $territory) {
+
+                if ($territory->user) {
+                    $associated_emp = $territory->user->employee->name . ' (' . $territory->user->username . ')';
+                } else {
+                    $associated_emp = 'Not Associated';
+                }
+
+                $serializeTerritories[] = [
+                    'territory_id' => $territory->id,
+                    'territory_name' => $territory->name,
+                    'area_id' => $territory->area_id,
+                    'associated_emp' => $associated_emp,
+                ];
+            }
+
+            return response()->json([
+                'status' => 'Success',
+                'data' => $serializeTerritories,
+                'message' => 'Territories retrieved successfully.'
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            \Log::error('Error retrieving territories by region: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Failed to retrieve territories.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

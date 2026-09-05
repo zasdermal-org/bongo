@@ -12,3 +12,5 @@ Route::post('/sale-points-by-territory', [SalePointController::class, 'salePoint
 Route::get('/regions', [RegionController::class, 'region_list']);
 Route::get('/areas-by-region/{id}', [AreaController::class, 'area_list']);
 Route::get('/territories-by-area/{id}', [TerritoryController::class, 'territory_list']);
+
+Route::get('/territories-by-region/{id}', [TerritoryController::class, 'territory_list_by_region']);
