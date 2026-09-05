@@ -960,7 +960,7 @@ class OrderInvoiceController extends Controller
             'submitted_by_user_id' => $data['submittedBy'],
             'sale_point_id' => $data['sale_point_id'],
             'territory_id' => $data['territory_id'],
-            'depot_id' => $data['depot_id'],
+            'depot_id' => $data['type'] === 'seed' ? 1 : ($data['type'] === 'agrochemicals' ? 2 : 3),
             'invoice_number' => $this->generate_unique_invoice_number('INV', OrderInvoice::class),
             'payment_type' => $data['payment_type'],
             'total_amount' => $totalAmount,
