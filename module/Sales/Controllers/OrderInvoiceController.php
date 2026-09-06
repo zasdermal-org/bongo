@@ -956,8 +956,8 @@ class OrderInvoiceController extends Controller
 
         $orderInvoice = OrderInvoice::create([
             'user_id' => $data['user_id'],
-            // 'submitted_by_user_id' => $auth_user->id,
-            'submitted_by_user_id' => $data['submittedBy'],
+            'submitted_by_user_id' => $auth_user->id,
+            // 'submitted_by_user_id' => $data['submittedBy'],
             'sale_point_id' => $data['sale_point_id'],
             'territory_id' => $data['territory_id'],
             'depot_id' => $data['type'] === 'seed' ? 1 : ($data['type'] === 'agrochemicals' ? 2 : 3),
