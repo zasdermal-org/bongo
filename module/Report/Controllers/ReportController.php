@@ -300,7 +300,7 @@ class ReportController extends Controller
             $query->whereDate('invoice_date', $today);
         }
 
-        $query->whereNotIn('status', ['Requested', 'Cancel']);
+        $query->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel']);
 
         $total_query = $query->get();
         $order_invoices = $query->orderBy('id', 'desc')->paginate(30);

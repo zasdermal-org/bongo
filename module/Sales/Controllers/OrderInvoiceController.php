@@ -1094,7 +1094,6 @@ class OrderInvoiceController extends Controller
         $api_type = $request->api_type;
 
         $query = OrderInvoice::query();
-        // $query = OrderInvoice::on('mysql_test');
 
         // Parse date filters
         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
