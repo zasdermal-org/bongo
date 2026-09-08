@@ -1226,7 +1226,7 @@ class OrderInvoiceController extends Controller
             'invoice_number' => $order_invoice->invoice_number,
             'address' => $order_invoice->salePoint->address,
             'invoice_value' => $order_invoice->total_amount,
-            // 'discount' => $order_invoice->discount,
+            'discount' => $order_invoice->discount,
             'return_amount' => $order_invoice->return_amount,
             'payable_amount' => $order_invoice->due,
             'orders' => $serializeOrders
