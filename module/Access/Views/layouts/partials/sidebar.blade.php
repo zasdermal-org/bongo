@@ -486,7 +486,7 @@
                                 </div>
                             @endif
 
-                            {{-- @if(auth()->user()->hasPermission('collection', 'dues', 'read')) --}}
+                            @if(auth()->user()->hasPermission('collection', 'dues', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('collection.return')) active @endif" href="{{ route('collection.return') }}">
                                         <span class="menu-bullet">
@@ -495,7 +495,7 @@
                                         <span class="menu-title">Return</span>
                                     </a>
                                 </div>
-                            {{-- @endif --}}
+                            @endif
                         </div>
                     </div>
                 @endif
