@@ -759,7 +759,7 @@ class ReportController extends Controller
 
         // 1. Previous Sales (Debit)
         $openingDebit = OrderInvoice::where('sale_point_id', $salePointId)
-            ->whereNotIn('status', ['Requested', 'Cancel'])
+            ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
             ->where('invoice_date', '<', $fromDate)
             ->selectRaw("
                 SUM(
@@ -783,7 +783,7 @@ class ReportController extends Controller
 
         $sales = OrderInvoice::where('sale_point_id', $salePointId)
             ->whereBetween('invoice_date', [$fromDate, $toDate])
-            ->whereNotIn('status', ['Requested', 'Cancel'])
+            ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
             ->get();
         
         foreach ($sales as $item) {
@@ -860,16 +860,6 @@ class ReportController extends Controller
         }
 
         $data['ledger'] = $ledger->sortBy('sort_date')->values();
-
-        // $data['totalDebit'] = 0;
-        // $data['totalCredit'] = 0;
-
-        // foreach ($data['ledger'] as $row) {
-        //     $data['totalDebit'] += $row['debit'];
-        //     $data['totalCredit'] += $row['credit'];
-        // }
-
-        // return view('Report::customer_ledger', $data);
 
         return $data;
     }
