@@ -1339,7 +1339,7 @@ class OrderInvoiceController extends Controller
                 ])
                 ->orderBy('sale_point_id')
                 ->orderByDesc('invoice_date')
-                ->whereNotIn('status', ['Cancel'])
+                ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
                 ->get();
 
             /*
