@@ -659,7 +659,7 @@ class OrderInvoiceController extends Controller
             $orderInvoice->update([
                 'updated_by_user_id' => $userId,
                 'status' => 'Accepted',
-                'invoice_date' => $orderInvoice->created_at // for july to aug invoice only
+                'invoice_date' => Carbon::now(),
             ]);
 
             DB::commit();
