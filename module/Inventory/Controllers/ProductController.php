@@ -107,7 +107,7 @@ class ProductController extends Controller
 
         if ($categoryName == 'seed') {
             $products = Product::whereHas('category', function ($query) {
-                $query->where('slug', 'seed');
+                // $query->where('slug', 'seed');
                 $query->whereIn('slug', ['seed', 'watermelon', 'crop']);
             })->get();
         }
