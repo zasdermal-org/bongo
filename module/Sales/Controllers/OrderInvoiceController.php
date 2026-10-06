@@ -53,11 +53,11 @@ class OrderInvoiceController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : null;
 
-        $authUser = auth()->user();
-        if ($authUser->role->slug === 'depot') {
-            $depot_id = auth()->user()->employee->depot_id;
-            $query->where('depot_id', $depot_id);
-        }
+        // $authUser = auth()->user();
+        // if ($authUser->role->slug === 'depot') {
+        //     $depot_id = auth()->user()->employee->depot_id;
+        //     $query->where('depot_id', $depot_id);
+        // }
 
         if ($request->filled('username')) {
             $user_id = User::where('username', $request->username)->value('id');
@@ -710,10 +710,10 @@ class OrderInvoiceController extends Controller
             ? Carbon::parse($request->to_date)->endOfDay()
             : null;
 
-        if ($authUser->role->slug === 'depot') {
-            $depot_id = auth()->user()->employee->depot_id;
-            $query->where('depot_id', $depot_id);
-        }
+        // if ($authUser->role->slug === 'depot') {
+        //     $depot_id = auth()->user()->employee->depot_id;
+        //     $query->where('depot_id', $depot_id);
+        // }
 
         if ($request->filled('invoice_number')) {
             $invoice_number = $request->invoice_number;
