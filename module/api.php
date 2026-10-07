@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | MArket Route
+    | Market Route
     |--------------------------------------------------------------------------
     */
     require __DIR__ . '/Market/api_routes.php';

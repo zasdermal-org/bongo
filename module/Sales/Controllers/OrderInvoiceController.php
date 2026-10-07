@@ -1418,7 +1418,7 @@ class OrderInvoiceController extends Controller
 
             // Previous Sales (Debit)
             $openingDebit = OrderInvoice::where('sale_point_id', $salePointId)
-                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
                 ->where('invoice_date', '<', $fromDate)
                 ->selectRaw("
                     SUM(
@@ -1447,7 +1447,7 @@ class OrderInvoiceController extends Controller
 
             $sales = OrderInvoice::where('sale_point_id', $salePointId)
                 ->whereBetween('invoice_date', [$fromDate, $toDate])
-                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
                 ->get();
             
             foreach ($sales as $item) {
