@@ -41,7 +41,7 @@
 
                                             <div class="flex-root d-flex flex-column">
                                                 <span class="text-muted">Order Date</span>
-                                                <span class="fs-5">{{ $orderInvoice->created_at->format('d M, Y / h:i A') }}</span>
+                                                <span class="fs-5">{{ $orderInvoice->invoice_date->format('d M, Y / h:i A') }}</span>
                                             </div>
 
                                             <div class="flex-root d-flex flex-column">
