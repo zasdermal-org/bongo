@@ -276,13 +276,20 @@ class UserController extends Controller
             |--------------------------------------------------------------------------
             */
             $creditInvoices = $invoices->where('payment_type', 'Credit');
-            $cashInvoices   = $invoices->where('payment_type', 'Cash');
+            // $cashInvoices   = $invoices->where('payment_type', 'Cash');
+
+            $cashInvoices = $invoices
+                ->where('payment_type', 'Cash')
+                ->map(function ($invoice) {
+                    $invoice->discount_amount = ($invoice->total_amount * $invoice->discount) / 100;
+                    return $invoice;
+                });
 
             $sales = [
                 'credit_invoice_count'   => $creditInvoices->count(),
                 'cash_invoice_count'     => $cashInvoices->count(),
                 'credit_invoice_value'   => round($creditInvoices->sum('total_amount'), 2),
-                'cash_invoice_value'     => round($cashInvoices->sum('total_amount'), 2),
+                'cash_invoice_value'     => round($cashInvoices->sum('total_amount') - $cashInvoices->sum('discount_amount'), 2),
                 'total_collection'       => round($invoices->sum('paid'), 2),
                 'total_due'              => round($invoices->sum('due'), 2),
                 'all_due'                => round($total_due->sum('due'), 2),
