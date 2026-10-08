@@ -258,13 +258,13 @@ class UserController extends Controller
             $invoiceQuery = clone $query;
 
 
-            $invoices = $invoiceQuery->whereNotIn('status', ['Requested', 'Cancel'])
+            $invoices = $invoiceQuery->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
                 ->whereMonth('invoice_date', $date->month)
                 ->whereYear('invoice_date', $date->year)
                 ->get();
 
             $total_due = (clone $query)
-                ->whereNotIn('status', ['Requested', 'Cancel'])
+                ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
                 // ->whereMonth('invoice_date', $date->month)
                 // ->whereYear('invoice_date', $date->year)
                 ->get();
