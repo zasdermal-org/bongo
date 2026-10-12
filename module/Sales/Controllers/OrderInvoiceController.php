@@ -1003,71 +1003,48 @@ class OrderInvoiceController extends Controller
             $total_amount = $request->total_amount;
             $submittedBy = $request->submittedBy;
             $payable_amount = $request->payable_amount;
+            $status = $request->status;
+
+            if (!in_array($status, ['Cancel', 'Reviewed'])) {
+                return response()->json([
+                    'status' => 'ERROR',
+                    'message' => 'Invalid invoice status'
+                ], 422);
+            }
+
             $orderData = collect($request->orders)->keyBy('sku');
 
             DB::beginTransaction();
-            // DB::connection('mysql_test')->beginTransaction();
 
             $orderInvoice = OrderInvoice::findOrFail($id);
             
             if ($orderInvoice->status === 'Reviewed') {
                 DB::rollBack();
-                // DB::connection('mysql_test')->rollBack();
                 return response()->json(['error' => 'Invoice already reviewed'], 409);
             }
 
-            // $userId = auth()->user()->id;
+            if ($status === 'Reviewed') {
+                foreach ($orderInvoice->orders as $order) {
 
-            foreach ($orderInvoice->orders as $order) {
+                    if (!$orderData->has($order->sku)) {
+                        continue;
+                    }
 
-                if (!$orderData->has($order->sku)) {
-                    continue;
+                    $newOrder = $orderData[$order->sku];
+
+                    if ($order->quantity != $newOrder['quantity']) {
+                        $order->update([
+                            'quantity'      => $newOrder['quantity'],
+                            'discount'      => $discount ?? null,
+                            'total_amount'  => $newOrder['order_total_amount'],
+                        ]);
+                    }
                 }
-
-                $newOrder = $orderData[$order->sku];
-
-                if ($order->quantity != $newOrder['quantity']) {
-                    $order->update([
-                        'quantity'      => $newOrder['quantity'],
-                        'discount'      => $discount ?? null,
-                        'total_amount'  => $newOrder['order_total_amount'],
-                    ]);
-                }
-
-                // $stock = Stock::where('id', $order->stock_id)
-                //     ->lockForUpdate()
-                //     ->first();
-
-                // if (!$stock) {
-                //     DB::rollBack();
-                //     return response()->json(['error' => 'Stock not found.'], 404);
-                // }
-
-                // if ($stock->quantity < $order->quantity) {
-                //     DB::rollBack();
-                //     return response()->json(['error' => 'Insufficient stock for SKU: ' . $order->sku], 400);
-                // }
-    
-                // $previous_quantity = $stock->quantity;
-                // $stock->decrement('quantity', $order->quantity);
-                // $new_quantity = $previous_quantity - $order->quantity;
-    
-                // Transection::create([
-                //     'user_id' => $submittedBy,
-                //     'stock_id' => $stock->id,
-                //     'order_invoice_id' => $orderInvoice->id,
-                //     'sku' => $order->sku,
-                //     'pre_stock' => $previous_quantity,
-                //     'tran_quant' => $order->quantity,
-                //     'curr_stock' => $new_quantity,
-                //     'tran_type' => 'Warehouse to Sale Point',
-                //     'status' => 'Stock Out'
-                // ]);
             }
 
             $orderInvoice->update([
                 'updated_by_user_id' => $submittedBy,
-                'status' => 'Reviewed',
+                'status' => $status,
                 'total_amount' => $total_amount ?? $orderInvoice->total_amount,
                 'discount' => $discount ?? null,
                 'due' => $payable_amount ?? $orderInvoice->due,
@@ -1075,11 +1052,12 @@ class OrderInvoiceController extends Controller
             ]);
 
             DB::commit();
-            // DB::connection('mysql_test')->commit();
 
             return response()->json([
                 'status' => 'SUCCESS',
-                'message' => 'Order Invoice reviewed Successfully'
+                'message' => $status === 'Cancel'
+                    ? 'Order Invoice cancelled successfully'
+                    : 'Order Invoice reviewed successfully'
             ], 200);
 
         } catch (\Exception $e) {
