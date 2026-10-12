@@ -1166,6 +1166,12 @@ class OrderInvoiceController extends Controller
 
         $query = OrderInvoice::query();
 
+        if (auth()->id() == 68) {
+            $query->whereDoesntHave('territory', function ($q) {
+                $q->where('name', 'Corporate');
+            });
+        }
+
         // Parse date filters
         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
             ? Carbon::parse($request->fromDate)->startOfDay()
