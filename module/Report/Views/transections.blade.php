@@ -98,7 +98,7 @@
                                     <th class="min-w-200px">Product</th>
                                     <th class="min-w-60px">SKU</th>
                                     <th class="min-w-100px">Invoice Number</th>
-                                    {{-- <th class="min-w-100px">Tran Type</th> --}}
+                                    <th class="min-w-100px">Sale Point Name</th>
                                     <th class="min-w-150px">Status</th>
                                     <th class="min-w-100px">Tran Date</th>
                                     <th class="min-w-50px">Pre Stock</th>
@@ -141,49 +141,11 @@
                                         <!--end::Invoice Number=-->
 
                                         <!--begin::Tran Type=-->
-                                        {{-- <td class="pe-0">
-                                            @if ($transection->tran_type === 'Warehouse Purchase')
-                                                <div class="badge badge-light-success">
-                                                    Warehouse Purchase
-                                                </div>
+                                        <td class="pe-0">
+                                            @if ($transection->orderInvoice)
+                                                {{ $transection->orderInvoice->salePoint->name }} ({{ $transection->orderInvoice->salePoint->code_number }})
                                             @endif
-
-                                            @if ($transection->tran_type === 'Warehouse to Depot')
-                                                <div class="badge badge-light-success">
-                                                    Warehouse to {{ $transection->depot->name }}
-                                                </div>
-                                            @endif
-
-                                            @if ($transection->tran_type === 'Depot to Warehouse')
-                                                <div class="badge badge-light-success">
-                                                    {{ $transection->stock_out_depot_name }} to Warehouse
-                                                </div>
-                                            @endif
-
-                                            @if ($transection->tran_type === 'Depot to Depot')
-                                                <div class="badge badge-light-success">
-                                                    {{ $transection->stock_out_depot_name }} to {{ $transection->depot->name }}
-                                                </div>
-                                            @endif
-
-                                            @if ($transection->tran_type === 'Depot to Sales Point')
-                                                <div class="badge badge-light-success">
-                                                    {{ $transection->stock_out_depot_name }} to Sales Point
-                                                </div>
-                                            @endif
-
-                                            @if ($transection->tran_type === 'Sales Point to Depot')
-                                                <div class="badge badge-light-success">
-                                                    Sales Point to {{ $transection->depot->name }}
-                                                </div>
-                                            @endif
-
-                                            @if ($transection->tran_type === 'Sample')
-                                                <div class="badge badge-light-success">
-                                                    Sample Deduction from {{ $transection->stock_out_depot_name }}
-                                                </div>
-                                            @endif
-                                        </td> --}}
+                                        </td>
                                         <!--end::Tran Type=-->
 
                                         <!--begin::Status=-->
