@@ -1128,9 +1128,9 @@ class OrderInvoiceController extends Controller
 
             $updateData = [
                 'updated_by_user_id' => $submittedBy,
-                'zone_approved' => $zone_approved,
-                'region_approved' => $region_approved,
-                'area_approved' => $area_approved,
+                'zone_approved' => $zone_approved ?? null,
+                'region_approved' => $region_approved ?? null,
+                'area_approved' => $area_approved ?? null,
             ];
 
             if ($status === 'Cancel') {
