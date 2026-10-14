@@ -212,13 +212,7 @@ class UserController extends Controller
 
             $query = OrderInvoice::query();
 
-            $userIds = [68, 70];
-
-            if (in_array((int) $user_id, $userIds, true)) {
-                $query->whereDoesntHave('territory', function ($q) {
-                    $q->where('name', 'Corporate');
-                });
-            }
+            
 
             // if ($request->filled('region_id') && $request->region_id != 0) {
 
@@ -264,6 +258,12 @@ class UserController extends Controller
             }
 
             $invoiceQuery = clone $query;
+
+            if (in_array((int) $user_id, $userIds, true)) {
+                $invoiceQuery->whereDoesntHave('territory', function ($q) {
+                    $q->where('name', 'Corporate');
+                });
+            }
 
 
             $invoices = $invoiceQuery->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
