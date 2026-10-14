@@ -204,26 +204,18 @@ class UserController extends Controller
             $isAdmin = in_array(optional($employee->designation)->slug, $slugs);
 
             $date = now();
-            // $year = $date->year;
-            // $month_name = $date->format('F');
-
-
-
 
             $query = OrderInvoice::query();
 
-            $userIds = [68, 70];
+            $restrictedUserIds = [68, 70];
 
-            // if ($request->filled('region_id') && $request->region_id != 0) {
+    if (in_array((int) $user_id, $restrictedUserIds, true)) {
+        $corporateTerritoryIds = Territory::where('name', 'Corporate')
+            ->pluck('id');
 
-            //     $region_id = $request->region_id;
+        $query->whereNotIn('territory_id', $corporateTerritoryIds);
+    }
 
-            //     $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
-            //         $query->where('id', $region_id);
-            //     })->pluck('id');
-
-            //     $query->whereIn('territory_id', $territoryIds);
-            // }
 
             if (!$isAdmin) {
 
@@ -258,12 +250,6 @@ class UserController extends Controller
             }
 
             $invoiceQuery = clone $query;
-
-            if (in_array((int) $user_id, $userIds, true)) {
-                $invoiceQuery->whereDoesntHave('territory', function ($q) {
-                    $q->where('name', 'Corporate');
-                });
-            }
 
 
             $invoices = $invoiceQuery->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
