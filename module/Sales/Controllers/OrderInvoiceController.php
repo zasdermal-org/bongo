@@ -1379,7 +1379,8 @@ class OrderInvoiceController extends Controller
             $query->where('territory_id', $territory_id);
         }
 
-        $query->where('status', 'Accepted');
+        // $query->where('status', 'Accepted');
+        $query->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel']);
 
         $query->whereBetween('invoice_date', [$fromDate, $toDate]);
 
