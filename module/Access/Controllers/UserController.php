@@ -212,7 +212,7 @@ class UserController extends Controller
 
             $query = OrderInvoice::query();
 
-            
+            $userIds = [68, 70];
 
             // if ($request->filled('region_id') && $request->region_id != 0) {
 
