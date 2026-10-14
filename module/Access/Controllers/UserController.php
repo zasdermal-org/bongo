@@ -212,6 +212,14 @@ class UserController extends Controller
 
             $query = OrderInvoice::query();
 
+            $userIds = [68, 70];
+
+            if (in_array(auth()->id(), $userIds)) {
+                $query->whereDoesntHave('territory', function ($q) {
+                    $q->where('name', 'Corporate');
+                });
+            }
+
             // if ($request->filled('region_id') && $request->region_id != 0) {
 
             //     $region_id = $request->region_id;
