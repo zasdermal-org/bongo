@@ -204,18 +204,32 @@ class UserController extends Controller
             $isAdmin = in_array(optional($employee->designation)->slug, $slugs);
 
             $date = now();
+            // $year = $date->year;
+            // $month_name = $date->format('F');
+
+
+
 
             $query = OrderInvoice::query();
 
-            $restrictedUserIds = [68, 70];
+            $userIds = [68, 70];
 
-    if (in_array((int) $user_id, $restrictedUserIds, true)) {
-        $corporateTerritoryIds = Territory::where('name', 'Corporate')
-            ->pluck('id');
+            if (in_array((int) $user_id, $userIds, true)) {
+                $query->whereDoesntHave('territory', function ($q) {
+                    $q->where('name', 'Corporate');
+                });
+            }
 
-        $query->whereNotIn('territory_id', $corporateTerritoryIds);
-    }
+            // if ($request->filled('region_id') && $request->region_id != 0) {
 
+            //     $region_id = $request->region_id;
+
+            //     $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+            //         $query->where('id', $region_id);
+            //     })->pluck('id');
+
+            //     $query->whereIn('territory_id', $territoryIds);
+            // }
 
             if (!$isAdmin) {
 
