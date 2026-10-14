@@ -214,7 +214,7 @@ class UserController extends Controller
 
             $userIds = [68, 70];
 
-            if (in_array(auth()->id(), $userIds)) {
+            if (in_array((int) $user_id, $userIds, true)) {
                 $query->whereDoesntHave('territory', function ($q) {
                     $q->where('name', 'Corporate');
                 });
