@@ -1316,13 +1316,13 @@ class OrderInvoiceController extends Controller
 
         $query = OrderInvoice::query();
 
-        $userIds = [68, 70];
+        // $userIds = [68, 70];
 
-        if (in_array(auth()->id(), $userIds)) {
-            $query->whereDoesntHave('territory', function ($q) {
-                $q->where('name', 'Corporate');
-            });
-        }
+        // if (in_array(auth()->id(), $userIds)) {
+        //     $query->whereDoesntHave('territory', function ($q) {
+        //         $q->where('name', 'Corporate');
+        //     });
+        // }
 
         // Parse date filters
         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
@@ -1384,9 +1384,11 @@ class OrderInvoiceController extends Controller
 
         $query->whereBetween('invoice_date', [$fromDate, $toDate]);
 
-        $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
-            return $order_invoice->user->username;
-        });
+        // $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
+        //     return $order_invoice->user->username;
+        // });
+
+        $order_invoices = $query->get();
 
         $count_invoices = $order_invoices->count();
 

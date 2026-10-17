@@ -60,7 +60,7 @@ class CollectionController extends Controller
         }
 
         $data['orderInvoices'] = $query->where('sale_point_id', $sale_point_id)
-            ->whereNotIn('status', ['Requested', 'Cancel'])
+            ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
             ->whereIn('payment_status', ['Due', 'Partial Paid'])
             ->orderBy('invoice_date', 'asc')
             ->get();
