@@ -195,13 +195,15 @@ class ReportController extends Controller
             } elseif ($request->type === 'agrochemicals') {
                 $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
             }
-        } else {
-            if ($userDepot && strtolower($userDepot) === 'mirpur') {
-                $ordersQuery->where('categories.slug', 'seed');
-            } elseif ($userDepot && strtolower($userDepot) === 'bogura') {
-                $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
-            }
-        }
+        } 
+        
+        // else {
+        //     if ($userDepot && strtolower($userDepot) === 'mirpur') {
+        //         $ordersQuery->where('categories.slug', 'seed');
+        //     } elseif ($userDepot && strtolower($userDepot) === 'bogura') {
+        //         $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+        //     }
+        // }
 
         $orders = $ordersQuery
             ->groupBy('orders.sku', 'orders.unit_price', 'products.title')
