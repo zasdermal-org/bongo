@@ -84,8 +84,17 @@ class RegionController extends Controller
     public function region_list(Request $request)
     {
         try {
+
+            $query = Region::where('is_active', 'active');
+
+            if (auth()->user()->role_id !== 1) {
+                $query->where('name', '!=', 'Corporate');
+            }
+
+            $regions = $query->orderBy('id', 'desc')->get();
+
             // Retrieve regions
-            $regions = Region::where('is_active', 'active')->orderBy('id', 'desc')->get();
+            // $regions = Region::where('is_active', 'active')->orderBy('id', 'desc')->get();
 
             // Check if any regions are found
             if ($regions->isEmpty()) {
