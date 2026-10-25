@@ -1316,13 +1316,13 @@ class OrderInvoiceController extends Controller
 
         $query = OrderInvoice::query();
 
-        // $userIds = [68, 70];
+        $userIds = [68, 70];
 
-        // if (in_array(auth()->id(), $userIds)) {
-        //     $query->whereDoesntHave('territory', function ($q) {
-        //         $q->where('name', 'Corporate');
-        //     });
-        // }
+        if (in_array(auth()->id(), $userIds)) {
+            $query->whereDoesntHave('territory', function ($q) {
+                $q->where('name', 'Corporate');
+            });
+        }
 
         // Parse date filters
         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
