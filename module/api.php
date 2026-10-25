@@ -15,6 +15,7 @@ Route::get('health-check', function (Request $request){
 Route::post('sign-in', [AuthController::class, 'signin']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
     /*
     |--------------------------------------------------------------------------
     | Access Route
