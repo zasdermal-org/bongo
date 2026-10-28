@@ -103,7 +103,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        if ($user->is_active !== 'active') {
+        if ($user->is_active !== 'Active') {
             return response()->json([
                 'status' => 'ERROR',
                 'message' => 'Your account is inactive. Please contact the administrator.'
