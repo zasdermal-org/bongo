@@ -75,6 +75,7 @@
                                 <th class="min-w-10px">S.N</th>
                                 <th class="min-w-80px">Stock Kipping Unit (SKU)</th>
                                 <th class="min-w-200px">Product Name</th>
+                                <th class="min-w-200px">Category</th>
                                 <th class="min-w-80px text-end">Current Stock</th>
                             </tr>
                             <!--end::Table row-->
@@ -93,6 +94,10 @@
 
                                     <!--begin::Product=-->
                                     <td>{{ $stock->product->title }}</td>
+                                    <!--end::Product=-->
+
+                                    <!--begin::Product=-->
+                                    <td>{{ $stock->product->category->name }}</td>
                                     <!--end::Product=-->
 
                                     <!-- Closing Stock -->
