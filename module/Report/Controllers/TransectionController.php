@@ -49,7 +49,7 @@ class TransectionController extends Controller
         }
 
         // Fetch the transactions
-        $data['transections'] = $query->where('is_active', 'Active')->orderBy('id', 'desc')->get();
+        $data['transections'] = $query->where('is_active', 'Active')->orderBy('id', 'asc')->get();
 
         $data['total'] = $data['transections']->count();
         $data['trans_qty'] = $data['transections']->sum('tran_quant');
