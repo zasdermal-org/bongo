@@ -57,6 +57,11 @@ class OrderInvoice extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function accepted_by()
+    {
+        return $this->belongsTo(User::class, 'updated_by_user_id');
+    }
+
     public function salePoint()
     {
         return $this->belongsTo(SalePoint::class);

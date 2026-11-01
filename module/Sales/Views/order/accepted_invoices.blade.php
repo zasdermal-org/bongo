@@ -168,6 +168,7 @@
                                     <th class="min-w-10px">S.N</th>
                                     <th class="min-w-80px">Invoice No</th>
                                     <th class="min-w-80px">Order By</th>
+                                    <th class="min-w-80px">Accepted By</th>
                                     <th class="min-w-80px">Sale Point Name</th>
                                     <th class="min-w-50px">Type</th>
                                     <th class="min-w-50px">Payment Type</th>
@@ -213,6 +214,10 @@
                                             ({{ $orderInvoice->user->username }})
                                         </td>
                                         <!--end::Order By=-->
+
+                                        <td>
+                                            {{ $orderInvoice->accepted_by?->name }}
+                                        </td>
 
                                         <!--begin::Sales Point Name=-->
                                         <td>
