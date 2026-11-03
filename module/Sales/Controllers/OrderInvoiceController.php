@@ -1766,7 +1766,10 @@ class OrderInvoiceController extends Controller
 
                 $firstItem = $ledger->first();
 
-                $firstItem['credit'] = $openingBalance;
+                // $firstItem['openingBalance'] = $openingBalance;
+
+                $firstItem['openingBalance'] = abs($openingBalance);
+                $firstItem['openingBalanceType'] = $openingBalance >= 0 ? 'Credit' : 'Debit';
 
                 $ledger->put(0, $firstItem);
             }
