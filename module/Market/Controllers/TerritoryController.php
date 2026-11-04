@@ -147,7 +147,7 @@ class TerritoryController extends Controller
     {
         try {
             // Retrieve territories
-            $territories = Territory::where('area_id', $id)->where('is_active', 'active')->orderBy('id', 'desc')->get();
+            $territories = Territory::where('area_id', $id)->where('is_active', 'Active')->orderBy('id', 'desc')->get();
 
             // Check if any territories are found
             if ($territories->isEmpty()) {

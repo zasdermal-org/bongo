@@ -1257,7 +1257,7 @@ class OrderInvoiceController extends Controller
 
         $query->whereNotIn('status', ['Cancel']);
 
-        if ($api_type === 'reviewed') { 
+        if ($api_type === 'reviewed') {
             $query->where('status', 'Requested');
         }
 
