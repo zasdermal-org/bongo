@@ -1789,4 +1789,127 @@ class OrderInvoiceController extends Controller
             ], 500);
         }
     }
+
+
+
+    public function customerSaleDetailsApi(Request $request)
+    {
+        try {
+
+            $today = Carbon::today();
+
+            $id = $request->sale_point_id;
+
+            $fromDateStr = $request->fromDate;
+            $toDateStr = $request->toDate;
+
+            $fromDate = ($fromDateStr && Carbon::hasFormat($fromDateStr, 'Y-m-d'))
+                ? Carbon::parse($fromDateStr)->startOfDay()
+                : null;
+
+            $toDate = ($toDateStr && Carbon::hasFormat($toDateStr, 'Y-m-d'))
+                ? Carbon::parse($toDateStr)->endOfDay()
+                : null;
+
+            $query = OrderInvoice::where('sale_point_id', $id)
+                ->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel'])
+                ->with('orders');
+
+            // Date filter
+            if ($fromDate && $toDate) {
+                $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+            } else {
+                $query->whereDate('invoice_date', $today);
+            }
+
+            $orderInvoices = $query->orderBy('id', 'desc')->get();
+
+            // Calculate total quantity
+            $totalQuantity = $orderInvoices
+                ->pluck('orders')
+                ->flatten()
+                ->sum('quantity');
+
+            $serializeInvoices = [];
+
+            // Calculate discount
+            foreach ($orderInvoices as $invoice) {
+
+                $discountAmount = 0;
+                $totalAfterDiscount = $invoice->total_amount;
+
+                // $invoice->discount_amount = 0;
+                // $invoice->total_after_discount = $invoice->total_amount;
+
+                if ($invoice->payment_type === 'Cash' && $invoice->discount > 0) {
+
+                    // $invoice->discount_amount =
+                    //     ($invoice->total_amount * $invoice->discount) / 100;
+
+                    // $invoice->total_after_discount =
+                    //     $invoice->total_amount - $invoice->discount_amount;
+
+                    $discountAmount = ($invoice->total_amount * $invoice->discount) / 100;
+
+                    $totalAfterDiscount = $invoice->total_amount - $discountAmount;
+                }
+
+                $serializeOrders = [];
+
+
+                foreach ($invoice->orders as $order) {
+                    $serializeOrders[] = [
+                        'order_id' => $order->id,
+                        'sku' => $order->sku,
+                        'product_name' => $order->stock->product->title ?? null,
+                        'quantity' => $order->quantity,
+                        'unit_price' => $order->unit_price,
+                        'discount' => $order->discount,
+                        'total_amount' => $order->total_amount
+                    ];
+                }
+
+
+                $serializeInvoices[] = [
+                    'invoice_id' => $invoice->id,
+                    'invoice_number' => $invoice->invoice_number,
+                    'sale_point_id' => $invoice->sale_point_id,
+                    'invoice_date' => $invoice->invoice_date
+                        ? Carbon::parse($invoice->invoice_date)
+                            ->setTimezone('Asia/Dhaka')
+                            ->format('d M, Y / h:i A')
+                        : null,
+                    'payment_type' => $invoice->payment_type,
+                    'status' => $invoice->status,
+                    'invoice_value' => $invoice->total_amount,
+                    'discount' => $invoice->discount,
+                    'discount_amount' => $discountAmount,
+                    'total_after_discount' => $totalAfterDiscount,
+                    'orders' => $serializeOrders,
+                ];
+            }
+
+            $totalInvoiceValue = collect($serializeInvoices)->sum('total_after_discount');
+
+            // Calculate total invoice value
+            // $totalInvoiceValue = $orderInvoices->sum('total_after_discount');
+
+            // Sale point details
+            $salePoint = SalePoint::findOrFail($id);
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'message' => 'Customer sale details fetched successfully',
+                'data' => $serializeInvoices
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

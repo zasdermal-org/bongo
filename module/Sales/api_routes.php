@@ -19,6 +19,8 @@ Route::prefix('/sales-report')->group(function () {
 
     Route::post('/customer-sales', [OrderInvoiceController::class, 'customer_sales']);
     Route::post('/customer-ledger', [OrderInvoiceController::class, 'customer_ledger']);
+
+    Route::post('/customer-sale-details', [OrderInvoiceController::class, 'customerSaleDetailsApi']);
 });
 
 Route::post('/collections', [CollectionController::class, 'collections']);
