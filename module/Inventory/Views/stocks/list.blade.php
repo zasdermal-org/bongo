@@ -106,7 +106,7 @@
 
                                         @if (in_array($categoryName, ['fertilizer', 'pesticide']))
                                             Agrochemicals
-                                        @elseif (in_array($categoryName, ['seed', 'crop']))
+                                        @elseif (in_array($categoryName, ['seed']))
                                             Seed
                                         @else
                                             {{ $stock->product->category->name }}
