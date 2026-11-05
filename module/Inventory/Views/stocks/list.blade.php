@@ -97,7 +97,21 @@
                                     <!--end::Product=-->
 
                                     <!--begin::Product=-->
-                                    <td>{{ $stock->product->category->name }}</td>
+                                    {{-- <td>{{ $stock->product->category->name }}</td> --}}
+
+                                    <td>
+                                        @php
+                                            $categoryName = strtolower($stock->product->category->name);
+                                        @endphp
+
+                                        @if (in_array($categoryName, ['fertilizer', 'pesticide']))
+                                            Agrochemicals
+                                        @elseif (in_array($categoryName, ['seed', 'crop']))
+                                            Seed
+                                        @else
+                                            {{ $stock->product->category->name }}
+                                        @endif
+                                    </td>
                                     <!--end::Product=-->
 
                                     <!-- Closing Stock -->
