@@ -127,7 +127,16 @@ class StockController extends Controller
     {
         try {
             // $stocks = Stock::whereNot('quantity', 0)->get();
-            $stocks = Stock::all();
+            // $stocks = Stock::all();
+
+            $stocks = Stock::whereNotIn('sku', [
+                'SW5251',
+                'SW5249',
+                'SW5248',
+                'SBU356',
+                'SBU358',
+                'SBU359'
+            ])->get();
             // $stocks = Stock::on('mysql_test')->whereNot('quantity', 0)->get();
 
             // Check if any products are not found
