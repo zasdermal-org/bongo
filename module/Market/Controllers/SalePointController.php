@@ -213,7 +213,8 @@ class SalePointController extends Controller
 
             // $designation = $request->designation_name ?? null;
 
-            $salePointQuery = SalePoint::where('is_active', 'Active');
+            $salePointQuery = SalePoint::whereIn('territory_id', $territoryIds)->where('is_active', 'Active');
+            // $salePointQuery->whereIn('territory_id', $territoryIds);
 
             // if ($designation !== 'Divisional Sales Manager') {
             //     if ($territoryIds->isNotEmpty()) {
