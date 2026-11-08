@@ -197,10 +197,6 @@ class SalePointController extends Controller
                 $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
                     $query->where('id', $region_id);
                 })->pluck('id');
-
-                // $territoryIds = Territory::on('mysql_test')->whereHas('area.region', function ($query) use ($region_id) {
-                //     $query->where('id', $region_id);
-                // })->pluck('id');
             }
 
             if ($request->filled('area_id') && $request->area_id != 0) {
@@ -208,10 +204,6 @@ class SalePointController extends Controller
                 $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
                     $query->where('id', $area_id);
                 })->pluck('id');
-
-                // $territoryIds = Territory::on('mysql_test')->whereHas('area', function ($query) use ($area_id) {
-                //     $query->where('id', $area_id);
-                // })->pluck('id');
             }
 
             if ($request->filled('territory_id') && $request->territory_id != 0) {
@@ -219,36 +211,19 @@ class SalePointController extends Controller
                 $territoryIds = collect([$territory_id]);
             }
 
-            // Fetch and format sales points data
-            // $salePoints = SalePoint::where('is_active', 'Active')
-            //     ->whereIn('territory_id', $territoryIds)
-            //     // ->whereHas('territories', function ($query) use ($territoryIds) {
-            //     //     if ($territoryIds->isNotEmpty()) {
-            //     //         $query->whereIn('territory_id', $territoryIds);
-            //     //     }
-            //     // })
-            //     ->orderBy('id', 'desc')
-            //     ->get();
-
-            $designation = $request->designation_name ?? null;
+            // $designation = $request->designation_name ?? null;
 
             $salePointQuery = SalePoint::where('is_active', 'Active');
 
-            if ($designation !== 'Divisional Sales Manager') {
-                if ($territoryIds->isNotEmpty()) {
-                    $salePointQuery->whereIn('territory_id', $territoryIds);
-                }
-            }
+            // if ($designation !== 'Divisional Sales Manager') {
+            //     if ($territoryIds->isNotEmpty()) {
+            //         $salePointQuery->whereIn('territory_id', $territoryIds);
+            //     }
+            // }
 
             $salePoints = $salePointQuery
                 ->orderBy('id', 'desc')
                 ->get();
-
-            // $salePoints = SalePoint::on('mysql_test')->where('is_active', 'Active')
-            //     ->whereIn('territory_id', $territoryIds)
-            //     ->orderBy('id', 'desc')
-            //     ->get();
-
 
             $serializeData = [];
 
