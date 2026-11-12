@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('total_collect', 10, 2)->nullable();
             $table->decimal('adjustment_amt', 10, 2)->nullable();
             $table->decimal('return_amt', 10, 2)->nullable();
+            $table->decimal('advance', 15, 2)->nullable();
             $table->enum('payment_type', ['Cash', 'Cheque', 'AC Transfer'])->nullable(); // cash or cheque
             $table->string('receipt_number')->nullable(); // transection details
             $table->timestamps();

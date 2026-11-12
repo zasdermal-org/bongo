@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use Module\Sales\Controllers\CollectionController;
+use Module\Sales\Controllers\CollectionRequestController;
 use Module\Sales\Controllers\OrderInvoiceController;
 
 Route::prefix('/order')->group(function () {
@@ -27,6 +28,8 @@ Route::post('/collections', [CollectionController::class, 'collections']);
 
 Route::prefix('/collection')->name('collection.')->group(function () {
     Route::post('/dues', [CollectionController::class, 'duesApi']);
+
+    Route::post('/submit', [CollectionRequestController::class, 'submitDuePayment']);
 
 
     // not implemented
