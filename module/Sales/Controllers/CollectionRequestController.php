@@ -13,11 +13,11 @@ class CollectionRequestController extends Controller
     public function submitDuePayment(Request $request)
     {
         $request->validate([
-            'selected_invoices'   => 'required|array|min:1',
-            'selected_invoices.*' => 'required|integer|distinct|exists:order_invoices,id',
+            // 'selected_invoices'   => 'required|array|min:1',
+            'sale_point_id' => 'required|integer|distinct|exists:sale_points,id',
 
-            'adjustment_amt' => 'nullable|numeric|min:0|required_without:total_collect',
-            'total_collect'  => 'nullable|numeric|min:0|required_without:adjustment_amt',
+            // 'adjustment_amt' => 'nullable|numeric|min:0|required_without:total_collect',
+            'total_collect'  => 'nullable|numeric|min:1',
 
             'payment_type'   => 'required|string',
             'receipt_number' => 'nullable|string',
@@ -27,7 +27,7 @@ class CollectionRequestController extends Controller
         try {
 
             $totalCollect = $request->total_collect ?? 0;
-            $extraDiscount = $request->adjustment_amt ?? 0;
+            // $extraDiscount = $request->adjustment_amt ?? 0;
 
             // if ($totalCollect <= 0 && $extraDiscount <= 0) {
             //     return response()->json([
@@ -36,7 +36,7 @@ class CollectionRequestController extends Controller
             //     ], 422);
             // }
 
-            $invoices = OrderInvoice::whereIn('id', $request->selected_invoices)->get();
+            // $invoices = OrderInvoice::whereIn('id', $request->selected_invoices)->get();
 
             // if ($invoices->count() != count($request->selected_invoices)) {
             //     return response()->json([
@@ -54,34 +54,34 @@ class CollectionRequestController extends Controller
             // }
 
             // Check invoice eligibility
-            foreach ($invoices as $invoice) {
+            // foreach ($invoices as $invoice) {
 
-                if (
-                    in_array($invoice->status, ['Requested', 'Reviewed', 'Cancel']) ||
-                    !in_array($invoice->payment_status, ['Due', 'Partial Paid']) ||
-                    $invoice->due <= 0
-                ) {
-                    return response()->json([
-                        'status' => 'ERROR',
-                        'message' => 'One or more selected invoices are not eligible for payment.'
-                    ], 422);
-                }
-            }
+            //     if (
+            //         in_array($invoice->status, ['Requested', 'Reviewed', 'Cancel']) ||
+            //         !in_array($invoice->payment_status, ['Due', 'Partial Paid']) ||
+            //         $invoice->due <= 0
+            //     ) {
+            //         return response()->json([
+            //             'status' => 'ERROR',
+            //             'message' => 'One or more selected invoices are not eligible for payment.'
+            //         ], 422);
+            //     }
+            // }
 
             // Preserve selected invoice order for FIFO processing
-            $selectedInvoices = collect($request->selected_invoices)
-                ->map(fn ($id) => (int) $id)
-                ->values()
-                ->toArray();
+            // $selectedInvoices = collect($request->selected_invoices)
+            //     ->map(fn ($id) => (int) $id)
+            //     ->values()
+            //     ->toArray();
 
             $collectionRequest = CollectionRequest::create([
                 'submitted_by_user_id'  => auth()->user()->id,
-                'sale_point_id'         => $invoices->first()->sale_point_id,
-                'selected_invoices'     => $selectedInvoices,
+                'sale_point_id'         => $request->sale_point_id,
+                // 'selected_invoices'     => $selectedInvoices,
                 'total_collect'         => $totalCollect,
-                'adjustment_amt'        => $extraDiscount,
+                // 'adjustment_amt'        => $extraDiscount,
                 'payment_type'          => $request->payment_type,
-                'receipt_number'        => $request->receipt_number,
+                'receipt_number'        => $request->receipt_number ?? null,
                 'collection_date'       => $request->date,
                 'status'                => 'Pending',
             ]);

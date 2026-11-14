@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('submitted_by_user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('approved_by_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('sale_point_id')->constrained('sale_points')->cascadeOnDelete();
-            $table->json('selected_invoices');
+            $table->json('selected_invoices')->nullable();
+            $table->enum('invoice_type', ['Cash', 'Credit'])->nullable();
             $table->decimal('total_collect', 10, 2)->nullable();
             $table->decimal('adjustment_amt', 10, 2)->nullable();
             $table->decimal('return_amt', 10, 2)->nullable();
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->string('receipt_number')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Rejected'])->nullable();
             $table->dateTime('collection_date');
-            $table->text('approval_note')->nullable();
+            $table->text('remark')->nullable();
             $table->timestamps();
         });
     }

@@ -11,6 +11,7 @@ class CollectionRequest extends Model
         'approved_by_user_id',
         'sale_point_id',
         'selected_invoices',
+        'invoice_type',
         'total_collect',
         'adjustment_amt',
         'return_amt',
@@ -19,7 +20,7 @@ class CollectionRequest extends Model
         'receipt_number',
         'status',
         'collection_date',
-        'approval_note'
+        'remark'
     ];
 
     protected $casts = [
