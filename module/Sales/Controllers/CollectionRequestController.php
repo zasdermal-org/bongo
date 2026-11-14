@@ -14,14 +14,16 @@ class CollectionRequestController extends Controller
     {
         $request->validate([
             // 'selected_invoices'   => 'required|array|min:1',
-            'sale_point_id' => 'required|integer|distinct|exists:sale_points,id',
+            'sale_point_id'     => 'required|integer|distinct|exists:sale_points,id',
 
             // 'adjustment_amt' => 'nullable|numeric|min:0|required_without:total_collect',
-            'total_collect'  => 'nullable|numeric|min:1',
+            'total_collect'     => 'nullable|numeric|min:1',
 
-            'payment_type'   => 'required|string',
-            'receipt_number' => 'nullable|string',
-            'date'           => 'required|date',
+            'invoice_type'      => 'required|string',
+            'payment_type'      => 'required|string',
+            'receipt_number'    => 'nullable|string',
+            'date'              => 'required|date',
+            'remark'            => 'nullable|string',
         ]);
 
         try {
@@ -80,10 +82,12 @@ class CollectionRequestController extends Controller
                 // 'selected_invoices'     => $selectedInvoices,
                 'total_collect'         => $totalCollect,
                 // 'adjustment_amt'        => $extraDiscount,
+                'invoice_type'          => $request->invoice_type,
                 'payment_type'          => $request->payment_type,
                 'receipt_number'        => $request->receipt_number ?? null,
                 'collection_date'       => $request->date,
                 'status'                => 'Pending',
+                'remark'                => $request->remark ?? null
             ]);
 
             return response()->json([
