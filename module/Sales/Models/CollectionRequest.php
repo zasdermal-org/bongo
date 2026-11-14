@@ -20,7 +20,7 @@ class CollectionRequest extends Model
         'receipt_number',
         'status',
         'collection_date',
-        'remark'
+        'remarks'
     ];
 
     protected $casts = [

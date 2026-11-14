@@ -17,18 +17,18 @@ class CollectionRequestController extends Controller
             'sale_point_id'     => 'required|integer|distinct|exists:sale_points,id',
 
             // 'adjustment_amt' => 'nullable|numeric|min:0|required_without:total_collect',
-            'total_collect'     => 'nullable|numeric|min:1',
+            'total_collection'  => 'nullable|numeric|min:1',
 
             'invoice_type'      => 'required|string',
             'payment_type'      => 'required|string',
-            'receipt_number'    => 'nullable|string',
+            'receipt_no'        => 'nullable|string',
             'date'              => 'required|date',
-            'remark'            => 'nullable|string',
+            'remarks'           => 'nullable|string',
         ]);
 
         try {
 
-            $totalCollect = $request->total_collect ?? 0;
+            $totalCollect = $request->total_collection ?? 0;
             // $extraDiscount = $request->adjustment_amt ?? 0;
 
             // if ($totalCollect <= 0 && $extraDiscount <= 0) {
@@ -84,10 +84,10 @@ class CollectionRequestController extends Controller
                 // 'adjustment_amt'        => $extraDiscount,
                 'invoice_type'          => $request->invoice_type,
                 'payment_type'          => $request->payment_type,
-                'receipt_number'        => $request->receipt_number ?? null,
+                'receipt_number'        => $request->receipt_no ?? null,
                 'collection_date'       => $request->date,
                 'status'                => 'Pending',
-                'remark'                => $request->remark ?? null
+                'remarks'               => $request->remarks ?? null
             ]);
 
             return response()->json([
