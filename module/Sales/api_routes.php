@@ -30,6 +30,7 @@ Route::prefix('/collection')->name('collection.')->group(function () {
     Route::post('/dues', [CollectionController::class, 'duesApi']);
 
     Route::post('/submit', [CollectionRequestController::class, 'submitDuePayment']);
+    Route::post('/payment-status', [CollectionRequestController::class, 'paymentStatus']);
 
 
     // not implemented

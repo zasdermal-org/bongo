@@ -3,6 +3,7 @@
 namespace Module\Sales\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Module\Market\Models\SalePoint;
 
 class CollectionRequest extends Model
 {
@@ -27,4 +28,9 @@ class CollectionRequest extends Model
         'selected_invoices' => 'array',
         'collection_date' => 'datetime'
     ];
+
+    public function salePoint()
+    {
+        return $this->belongsTo(SalePoint::class);
+    }
 }

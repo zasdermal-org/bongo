@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 use Module\Sales\Models\OrderInvoice;
 use Module\Sales\Models\CollectionRequest;
+use Module\Market\Models\Territory;
+
+use Carbon\Carbon;
 
 class CollectionRequestController extends Controller
 {
@@ -103,5 +106,112 @@ class CollectionRequestController extends Controller
                 'message' => 'Failed to submit payment: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function paymentStatus(Request $request)
+    {
+        $query = CollectionRequest::query();
+
+        $userIds = [68, 70];
+
+        if (in_array(auth()->id(), $userIds)) {
+            $query->whereDoesntHave('salePoint.territory', function ($q) {
+               $q->where('name', 'Corporate');
+            });
+        }
+
+        // Parse date filters
+        $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+            ? Carbon::parse($request->fromDate)->startOfDay()
+            : null;
+
+        $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+            ? Carbon::parse($request->toDate)->endOfDay()
+            : null;
+
+        if ($request->filled('zone_id') && $request->zone_id != 0) {
+            $zone_id = $request->zone_id;
+
+            $territoryIds = Territory::whereHas('area.region.division.zone', function ($q) use ($zone_id) {
+                $q->where('id', $zone_id);
+            })->pluck('id');
+
+            $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
+                $q->whereIn('id', $territoryIds);
+            });
+        }
+
+        if ($request->filled('division_id') && $request->division_id != 0) {
+            $division_id = $request->division_id;
+
+            $territoryIds = Territory::whereHas('area.region.division', function ($q) use ($division_id) {
+                $q->where('id', $division_id);
+            })->pluck('id');
+
+            $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
+                $q->whereIn('id', $territoryIds);
+            });
+        }
+
+        if ($request->filled('region_id') && $request->region_id != 0) {
+            $region_id = $request->region_id;
+            $territoryIds = Territory::whereHas('area.region', function ($q) use ($region_id) {
+                $q->where('id', $region_id);
+            })->pluck('id');
+
+            $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
+                $q->whereIn('id', $territoryIds);
+            });
+        }
+
+        if ($request->filled('area_id') && $request->area_id != 0) {
+            $area_id = $request->area_id;
+            $territoryIds = Territory::whereHas('area', function ($q) use ($area_id) {
+                $q->where('id', $area_id);
+            })->pluck('id');
+
+            $query->whereHas('salePoint.territory', function ($q) use ($territoryIds) {
+                $q->whereIn('id', $territoryIds);
+            });
+        }
+
+        if ($request->filled('territory_id') && $request->territory_id != 0) {
+            $territory_id = $request->territory_id;
+
+            $query->whereHas('salePoint.territory', function ($q) use ($territory_id) {
+                $q->where('id', $territory_id);
+            });
+        }
+
+        $query->whereBetween('created_at', [$fromDate, $toDate]);
+
+        // $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
+        //     return $order_invoice->user->username;
+        // });
+
+        // $count_invoices = $order_invoices->count();
+
+        $collection_requests = $query->get();
+
+        $serializeData = [];
+
+        foreach ($collection_requests as $collection) {
+            $serializeData[] = [
+                'collection_id' => $collection->id,
+                'sale_point_name' => $collection->salePoint->name,
+                'invoice_type' => $collection->invoice_type,
+                'total_collection' => $collection->total_collect,
+                'payment_type' => $collection->payment_type,
+                'status' => $collection->status,
+                'collection_date' => $collection->collection_date
+            ];
+        }
+
+        return response()->json([
+            'status' => 'SUCCESS',
+            'data' => $serializeData,
+            'message' => 'Collection retrieved successfully.'
+        ], 200);
     }
 }
