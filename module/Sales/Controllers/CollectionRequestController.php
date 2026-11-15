@@ -214,4 +214,48 @@ class CollectionRequestController extends Controller
             'message' => 'Collection retrieved successfully.'
         ], 200);
     }
+
+    public function invoiceDetails(Request $request)
+    {
+        try {
+
+            $collectionId = $request->collection_id;
+
+            $collection = CollectionRequest::find($collectionId);
+
+            if (!$collection) {
+                return response()->json([
+                    'status' => 'ERROR',
+                    'message' => 'Collection request not found.'
+                ], 404);
+            }
+
+            $invoiceIds = array_map('trim', explode(',', $collection->selected_invoices));
+
+            $invoices = OrderInvoice::whereIn('id', $invoiceIds)->get();
+
+            $serializeInvoices = $invoices->map(function ($invoice) {
+                return [
+                    'invoice_id' => $invoice->id,
+                    'invoice_number' => $invoice->invoice_number,
+                    'total_amount' => $invoice->total_amount,
+                    'paid' => $invoice->paid,
+                    'due' => $invoice->due,
+                    'invoice_date' => $invoice->invoice_date,
+                ];
+            });
+
+            return response()->json([
+                'status' => 'SUCCESS',
+                'data' => $serializeInvoices,
+                'message' => 'Invoice details retrieved successfully.'
+            ], 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'ERROR',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

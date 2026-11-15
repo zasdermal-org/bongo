@@ -31,6 +31,7 @@ Route::prefix('/collection')->name('collection.')->group(function () {
 
     Route::post('/submit', [CollectionRequestController::class, 'submitDuePayment']);
     Route::post('/payment-status', [CollectionRequestController::class, 'paymentStatus']);
+    Route::post('/invoice-details', [CollectionRequestController::class, 'invoiceDetails']);
 
 
     // not implemented
