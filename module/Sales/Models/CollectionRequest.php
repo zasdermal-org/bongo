@@ -25,7 +25,6 @@ class CollectionRequest extends Model
     ];
 
     protected $casts = [
-        'selected_invoices' => 'array',
         'collection_date' => 'datetime'
     ];
 
