@@ -200,6 +200,7 @@ class CollectionRequestController extends Controller
             $serializeData[] = [
                 'collection_id' => $collection->id,
                 'sale_point_name' => $collection->salePoint->name,
+                'code_number' => $collection->salePoint->code_number,
                 'invoice_type' => $collection->invoice_type,
                 'total_collection' => $collection->total_collect,
                 'payment_type' => $collection->payment_type,
