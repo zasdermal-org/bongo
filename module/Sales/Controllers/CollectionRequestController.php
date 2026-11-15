@@ -204,7 +204,7 @@ class CollectionRequestController extends Controller
                 'total_collection' => $collection->total_collect,
                 'payment_type' => $collection->payment_type,
                 'status' => $collection->status,
-                'collection_date' => $collection->collection_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A')
+                'collection_date' => $collection->collection_date->setTimezone('Asia/Dhaka')->format('d M, Y')
             ];
         }
 
@@ -241,7 +241,7 @@ class CollectionRequestController extends Controller
                     'total_amount' => $invoice->total_amount,
                     'paid' => $invoice->paid,
                     'due' => $invoice->due,
-                    'invoice_date' => $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+                    'invoice_date' => $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y'),
                 ];
             });
 
