@@ -559,6 +559,15 @@
                                 </div>
                             {{-- @endif --}}
 
+                            <div class="menu-item">
+                                <a class="menu-link @if(Route::is('report.national_sales')) active @endif" href="{{ route('report.national_sales') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">National Sales</span>
+                                </a>
+                            </div>
+
                             @if(auth()->user()->hasPermission('report', 'sales', 'read'))
                                 <div class="menu-item">
                                     <a class="menu-link @if(Route::is('report.sales')) active @endif" href="{{ route('report.sales') }}">

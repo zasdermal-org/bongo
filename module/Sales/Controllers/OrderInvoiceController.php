@@ -456,7 +456,7 @@ class OrderInvoiceController extends Controller
                 ->join('regions', 'areas.region_id', '=', 'regions.id')
 
                 ->where('order_invoices.status', 'Accepted')
-                ->whereBetween('orders.created_at', [$fromDate, $toDate]);
+                ->whereBetween('order_invoices.invoice_date', [$fromDate, $toDate]);
 
             // ✅ REGION FILTER
             if ($request->filled('region_id') && $request->region_id != 0) {

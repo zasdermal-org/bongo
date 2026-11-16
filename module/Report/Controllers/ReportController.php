@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Employee;
 use App\Models\MoneyReceiptInvoice;
-use App\Models\Order;
 
 use App\Models\Supplier;
 use App\Models\Transection;
@@ -25,6 +24,7 @@ use Module\Market\Models\SalePoint;
 use Module\Market\Models\Territory;
 use Module\Sales\Models\Collection;
 use Module\Sales\Models\OrderInvoice;
+use Module\Sales\Models\Order;
 
 use Illuminate\Support\Facades\DB;
 
@@ -167,7 +167,7 @@ class ReportController extends Controller
             ->join('regions', 'areas.region_id', '=', 'regions.id')
 
             ->where('order_invoices.status', 'Accepted')
-            ->whereBetween('orders.created_at', [$fromDate, $toDate]);
+            ->whereBetween('order_invoices.invoice_date', [$fromDate, $toDate]);
 
         // ✅ REGION FILTER
         if ($request->filled('region_id')) {
@@ -1626,95 +1626,6 @@ class ReportController extends Controller
         return view('report.sales.pre_returns', $data);
     }
 
-    public function national_sales(Request $request)
-    {
-        $data['breadcrumbs'] = [
-            ['title' => 'Dashboard', 'url' => route('dashboard')],
-            ['title' => 'Report', 'url' => null],
-            ['title' => 'Sales', 'url' => null],
-            ['title' => 'National Sales', 'url' => null]
-        ];
-
-        $query = Order::query();
-        $today = Carbon::today();
-        $data['depots'] = Depot::whereNotIn('slug', ['ware-house'])->get();
-        
-        // Parse date filters
-        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
-            ? Carbon::parse($request->from_date)->startOfDay()
-            : null;
-
-        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
-            ? Carbon::parse($request->to_date)->endOfDay()
-            : null;
-
-        $query->whereHas('orderInvoices', function ($invoiceQuery) use ($fromDate, $toDate, $today) {
-            $invoiceQuery->whereNotIn('status', ['Requested', 'Cancel']);
-        
-            if ($fromDate && $toDate) {
-                $invoiceQuery->whereBetween('order_invoices.updated_at', [$fromDate, $toDate]);
-            } else {
-                $invoiceQuery->whereDate('order_invoices.updated_at', $today);
-            }
-        });
-
-        // Run the query
-        $orders = $query->get();
-        // $orders = $query->paginate(10);
-
-        // Group manually using loop
-        $grouped = [];
-        $invoiceIds = [];
-
-        foreach ($orders as $order) {
-            if ($order->quantity !== 0) {
-                $sku = $order->sku;
-
-                if (!isset($grouped[$sku])) {
-                    $grouped[$sku] = [
-                        'sku' => $order->sku,
-                        'product_name' => $order->product_name,
-                        'total_qty' => 0,
-                        'total_return_qty' => 0,
-                        'total_value' => 0,
-                    ];
-                }
-
-                $grouped[$sku]['total_qty'] += $order->quantity;
-                $grouped[$sku]['total_return_qty'] += $order->return_qty;
-                $grouped[$sku]['total_value'] += $order->total_amount;
-            }
-            
-            foreach ($order->orderInvoices as $invoice) {
-                $invoiceIds[] = $invoice->id;
-            }
-        }
-
-        $totalQty = 0;
-        $totalReturnQty = 0;
-        $totalValue = 0;
-
-        foreach ($grouped as $item) {
-            $totalQty += $item['total_qty'];
-            $totalReturnQty += $item['total_return_qty'];
-            $totalValue += $item['total_value'];
-        }
-
-        $invoiceIds = array_values(array_unique($invoiceIds));
-
-        $totalAdditionalDiscount = Collection::whereIn('order_invoice_id', $invoiceIds)
-            ->whereIn('status', ['Paid', 'Partial | Paid'])
-            ->sum('addi_dis_amount');
-
-        $data['national_sales'] = array_values($grouped);
-        $data['totalQty'] = $totalQty;
-        $data['totalReturnQty'] = $totalReturnQty;
-        $data['totalValue'] = $totalValue;
-        $data['totalAdditionalDiscount'] = $totalAdditionalDiscount;
-
-        return view('report.sales.national_sales', $data);
-    }
-
     public function money_receipts(Request $request)
     {
         $data['breadcrumbs'] = [
@@ -1784,5 +1695,163 @@ class ReportController extends Controller
         $data['grand_total_in_words'] = $grandTotalInWords;
 
         return view('report.receipt', $data);
+    }
+
+
+
+    public function national_sales(Request $request)
+    {
+        $data['breadcrumbs'] = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Report', 'url' => null],
+            ['title' => 'National Sales', 'url' => null]
+        ];
+
+        $data['areas'] = Area::all();
+        $data['regions'] = Region::all();
+        $data['territories'] = Territory::all();
+
+        $query = Order::query();
+        $today = Carbon::today();
+        
+        // Parse date filters
+        $fromDate = $request->filled('from_date') && Carbon::hasFormat($request->from_date, 'Y-m-d')
+            ? Carbon::parse($request->from_date)->startOfDay()
+            : null;
+
+        $toDate = $request->filled('to_date') && Carbon::hasFormat($request->to_date, 'Y-m-d')
+            ? Carbon::parse($request->to_date)->endOfDay()
+            : null;
+
+        if ($request->filled('region_id')) {
+            $region_id = $request->region_id;
+            $territoryIds = Territory::whereHas('area.region', function ($q) use ($region_id) {
+                $q->where('id', $region_id);
+            })->pluck('id');
+
+            $query->whereHas('orderInvoices.territory', function ($q) use ($territoryIds) {
+                $q->whereIn('id', $territoryIds);
+            });
+        }
+
+        if ($request->filled('area_id')) {
+            $area_id = $request->area_id;
+            $territoryIds = Territory::whereHas('area', function ($q) use ($area_id) {
+                $q->where('id', $area_id);
+            })->pluck('id');
+
+            $query->whereHas('orderInvoices.territory', function ($q) use ($territoryIds) {
+                $q->whereIn('id', $territoryIds);
+            });
+        }
+
+        if ($request->filled('territory_id')) {
+            $territory_id = $request->territory_id;
+
+            $query->whereHas('orderInvoices.territory', function ($q) use ($territory_id) {
+                $q->where('id', $territory_id);
+            });
+        }
+
+        if ($request->filled('type')) {
+            $type = $request->type;
+
+            $query->whereHas('orderInvoices', function ($q) use ($type) {
+                $q->where('type', $type);
+            });
+        }
+
+        $query->whereHas('orderInvoices', function ($invoiceQuery) use ($fromDate, $toDate, $today) {
+            $invoiceQuery->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel']);
+        
+            if ($fromDate && $toDate) {
+                $invoiceQuery->whereBetween('order_invoices.invoice_date', [$fromDate, $toDate]);
+            } else {
+                $invoiceQuery->whereDate('order_invoices.invoice_date', $today);
+            }
+        });
+
+        // Run the query
+        $orders = $query->get();
+        // $orders = $query->paginate(10);
+
+        // Group manually using loop
+        $grouped = [];
+        $invoiceIds = [];
+
+        foreach ($orders as $order) {
+            if ($order->quantity !== 0) {
+                $sku = $order->sku;
+
+                if (!isset($grouped[$sku])) {
+                    $grouped[$sku] = [
+                        'sku' => $order->sku,
+                        'product_name' => $order->stock->product->title,
+                        // 'unit_price' => $order->unit_price,
+                        'total_qty' => 0,
+                        // 'total_return_qty' => 0,
+                        'total_value' => 0,
+                        'unit_price_total_value' => 0
+                    ];
+                }
+
+                $grouped[$sku]['total_qty'] += $order->quantity;
+                // $grouped[$sku]['total_return_qty'] += $order->return_qty;
+                $grouped[$sku]['total_value'] += $order->total_amount;
+                $grouped[$sku]['unit_price_total_value'] += $order->unit_price * $order->quantity;
+            }
+            
+            foreach ($order->orderInvoices as $invoice) {
+                $invoiceIds[] = $invoice->id;
+            }
+        }
+
+        $totalQty = 0;
+        // $totalReturnQty = 0;
+        $totalValue = 0;
+        $unit_price_total_value = 0;
+
+        foreach ($grouped as $item) {
+            $totalQty += $item['total_qty'];
+            // $totalReturnQty += $item['total_return_qty'];
+            $totalValue += $item['total_value'];
+            $unit_price_total_value += $item['unit_price_total_value'];
+        }
+
+        $invoiceIds = array_values(array_unique($invoiceIds));
+
+        // $collectionQuery = Collection::whereIn('order_invoice_id', $invoiceIds)
+        //     ->whereIn('status', ['Paid', 'Partial | Paid']);
+
+        // if ($fromDate && $toDate) {
+        //     $collectionQuery->whereBetween('updated_at', [$fromDate, $toDate]);
+        // }
+        // else {
+        //     $collectionQuery->whereDate('updated_at', $today);
+        // }
+
+        // $totalAdditionalDiscount = (clone $collectionQuery)
+        //     ->sum('addi_dis_amount');
+
+        // $totalAIT = (clone $collectionQuery)
+        //     ->sum('ait');
+
+        // $totalAdditionalDiscount = Collection::whereIn('order_invoice_id', $invoiceIds)
+        //     ->whereIn('status', ['Paid', 'Partial | Paid'])
+        //     ->sum('addi_dis_amount');
+
+        // $totalAIT = Collection::whereIn('order_invoice_id', $invoiceIds)
+        //     ->whereIn('status', ['Paid', 'Partial | Paid'])
+        //     ->sum('ait');
+
+        $data['national_sales'] = array_values($grouped);
+        $data['totalQty'] = $totalQty;
+        // $data['totalReturnQty'] = $totalReturnQty;
+        $data['unit_price_total_value'] = $unit_price_total_value;
+        $data['sellDiscount'] = $unit_price_total_value - $totalValue;
+        // $data['totalAdditionalDiscount'] = $totalAdditionalDiscount;
+        // $data['totalAIT'] = $totalAIT;
+
+        return view('Report::national_sales', $data);
     }
 }

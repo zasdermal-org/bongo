@@ -20,6 +20,9 @@ Route::prefix('/report')->name('report.')->group(function () {
 
     Route::get('/customer-summary', [ReportController::class, 'customer_summary'])->name('customer_summary');
 
+
+    Route::get('/national-sales', [ReportController::class, 'national_sales'])->name('national_sales');
+
     // Route::get('/delivery-top-sheet', [SalesReportController::class, 'delivery_top_sheet'])->name('delivery_top_sheet');
     // Route::get('/delivery-top-sheet-products/{id}', [SalesReportController::class, 'delivery_top_sheet_products'])->name('delivery_top_sheet_products');
     // Route::get('/delivery-top-sheet-pharmacy/{id}', [SalesReportController::class, 'delivery_top_sheet_pharmacy'])->name('delivery_top_sheet_pharmacy');
