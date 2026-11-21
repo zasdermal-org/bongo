@@ -603,12 +603,12 @@ class OrderInvoiceController extends Controller
                             'product_name' => $order->stock->product->title,
                             'total_quantity' => 0,
 
-                            'unit_price_total_value' => 0
+                            'total_value' => 0
                         ];
                     }
 
                     $grouped[$sku]['total_quantity'] += $order->quantity;
-                    $grouped[$sku]['unit_price_total_value'] += $order->unit_price * $order->quantity;
+                    $grouped[$sku]['total_value'] += $order->unit_price * $order->quantity;
                 }
 
                 // $serializedOrders[] = [
@@ -631,7 +631,7 @@ class OrderInvoiceController extends Controller
                     'sku' => $item['sku'],
                     'product_name' => $item['product_name'],
                     'total_quantity' => $item['total_quantity'],
-                    'unit_price_total_value' => $item['unit_price_total_value']
+                    'total_value' => $item['total_value']
                 ];
             }
 
