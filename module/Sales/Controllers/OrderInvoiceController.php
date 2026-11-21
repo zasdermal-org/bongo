@@ -1303,151 +1303,338 @@ class OrderInvoiceController extends Controller
     }
 
 
+    // public function sale_invoices(Request $request)
+    // {
+    //     $api_type = $request->api_type;
+
+    //     $query = OrderInvoice::query();
+
+    //     $userIds = [68, 70];
+
+    //     if (in_array(auth()->id(), $userIds)) {
+    //         $query->whereDoesntHave('territory', function ($q) {
+    //             $q->where('name', 'Corporate');
+    //         });
+    //     }
+
+    //     // Parse date filters
+    //     $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+    //         ? Carbon::parse($request->fromDate)->startOfDay()
+    //         : null;
+
+    //     $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+    //         ? Carbon::parse($request->toDate)->endOfDay()
+    //         : null;
+
+    //     if ($request->filled('depot_id') && $request->depot_id != 0) {
+    //         $depot_id = $request->depot_id;
+    //         $query->where('depot_id', $depot_id);
+    //     }
+
+    //     if ($request->filled('zone_id') && $request->zone_id != 0) {
+    //         $zone_id = $request->zone_id;
+    //         $territoryIds = Territory::whereHas('area.region.division.zone', function ($query) use ($zone_id) {
+    //             $query->where('id', $zone_id);
+    //         })->pluck('id');
+
+    //         $query->whereIn('territory_id', $territoryIds);
+    //     }
+
+    //     if ($request->filled('division_id') && $request->division_id != 0) {
+    //         $division_id = $request->division_id;
+    //         $territoryIds = Territory::whereHas('area.region.division', function ($query) use ($division_id) {
+    //             $query->where('id', $division_id);
+    //         })->pluck('id');
+
+    //         $query->whereIn('territory_id', $territoryIds);
+    //     }
+
+    //     if ($request->filled('region_id') && $request->region_id != 0) {
+    //         $region_id = $request->region_id;
+    //         $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
+    //             $query->where('id', $region_id);
+    //         })->pluck('id');
+
+    //         $query->whereIn('territory_id', $territoryIds);
+    //     }
+
+    //     if ($request->filled('area_id') && $request->area_id != 0) {
+    //         $area_id = $request->area_id;
+    //         $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
+    //             $query->where('id', $area_id);
+    //         })->pluck('id');
+
+    //         $query->whereIn('territory_id', $territoryIds);
+    //     }
+
+    //     if ($request->filled('territory_id') && $request->territory_id != 0) {
+    //         $territory_id = $request->territory_id;
+    //         $query->where('territory_id', $territory_id);
+    //     }
+
+    //     // $query->whereNotIn('status', ['Cancel']);
+
+    //     // if ($api_type == 'reviewed') {
+    //     //     $query->where('status', 'Requested');
+    //     //     $query->whereBetween('created_at', [$fromDate, $toDate]);
+    //     // }
+
+    //     // $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+
+    //     // if ($api_type === 'reviewed') {
+    //     //     $query->where('status', 'Requested');
+
+    //     //     if ($fromDate && $toDate) {
+    //     //         $query->whereBetween('created_at', [$fromDate, $toDate]);
+    //     //     } elseif ($fromDate) {
+    //     //         $query->where('created_at', '>=', $fromDate);
+    //     //     } elseif ($toDate) {
+    //     //         $query->where('created_at', '<=', $toDate);
+    //     //     }
+    //     // } else {
+    //     //     if ($fromDate && $toDate) {
+    //     //         $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+    //     //     } elseif ($fromDate) {
+    //     //         $query->where('invoice_date', '>=', $fromDate);
+    //     //     } elseif ($toDate) {
+    //     //         $query->where('invoice_date', '<=', $toDate);
+    //     //     }
+    //     // }
+
+    //     if ($api_type === 'review') {
+    //         $query->where('status', 'Requested');
+
+    //         $dateColumn = 'created_at';
+    //     } else {
+    //         // "report", null, or any other api_type
+    //         $query->where('status', '!=', 'Cancel');
+
+    //         $dateColumn = 'invoice_date';
+    //     }
+
+    //     if ($fromDate && $toDate) {
+    //         $query->whereBetween($dateColumn, [$fromDate, $toDate]);
+    //     } elseif ($fromDate) {
+    //         $query->where($dateColumn, '>=', $fromDate);
+    //     } elseif ($toDate) {
+    //         $query->where($dateColumn, '<=', $toDate);
+    //     }
+
+    //     $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
+    //         return $order_invoice->user->username;
+    //     });
+
+    //     $count_invoices = $order_invoices->count();
+
+    //     $serializeInvoices = [];
+
+    //     foreach ($order_invoices as $invoice) {
+    //         // $payable_amount = $invoice->total_amount - $invoice->sell_discount_amount - $invoice->return_amount;
+    //         $sales_point = $invoice->salePoint->name . ' (' . $invoice->salePoint->code_number . ')';
+            
+    //         $serializeInvoices[] = [
+    //             'invoice_id' => $invoice->id,
+    //             'invoice_number' => $invoice->invoice_number,
+    //             'territory_name' => $invoice->territory->name,
+    //             'status' => $invoice->status,
+    //             'zone_approved' => $invoice->zone_approved,
+    //             'region_approved' => $invoice->region_approved,
+    //             'area_approved' => $invoice->area_approved,
+    //             'type' => $invoice->type,
+    //             'payment_type' => $invoice->payment_type,
+    //             'invoice_value' => $invoice->total_amount,
+    //             'discount' => $invoice->discount,
+    //             'return_amount' => $invoice->return_amount ?? 0,
+    //             'payable_amount' => $invoice->due,
+    //             'sale_point_name' => $sales_point,
+    //             'address' => $invoice->salePoint->address,
+    //             'order_date' => $invoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+    //             // 'invoice_date' => $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
+    //             'invoice_date' => $invoice->invoice_date
+    //             ? Carbon::parse($invoice->invoice_date)
+    //                 ->setTimezone('Asia/Dhaka')
+    //                 ->format('d M, Y / h:i A')
+    //             : null,
+    //             'username' => $invoice->user->username,
+    //             'employee_name' => $invoice->user->name
+    //         ];
+    //     }
+
+    //     return response()->json([
+    //         'status' => 'SUCCESS',
+    //         'count' => $count_invoices,
+    //         'data' => $serializeInvoices,
+    //         'message' => 'Invoices retrieved successfully.'
+    //     ], 200);
+    // }
+
+
     public function sale_invoices(Request $request)
-    {
-        $api_type = $request->api_type;
+{
+    $apiType = strtolower($request->input('api_type', ''));
 
-        $query = OrderInvoice::query();
+    $query = OrderInvoice::query();
 
-        $userIds = [68, 70];
+    if (in_array(auth()->id(), [68, 70])) {
+        $query->whereDoesntHave('territory', function ($q) {
+            $q->where('name', 'Corporate');
+        });
+    }
 
-        if (in_array(auth()->id(), $userIds)) {
-            $query->whereDoesntHave('territory', function ($q) {
-                $q->where('name', 'Corporate');
+    $fromDate = $request->filled('fromDate')
+        && Carbon::hasFormat($request->input('fromDate'), 'Y-m-d')
+            ? Carbon::parse($request->input('fromDate'))->startOfDay()
+            : null;
+
+    $toDate = $request->filled('toDate')
+        && Carbon::hasFormat($request->input('toDate'), 'Y-m-d')
+            ? Carbon::parse($request->input('toDate'))->endOfDay()
+            : null;
+
+    if ($request->filled('depot_id') && $request->input('depot_id') != 0) {
+        $query->where('depot_id', $request->input('depot_id'));
+    }
+
+    if ($request->filled('zone_id') && $request->input('zone_id') != 0) {
+        $territoryIds = Territory::whereHas(
+            'area.region.division.zone',
+            fn ($q) => $q->where('id', $request->input('zone_id'))
+        )->pluck('id');
+
+        $query->whereIn('territory_id', $territoryIds);
+    }
+
+    if ($request->filled('division_id') && $request->input('division_id') != 0) {
+        $territoryIds = Territory::whereHas(
+            'area.region.division',
+            fn ($q) => $q->where('id', $request->input('division_id'))
+        )->pluck('id');
+
+        $query->whereIn('territory_id', $territoryIds);
+    }
+
+    if ($request->filled('region_id') && $request->input('region_id') != 0) {
+        $territoryIds = Territory::whereHas(
+            'area.region',
+            fn ($q) => $q->where('id', $request->input('region_id'))
+        )->pluck('id');
+
+        $query->whereIn('territory_id', $territoryIds);
+    }
+
+    if ($request->filled('area_id') && $request->input('area_id') != 0) {
+        $territoryIds = Territory::whereHas(
+            'area',
+            fn ($q) => $q->where('id', $request->input('area_id'))
+        )->pluck('id');
+
+        $query->whereIn('territory_id', $territoryIds);
+    }
+
+    if ($request->filled('territory_id') && $request->input('territory_id') != 0) {
+        $query->where('territory_id', $request->input('territory_id'));
+    }
+
+    if ($apiType === 'review' || $apiType === 'reviewed') {
+        // Review: only Requested invoices, filtered by created_at
+        $query->where('status', 'Requested');
+
+        if ($fromDate && $toDate) {
+            $query->whereBetween('created_at', [$fromDate, $toDate]);
+        } elseif ($fromDate) {
+            $query->where('created_at', '>=', $fromDate);
+        } elseif ($toDate) {
+            $query->where('created_at', '<=', $toDate);
+        }
+    } else {
+        // Report or missing api_type: exclude cancelled invoices
+        $query->where('status', '!=', 'Cancel');
+
+        // Filter invoice_date; use created_at when invoice_date is NULL
+        if ($fromDate || $toDate) {
+            $query->where(function ($q) use ($fromDate, $toDate) {
+                $q->where(function ($dateQuery) use ($fromDate, $toDate) {
+                    $dateQuery->whereNotNull('invoice_date');
+
+                    if ($fromDate && $toDate) {
+                        $dateQuery->whereBetween(
+                            'invoice_date',
+                            [$fromDate, $toDate]
+                        );
+                    } elseif ($fromDate) {
+                        $dateQuery->where('invoice_date', '>=', $fromDate);
+                    } elseif ($toDate) {
+                        $dateQuery->where('invoice_date', '<=', $toDate);
+                    }
+                })->orWhere(function ($dateQuery) use ($fromDate, $toDate) {
+                    $dateQuery->whereNull('invoice_date');
+
+                    if ($fromDate && $toDate) {
+                        $dateQuery->whereBetween(
+                            'created_at',
+                            [$fromDate, $toDate]
+                        );
+                    } elseif ($fromDate) {
+                        $dateQuery->where('created_at', '>=', $fromDate);
+                    } elseif ($toDate) {
+                        $dateQuery->where('created_at', '<=', $toDate);
+                    }
+                });
             });
         }
+    }
 
-        // Parse date filters
-        $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
-            ? Carbon::parse($request->fromDate)->startOfDay()
-            : null;
+    $orderInvoices = $query
+        ->with(['user', 'territory', 'salePoint'])
+        ->get()
+        ->sortBy(fn ($invoice) => optional($invoice->user)->username)
+        ->values();
 
-        $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
-            ? Carbon::parse($request->toDate)->endOfDay()
-            : null;
+    $serializeInvoices = [];
 
-        if ($request->filled('depot_id') && $request->depot_id != 0) {
-            $depot_id = $request->depot_id;
-            $query->where('depot_id', $depot_id);
-        }
+    foreach ($orderInvoices as $invoice) {
+        $salePoint = $invoice->salePoint;
 
-        if ($request->filled('zone_id') && $request->zone_id != 0) {
-            $zone_id = $request->zone_id;
-            $territoryIds = Territory::whereHas('area.region.division.zone', function ($query) use ($zone_id) {
-                $query->where('id', $zone_id);
-            })->pluck('id');
-
-            $query->whereIn('territory_id', $territoryIds);
-        }
-
-        if ($request->filled('division_id') && $request->division_id != 0) {
-            $division_id = $request->division_id;
-            $territoryIds = Territory::whereHas('area.region.division', function ($query) use ($division_id) {
-                $query->where('id', $division_id);
-            })->pluck('id');
-
-            $query->whereIn('territory_id', $territoryIds);
-        }
-
-        if ($request->filled('region_id') && $request->region_id != 0) {
-            $region_id = $request->region_id;
-            $territoryIds = Territory::whereHas('area.region', function ($query) use ($region_id) {
-                $query->where('id', $region_id);
-            })->pluck('id');
-
-            $query->whereIn('territory_id', $territoryIds);
-        }
-
-        if ($request->filled('area_id') && $request->area_id != 0) {
-            $area_id = $request->area_id;
-            $territoryIds = Territory::whereHas('area', function ($query) use ($area_id) {
-                $query->where('id', $area_id);
-            })->pluck('id');
-
-            $query->whereIn('territory_id', $territoryIds);
-        }
-
-        if ($request->filled('territory_id') && $request->territory_id != 0) {
-            $territory_id = $request->territory_id;
-            $query->where('territory_id', $territory_id);
-        }
-
-        $query->whereNotIn('status', ['Cancel']);
-
-        // if ($api_type == 'reviewed') {
-        //     $query->where('status', 'Requested');
-        //     $query->whereBetween('created_at', [$fromDate, $toDate]);
-        // }
-
-        // $query->whereBetween('invoice_date', [$fromDate, $toDate]);
-
-        if ($api_type === 'reviewed') {
-            $query->where('status', 'Requested');
-
-            if ($fromDate && $toDate) {
-                $query->whereBetween('created_at', [$fromDate, $toDate]);
-            } elseif ($fromDate) {
-                $query->where('created_at', '>=', $fromDate);
-            } elseif ($toDate) {
-                $query->where('created_at', '<=', $toDate);
-            }
-        } else {
-            if ($fromDate && $toDate) {
-                $query->whereBetween('invoice_date', [$fromDate, $toDate]);
-            } elseif ($fromDate) {
-                $query->where('invoice_date', '>=', $fromDate);
-            } elseif ($toDate) {
-                $query->where('invoice_date', '<=', $toDate);
-            }
-        }
-
-        $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
-            return $order_invoice->user->username;
-        });
-
-        $count_invoices = $order_invoices->count();
-
-        $serializeInvoices = [];
-
-        foreach ($order_invoices as $invoice) {
-            // $payable_amount = $invoice->total_amount - $invoice->sell_discount_amount - $invoice->return_amount;
-            $sales_point = $invoice->salePoint->name . ' (' . $invoice->salePoint->code_number . ')';
-            
-            $serializeInvoices[] = [
-                'invoice_id' => $invoice->id,
-                'invoice_number' => $invoice->invoice_number,
-                'territory_name' => $invoice->territory->name,
-                'status' => $invoice->status,
-                'zone_approved' => $invoice->zone_approved,
-                'region_approved' => $invoice->region_approved,
-                'area_approved' => $invoice->area_approved,
-                'type' => $invoice->type,
-                'payment_type' => $invoice->payment_type,
-                'invoice_value' => $invoice->total_amount,
-                'discount' => $invoice->discount,
-                'return_amount' => $invoice->return_amount ?? 0,
-                'payable_amount' => $invoice->due,
-                'sale_point_name' => $sales_point,
-                'address' => $invoice->salePoint->address,
-                'order_date' => $invoice->created_at->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
-                // 'invoice_date' => $invoice->invoice_date->setTimezone('Asia/Dhaka')->format('d M, Y / h:i A'),
-                'invoice_date' => $invoice->invoice_date
+        $serializeInvoices[] = [
+            'invoice_id' => $invoice->id,
+            'invoice_number' => $invoice->invoice_number,
+            'territory_name' => optional($invoice->territory)->name,
+            'status' => $invoice->status,
+            'zone_approved' => $invoice->zone_approved,
+            'region_approved' => $invoice->region_approved,
+            'area_approved' => $invoice->area_approved,
+            'type' => $invoice->type,
+            'payment_type' => $invoice->payment_type,
+            'invoice_value' => $invoice->total_amount,
+            'discount' => $invoice->discount,
+            'return_amount' => $invoice->return_amount ?? 0,
+            'payable_amount' => $invoice->due,
+            'sale_point_name' => optional($salePoint)->name,
+            'address' => optional($salePoint)->address,
+            'order_date' => $invoice->created_at
+                ? Carbon::parse($invoice->created_at)
+                    ->setTimezone('Asia/Dhaka')
+                    ->format('d M, Y / h:i A')
+                : null,
+            'invoice_date' => $invoice->invoice_date
                 ? Carbon::parse($invoice->invoice_date)
                     ->setTimezone('Asia/Dhaka')
                     ->format('d M, Y / h:i A')
                 : null,
-                'username' => $invoice->user->username,
-                'employee_name' => $invoice->user->name
-            ];
-        }
-
-        return response()->json([
-            'status' => 'SUCCESS',
-            'count' => $count_invoices,
-            'data' => $serializeInvoices,
-            'message' => 'Invoices retrieved successfully.'
-        ], 200);
+            'username' => optional($invoice->user)->username,
+            'employee_name' => optional($invoice->user)->name,
+        ];
     }
+
+    $countInvoices = count($serializeInvoices);
+
+    return response()->json([
+        'status' => 'SUCCESS',
+        'count' => $countInvoices,
+        'data' => $serializeInvoices,
+        'message' => 'Invoices retrieved successfully.',
+    ], 200);
+}
 
     public function accepted_invoice(Request $request)
     {
