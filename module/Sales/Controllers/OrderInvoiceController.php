@@ -424,93 +424,214 @@ class OrderInvoiceController extends Controller
 
 
 
+    // public function product_summary(Request $request)
+    // {
+    //     try {
+
+    //         // Parse date filters
+    //         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
+    //             ? Carbon::parse($request->fromDate)->startOfDay()
+    //             : Carbon::today()->startOfDay();
+
+    //         $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
+    //             ? Carbon::parse($request->toDate)->endOfDay()
+    //             : Carbon::today()->endOfDay();
+
+    //         $ordersQuery = DB::table('orders')
+    //             ->select(
+    //                 DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
+    //                 'orders.sku',
+    //                 'orders.unit_price',
+    //                 DB::raw('SUM(orders.quantity) as total_quantity'),
+    //                 'products.title as product_name',
+    //                 'categories.slug as category_slug'
+    //             )
+    //             ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
+    //             ->join('products', 'stocks.product_id', '=', 'products.id')
+    //             ->join('order_order_invoice', 'orders.id', '=', 'order_order_invoice.order_id')
+    //             ->join('order_invoices', 'order_order_invoice.order_invoice_id', '=', 'order_invoices.id')
+
+    //             ->join('territories', 'order_invoices.territory_id', '=', 'territories.id')
+    //             ->join('areas', 'territories.area_id', '=', 'areas.id')
+    //             ->join('regions', 'areas.region_id', '=', 'regions.id')
+
+    //             ->where('order_invoices.status', 'Accepted')
+    //             ->whereBetween('order_invoices.invoice_date', [$fromDate, $toDate]);
+
+    //         // ✅ REGION FILTER
+    //         if ($request->filled('region_id') && $request->region_id != 0) {
+    //             $ordersQuery->where('regions.id', $request->region_id);
+    //         }
+
+    //         if ($request->filled('area_id') && $request->area_id != 0) {
+    //             $ordersQuery->where('areas.id', $request->area_id);
+    //         }
+
+    //         if ($request->filled('territory_id') && $request->territory_id != 0) {
+    //             $ordersQuery->where('territories.id', $request->territory_id);
+    //         }
+                
+    //         $userDepot = auth()->user()->employee->depot->name ?? null;
+
+    //         // Always join once
+    //         $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+                
+    //         if ($request->filled('type')) {
+    //             // $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
+
+    //             if ($request->type === 'seed') {
+    //                 $ordersQuery->where('categories.slug', 'seed');
+    //             } elseif ($request->type === 'agrochemicals') {
+    //                 $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+    //             }
+    //         } else {
+    //             if ($userDepot && strtolower($userDepot) === 'mirpur') {
+    //                 $ordersQuery->where('categories.slug', 'seed');
+    //             } elseif ($userDepot && strtolower($userDepot) === 'bogura') {
+    //                 $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
+    //             }
+    //         }
+
+    //         $orders = $ordersQuery
+    //             ->groupBy('orders.sku', 'orders.unit_price', 'products.title', 'categories.slug')
+    //             ->orderBy('stock_id', 'asc')
+    //             ->get();
+
+    //         $serializedOrders = [];
+
+    //         foreach ($orders as $order) {
+    //             $discountValue = ($order->unit_price * ($order->discount ?? 0)) / 100;
+
+    //             $finalUnitPrice = $order->unit_price - $discountValue;
+
+    //             $serializedOrders[] = [
+    //                 'stock_id'        => $order->stock_id,
+    //                 'type'            => $order->category_slug,
+    //                 'sku'             => $order->sku,
+    //                 'product_name'    => $order->product_name,
+    //                 'unit_price'      => $finalUnitPrice,
+    //                 'total_quantity'  => $order->total_quantity
+    //             ];
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'SUCCESS',
+    //             'data' => $serializedOrders,
+    //             'message' => 'Product summary retrieved successfully.'
+    //         ], 200);
+
+    //     } catch (\Exception $e) {
+
+    //         return response()->json([
+    //             'status' => 'ERROR',
+    //             'message' => 'Failed to retrieve product summary.',
+    //             'error' => $e->getMessage()
+    //         ], 200);
+    //     }
+    // }
+
     public function product_summary(Request $request)
     {
         try {
 
+            $query = Order::query();
+            $today = Carbon::today();
+
             // Parse date filters
             $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
                 ? Carbon::parse($request->fromDate)->startOfDay()
-                : Carbon::today()->startOfDay();
+                : null;
 
             $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
                 ? Carbon::parse($request->toDate)->endOfDay()
-                : Carbon::today()->endOfDay();
+                : null;
 
-            $ordersQuery = DB::table('orders')
-                ->select(
-                    DB::raw('MIN(orders.stock_id) as stock_id'), // pick one stock_id per SKU
-                    'orders.sku',
-                    'orders.unit_price',
-                    DB::raw('SUM(orders.quantity) as total_quantity'),
-                    'products.title as product_name',
-                    'categories.slug as category_slug'
-                )
-                ->join('stocks', 'orders.stock_id', '=', 'stocks.id')
-                ->join('products', 'stocks.product_id', '=', 'products.id')
-                ->join('order_order_invoice', 'orders.id', '=', 'order_order_invoice.order_id')
-                ->join('order_invoices', 'order_order_invoice.order_invoice_id', '=', 'order_invoices.id')
-
-                ->join('territories', 'order_invoices.territory_id', '=', 'territories.id')
-                ->join('areas', 'territories.area_id', '=', 'areas.id')
-                ->join('regions', 'areas.region_id', '=', 'regions.id')
-
-                ->where('order_invoices.status', 'Accepted')
-                ->whereBetween('order_invoices.invoice_date', [$fromDate, $toDate]);
-
-            // ✅ REGION FILTER
             if ($request->filled('region_id') && $request->region_id != 0) {
-                $ordersQuery->where('regions.id', $request->region_id);
+                $region_id = $request->region_id;
+                $territoryIds = Territory::whereHas('area.region', function ($q) use ($region_id) {
+                    $q->where('id', $region_id);
+                })->pluck('id');
+
+                $query->whereHas('orderInvoices.territory', function ($q) use ($territoryIds) {
+                    $q->whereIn('id', $territoryIds);
+                });
             }
 
             if ($request->filled('area_id') && $request->area_id != 0) {
-                $ordersQuery->where('areas.id', $request->area_id);
+                $area_id = $request->area_id;
+                $territoryIds = Territory::whereHas('area', function ($q) use ($area_id) {
+                    $q->where('id', $area_id);
+                })->pluck('id');
+
+                $query->whereHas('orderInvoices.territory', function ($q) use ($territoryIds) {
+                    $q->whereIn('id', $territoryIds);
+                });
             }
 
             if ($request->filled('territory_id') && $request->territory_id != 0) {
-                $ordersQuery->where('territories.id', $request->territory_id);
-            }
-                
-            $userDepot = auth()->user()->employee->depot->name ?? null;
+                $territory_id = $request->territory_id;
 
-            // Always join once
-            $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
-                
-            if ($request->filled('type')) {
-                // $ordersQuery->join('categories', 'products.category_id', '=', 'categories.id');
-
-                if ($request->type === 'seed') {
-                    $ordersQuery->where('categories.slug', 'seed');
-                } elseif ($request->type === 'agrochemicals') {
-                    $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
-                }
-            } else {
-                if ($userDepot && strtolower($userDepot) === 'mirpur') {
-                    $ordersQuery->where('categories.slug', 'seed');
-                } elseif ($userDepot && strtolower($userDepot) === 'bogura') {
-                    $ordersQuery->whereIn('categories.slug', ['fertilizer', 'pesticide']);
-                }
+                $query->whereHas('orderInvoices.territory', function ($q) use ($territory_id) {
+                    $q->where('id', $territory_id);
+                });
             }
 
-            $orders = $ordersQuery
-                ->groupBy('orders.sku', 'orders.unit_price', 'products.title', 'categories.slug')
-                ->orderBy('stock_id', 'asc')
-                ->get();
+            $query->whereHas('orderInvoices', function ($invoiceQuery) use ($fromDate, $toDate, $today) {
+                $invoiceQuery->whereNotIn('status', ['Requested', 'Reviewed', 'Cancel']);
+            
+                if ($fromDate && $toDate) {
+                    $invoiceQuery->whereBetween('order_invoices.invoice_date', [$fromDate, $toDate]);
+                } else {
+                    $invoiceQuery->whereDate('order_invoices.invoice_date', $today);
+                }
+            });
+
+            $orders = $query->get();
+
+            $grouped = [];
+
+            foreach ($orders as $order) {
+                if ($order->quantity != 0) {
+
+                    $sku = $order->sku;
+
+                    if (!isset($grouped[$sku])) {
+                        $grouped[$sku] = [
+                            'stock_id' => $order->stock_id,
+                            'type' => $order->stock->product->category->slug,
+                            'sku' => $order->sku,
+                            'product_name' => $order->stock->product->title,
+                            'total_quantity' => 0,
+
+                            'unit_price_total_value' => 0
+                        ];
+                    }
+
+                    $grouped[$sku]['total_quantity'] += $order->quantity;
+                    $grouped[$sku]['unit_price_total_value'] += $order->unit_price * $order->quantity;
+                }
+
+                // $serializedOrders[] = [
+                //     'stock_id'        => $order->stock_id,
+                //     'type'            => $order->category_slug,
+                //     'sku'             => $order->sku,
+                //     'product_name'    => $order->product_name,
+                //     'unit_price'      => $finalUnitPrice,
+                //     'total_quantity'  => $order->total_quantity
+                // ];
+            }
 
             $serializedOrders = [];
 
-            foreach ($orders as $order) {
-                $discountValue = ($order->unit_price * ($order->discount ?? 0)) / 100;
-
-                $finalUnitPrice = $order->unit_price - $discountValue;
+            foreach ($grouped as $item) {
 
                 $serializedOrders[] = [
-                    'stock_id'        => $order->stock_id,
-                    'type'            => $order->category_slug,
-                    'sku'             => $order->sku,
-                    'product_name'    => $order->product_name,
-                    'unit_price'      => $finalUnitPrice,
-                    'total_quantity'  => $order->total_quantity
+                    'stock_id' => $item['stock_id'],
+                    'type' => $item['type'],
+                    'sku' => $item['sku'],
+                    'product_name' => $item['product_name'],
+                    'total_quantity' => $item['total_qty'],
+                    'unit_price_total_value' => $item['unit_price_total_value']
                 ];
             }
 
