@@ -298,7 +298,7 @@ class UserController extends Controller
                 'cash_invoice_count'     => $cashInvoices->count(),
                 'credit_invoice_value'   => round($creditInvoices->sum('total_amount'), 2),
                 'cash_invoice_value'     => round($cashInvoices->sum('total_amount') - $cashInvoices->sum('discount_amount'), 2),
-                'total_collection'       => round($invoices->sum('paid'), 2),
+                'total_collection'       => round($invoices->sum('Paid'), 2),
                 'total_due'              => round($invoices->sum('due'), 2),
                 'all_due'                => round($total_due->sum('due'), 2),
             ];

@@ -617,15 +617,6 @@ class OrderInvoiceController extends Controller
                     // $grouped[$sku]['total_value'] += $order->unit_price * $order->quantity;
                     $grouped[$sku]['total_value'] += $finalUnitPrice * $order->quantity;
                 }
-
-                // $serializedOrders[] = [
-                //     'stock_id'        => $order->stock_id,
-                //     'type'            => $order->category_slug,
-                //     'sku'             => $order->sku,
-                //     'product_name'    => $order->product_name,
-                //     'unit_price'      => $finalUnitPrice,
-                //     'total_quantity'  => $order->total_quantity
-                // ];
             }
 
             $serializedOrders = [];
