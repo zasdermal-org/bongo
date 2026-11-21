@@ -497,21 +497,19 @@ class OrderInvoiceController extends Controller
                 ->orderBy('stock_id', 'asc')
                 ->get();
 
-            // $skuList = $orders->pluck('sku');
-
-            // $stocks = DB::table('stocks')
-            //     ->whereIn('sku', $skuList)
-            //     ->pluck('quantity', 'sku');
-
             $serializedOrders = [];
 
             foreach ($orders as $order) {
+                $discountValue = ($order->unit_price * ($order->discount ?? 0)) / 100;
+
+                $finalUnitPrice = $order->unit_price - $discountValue;
+
                 $serializedOrders[] = [
                     'stock_id'        => $order->stock_id,
                     'type'            => $order->category_slug,
                     'sku'             => $order->sku,
                     'product_name'    => $order->product_name,
-                    'unit_price'      => $order->unit_price,
+                    'unit_price'      => $finalUnitPrice,
                     'total_quantity'  => $order->total_quantity
                 ];
             }
