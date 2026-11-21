@@ -1394,7 +1394,7 @@ class OrderInvoiceController extends Controller
         } 
         
         if ($api_type === 'report') {
-            $query->where('status', 'Accepted');
+            // $query->where('status', 'Accepted')
             if ($fromDate && $toDate) {
                 $query->whereBetween('invoice_date', [$fromDate, $toDate]);
             } elseif ($fromDate) {
