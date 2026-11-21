@@ -630,7 +630,7 @@ class OrderInvoiceController extends Controller
                     'type' => $item['type'],
                     'sku' => $item['sku'],
                     'product_name' => $item['product_name'],
-                    'total_quantity' => $item['total_qty'],
+                    'total_quantity' => $item['total_quantity'],
                     'unit_price_total_value' => $item['unit_price_total_value']
                 ];
             }
