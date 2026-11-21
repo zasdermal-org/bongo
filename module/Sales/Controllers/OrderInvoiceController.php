@@ -607,7 +607,9 @@ class OrderInvoiceController extends Controller
                         ];
                     }
 
-                    $discountValue = ($order->unit_price * ($order->discount ?? 0)) / 100;
+                    $discount = $order->orderInvoices->first()->discount ?? 0;
+
+                    $discountValue = ($order->unit_price * $discount) / 100;
 
                     $finalUnitPrice = $order->unit_price - $discountValue;
 
