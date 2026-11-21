@@ -1374,12 +1374,30 @@ class OrderInvoiceController extends Controller
 
         $query->whereNotIn('status', ['Cancel']);
 
-        if ($api_type == 'reviewed') {
-            $query->where('status', 'Requested');
-            $query->whereBetween('created_at', [$fromDate, $toDate]);
-        }
+        // if ($api_type == 'reviewed') {
+        //     $query->where('status', 'Requested');
+        //     $query->whereBetween('created_at', [$fromDate, $toDate]);
+        // }
 
-        $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+        // $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+
+        if ($api_type === 'reviewed') {
+            $query->where('status', 'Requested');
+
+            if ($fromDate && $toDate) {
+                $query->whereBetween('created_at', [$fromDate, $toDate]);
+            }
+        } 
+        
+        // else {
+        //     if ($fromDate && $toDate) {
+        //         $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+        //     }
+        // }
+
+        if ($fromDate && $toDate) {
+                $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+            }
 
         $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
             return $order_invoice->user->username;
