@@ -22,6 +22,7 @@ use Module\Market\Models\Zone;
 use Module\Market\Models\Region;
 use Module\Market\Models\Division;
 use Module\Market\Models\Territory;
+use Module\Sales\Models\Collection;
 use Module\Sales\Models\OrderInvoice;
 
 
@@ -293,12 +294,17 @@ class UserController extends Controller
                     return $invoice;
                 });
 
+            $collection = Collection::whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->get();
+
             $sales = [
                 'credit_invoice_count'   => $creditInvoices->count(),
                 'cash_invoice_count'     => $cashInvoices->count(),
                 'credit_invoice_value'   => round($creditInvoices->sum('total_amount'), 2),
                 'cash_invoice_value'     => round($cashInvoices->sum('total_amount') - $cashInvoices->sum('discount_amount'), 2),
-                'total_collection'       => round($invoices->sum('Paid'), 2),
+                'total_collection_curr'  => round($invoices->sum('paid'), 2),
+                'total_collection_pre'   => round($collection->sum('total_collect'), 2),
                 'total_due'              => round($invoices->sum('due'), 2),
                 'all_due'                => round($total_due->sum('due'), 2),
             ];
