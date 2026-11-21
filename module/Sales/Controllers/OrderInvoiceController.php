@@ -1391,10 +1391,7 @@ class OrderInvoiceController extends Controller
             } elseif ($toDate) {
                 $query->where('created_at', '<=', $toDate);
             }
-        } 
-        
-        if ($api_type === 'report') {
-            // $query->where('status', 'Accepted')
+        } else {
             if ($fromDate && $toDate) {
                 $query->whereBetween('invoice_date', [$fromDate, $toDate]);
             } elseif ($fromDate) {
