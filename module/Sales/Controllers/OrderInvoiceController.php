@@ -1320,11 +1320,11 @@ class OrderInvoiceController extends Controller
         // Parse date filters
         $fromDate = $request->filled('fromDate') && Carbon::hasFormat($request->fromDate, 'Y-m-d')
             ? Carbon::parse($request->fromDate)->startOfDay()
-            : Carbon::today()->startOfDay();
+            : null;
 
         $toDate = $request->filled('toDate') && Carbon::hasFormat($request->toDate, 'Y-m-d')
             ? Carbon::parse($request->toDate)->endOfDay()
-            : Carbon::today()->endOfDay();
+            : null;
 
         if ($request->filled('depot_id') && $request->depot_id != 0) {
             $depot_id = $request->depot_id;
@@ -1386,18 +1386,23 @@ class OrderInvoiceController extends Controller
 
             if ($fromDate && $toDate) {
                 $query->whereBetween('created_at', [$fromDate, $toDate]);
+            } elseif ($fromDate) {
+                $query->where('created_at', '>=', $fromDate);
+            } elseif ($toDate) {
+                $query->where('created_at', '<=', $toDate);
             }
         } 
         
-        // else {
-        //     if ($fromDate && $toDate) {
-        //         $query->whereBetween('invoice_date', [$fromDate, $toDate]);
-        //     }
-        // }
-
-        if ($fromDate && $toDate) {
+        if ($api_type === 'report') {
+            $query->where('status', 'Accepted');
+            if ($fromDate && $toDate) {
                 $query->whereBetween('invoice_date', [$fromDate, $toDate]);
+            } elseif ($fromDate) {
+                $query->where('invoice_date', '>=', $fromDate);
+            } elseif ($toDate) {
+                $query->where('invoice_date', '<=', $toDate);
             }
+        }
 
         $order_invoices = $query->with('user')->get()->sortBy(function ($order_invoice) {
             return $order_invoice->user->username;
