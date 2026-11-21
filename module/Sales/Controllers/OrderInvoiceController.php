@@ -607,8 +607,13 @@ class OrderInvoiceController extends Controller
                         ];
                     }
 
+                    $discountValue = ($order->unit_price * ($order->discount ?? 0)) / 100;
+
+                    $finalUnitPrice = $order->unit_price - $discountValue;
+
                     $grouped[$sku]['total_quantity'] += $order->quantity;
-                    $grouped[$sku]['total_value'] += $order->unit_price * $order->quantity;
+                    // $grouped[$sku]['total_value'] += $order->unit_price * $order->quantity;
+                    $grouped[$sku]['total_value'] += $finalUnitPrice * $order->quantity;
                 }
 
                 // $serializedOrders[] = [
